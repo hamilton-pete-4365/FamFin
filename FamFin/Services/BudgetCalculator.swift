@@ -29,6 +29,7 @@ struct BudgetCalculator {
         let directActivity = toBudgetCategory.cumulativeActivity(through: month)
 
         // 2. Uncategorised income/expenses on Budget accounts (category = nil)
+        //    Also includes uncategorised cross-boundary transfers.
         var uncategorisedNet = Decimal.zero
         for account in accounts where account.isBudget {
             for transaction in account.transactions {
@@ -40,18 +41,23 @@ struct BudgetCalculator {
                 case .expense:
                     uncategorisedNet -= transaction.amount
                 case .transfer:
-                    break
+                    // Budget → Tracking without a category: money leaving the budget
+                    if transaction.transferToAccount?.isBudget == false {
+                        uncategorisedNet -= transaction.amount
+                    }
                 }
             }
         }
 
-        // 3. Incoming transfers from Tracking → Budget accounts
+        // 3. Incoming transfers from Tracking → Budget accounts (uncategorised only).
+        //    Categorised Tracking → Budget transfers go to their assigned category instead.
         var trackingTransfers = Decimal.zero
         for account in accounts where account.isBudget {
             for transaction in account.incomingTransfers {
                 guard transaction.type == .transfer else { continue }
                 guard transaction.date < endOfMonth else { continue }
                 guard transaction.account?.isBudget == false else { continue }
+                guard transaction.category == nil else { continue }
                 trackingTransfers += transaction.amount
             }
         }

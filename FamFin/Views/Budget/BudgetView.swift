@@ -109,6 +109,12 @@ struct BudgetView: View {
                         Image(systemName: "gear")
                     }
                 }
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") {
+                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                    }
+                }
             }
             .sheet(isPresented: $showingSettings) {
                 SettingsView()
@@ -301,6 +307,7 @@ struct BudgetView: View {
         }
         .listStyle(.insetGrouped)
         .listSectionSpacing(4)
+        .scrollDismissesKeyboard(.interactively)
     }
 
     // MARK: - Empty State
@@ -452,6 +459,7 @@ struct BudgetCategoryRow: View {
     @State private var rawDigits: String = ""
     @State private var previousDigits: String = ""  // backup for cancel-on-blur
     @State private var hasLoaded: Bool = false
+    @State private var hasTyped: Bool = false  // tracks whether user typed anything while focused
     @FocusState private var isFocused: Bool
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
@@ -492,17 +500,26 @@ struct BudgetCategoryRow: View {
                         if focused {
                             // Save current value before clearing, so we can restore on cancel
                             previousDigits = rawDigits
+                            hasTyped = false
                             rawDigits = ""
                         } else if !focused {
-                            // If user typed nothing, restore previous value
-                            if rawDigits.isEmpty {
+                            // If user typed nothing (didn't press any key), restore previous value
+                            if !hasTyped {
                                 rawDigits = previousDigits
                             } else {
+                                // User typed something (even if it was "0" which stripped to "")
                                 onBudgetChanged(decimalAmount)
                             }
                         }
                     }
                     .onChange(of: rawDigits) { _, newValue in
+                        // Mark that the user has typed if we're focused and digits came in
+                        if isFocused {
+                            let digits = newValue.filter { $0.isNumber }
+                            if !digits.isEmpty {
+                                hasTyped = true
+                            }
+                        }
                         // Strip non-digits, leading zeros, cap at 8 digits
                         let digits = newValue.filter { $0.isNumber }
                         let trimmed = String(digits.drop(while: { $0 == "0" }))

@@ -112,11 +112,17 @@ func formatGBP(_ amount: Decimal, currencyCode: String = "GBP") -> String {
 /// Pass the currency code from @AppStorage to ensure reactivity.
 func formatPence(_ pence: Int, currencyCode: String = "GBP") -> String {
     let currency = SupportedCurrency(rawValue: currencyCode) ?? .gbp
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .decimal
+    formatter.usesGroupingSeparator = true
     if currency.hasMinorUnits {
         let major = pence / 100
         let minor = pence % 100
-        return String(format: "%@%d.%02d", currency.symbol, major, minor)
+        let majorString = formatter.string(from: NSNumber(value: major)) ?? "\(major)"
+        let minorString = minor < 10 ? "0\(minor)" : "\(minor)"
+        return "\(currency.symbol)\(majorString).\(minorString)"
     } else {
-        return "\(currency.symbol)\(pence)"
+        let valueString = formatter.string(from: NSNumber(value: pence)) ?? "\(pence)"
+        return "\(currency.symbol)\(valueString)"
     }
 }

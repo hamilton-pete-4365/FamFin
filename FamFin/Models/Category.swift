@@ -40,21 +40,33 @@ final class Category {
 
     // MARK: - Activity (transaction impact on this category)
 
-    /// Net activity in this category for a given month (Budget accounts only).
+    /// Net activity in this category for a given month.
     /// Expenses reduce the balance, income increases it.
+    /// Cross-boundary transfers also affect the balance:
+    ///   Budget → Tracking = outflow (reduces balance, like an expense)
+    ///   Tracking → Budget = inflow (increases balance, like income)
     func activity(in month: Date) -> Decimal {
         let calendar = Calendar.current
         var net = Decimal.zero
         for transaction in transactions {
-            guard transaction.account?.isBudget == true else { continue }
             guard calendar.isDate(transaction.date, equalTo: month, toGranularity: .month) else { continue }
             switch transaction.type {
             case .expense:
+                guard transaction.account?.isBudget == true else { continue }
                 net -= transaction.amount
             case .income:
+                guard transaction.account?.isBudget == true else { continue }
                 net += transaction.amount
             case .transfer:
-                break  // transfers don't affect category activity
+                // Only cross-boundary transfers with a category affect budget
+                guard transaction.transferNeedsCategory else { continue }
+                if transaction.account?.isBudget == true {
+                    // Budget → Tracking: money leaving the budget system
+                    net -= transaction.amount
+                } else {
+                    // Tracking → Budget: money entering the budget system
+                    net += transaction.amount
+                }
             }
         }
         return net
@@ -62,19 +74,26 @@ final class Category {
 
     /// Cumulative net activity from all time up to and including the given month.
     /// Expenses reduce the balance, income assigned to a category increases it.
+    /// Cross-boundary transfers also affect the balance.
     func cumulativeActivity(through month: Date) -> Decimal {
         let endOfMonth = Self.endOfMonth(month)
         var net = Decimal.zero
         for transaction in transactions {
-            guard transaction.account?.isBudget == true else { continue }
             guard transaction.date < endOfMonth else { continue }
             switch transaction.type {
             case .expense:
+                guard transaction.account?.isBudget == true else { continue }
                 net -= transaction.amount
             case .income:
+                guard transaction.account?.isBudget == true else { continue }
                 net += transaction.amount
             case .transfer:
-                break
+                guard transaction.transferNeedsCategory else { continue }
+                if transaction.account?.isBudget == true {
+                    net -= transaction.amount
+                } else {
+                    net += transaction.amount
+                }
             }
         }
         return net

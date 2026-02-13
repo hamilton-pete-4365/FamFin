@@ -4,9 +4,11 @@ import SwiftData
 struct AccountsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Account.sortOrder) private var accounts: [Account]
+    @Environment(\.colorScheme) private var colorScheme
     @State private var showingAddAccount = false
     @State private var editingAccount: Account?
     @State private var isEditing = false
+    @State private var expandedSections: Set<String> = ["Budget", "Tracking"]
 
     var budgetAccounts: [Account] {
         accounts.filter { $0.isBudget }.sorted { $0.sortOrder < $1.sortOrder }
@@ -49,45 +51,62 @@ struct AccountsView: View {
                                     .foregroundStyle(.secondary)
                             }
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 8)
-                            .listRowBackground(Color.accentColor.opacity(0.1))
+                            .padding(.vertical, 16)
+                            .listRowBackground(Color.accentColor.opacity(colorScheme == .dark ? 0.2 : 0.1))
                         }
 
                         // Budget accounts
                         if !budgetAccounts.isEmpty {
                             Section {
-                                // Section header row (inline, styled like budget tab)
-                                HStack {
-                                    Text("BUDGET ACCOUNTS")
-                                        .font(.caption.bold())
-                                        .foregroundStyle(.secondary)
-                                    Spacer()
-                                    GBPText(amount: budgetBalance, font: .caption)
+                                // Collapsible section header
+                                Button {
+                                    withAnimation {
+                                        if expandedSections.contains("Budget") {
+                                            expandedSections.remove("Budget")
+                                        } else {
+                                            expandedSections.insert("Budget")
+                                        }
+                                    }
+                                } label: {
+                                    HStack(spacing: 6) {
+                                        Image(systemName: expandedSections.contains("Budget") ? "chevron.down" : "chevron.right")
+                                            .font(.system(size: 10, weight: .bold))
+                                            .foregroundStyle(.secondary)
+                                            .frame(width: 12)
+                                        Text("BUDGET ACCOUNTS")
+                                            .font(.caption.bold())
+                                            .foregroundStyle(.secondary)
+                                        Spacer()
+                                        GBPText(amount: budgetBalance, font: .caption)
+                                    }
                                 }
+                                .tint(.primary)
                                 .listRowBackground(Color(.secondarySystemGroupedBackground).opacity(0.5))
                                 .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
 
-                                ForEach(budgetAccounts) { account in
-                                    if isEditing {
-                                        // In edit mode: tap to edit, no navigation
-                                        Button {
-                                            editingAccount = account
-                                        } label: {
-                                            AccountRow(account: account)
-                                        }
-                                        .tint(.primary)
-                                    } else {
-                                        // Normal mode: tap to navigate to transactions
-                                        NavigationLink(value: account) {
-                                            AccountRow(account: account)
+                                if expandedSections.contains("Budget") {
+                                    ForEach(budgetAccounts) { account in
+                                        if isEditing {
+                                            // In edit mode: tap to edit, no navigation
+                                            Button {
+                                                editingAccount = account
+                                            } label: {
+                                                AccountRow(account: account)
+                                            }
+                                            .tint(.primary)
+                                        } else {
+                                            // Normal mode: tap to navigate to transactions
+                                            NavigationLink(value: account) {
+                                                AccountRow(account: account)
+                                            }
                                         }
                                     }
-                                }
-                                .onDelete { offsets in
-                                    deleteAccounts(offsets, from: budgetAccounts)
-                                }
-                                .onMove { source, destination in
-                                    moveAccounts(source: source, destination: destination, inList: budgetAccounts)
+                                    .onDelete { offsets in
+                                        deleteAccounts(offsets, from: budgetAccounts)
+                                    }
+                                    .onMove { source, destination in
+                                        moveAccounts(source: source, destination: destination, inList: budgetAccounts)
+                                    }
                                 }
                             }
                         }
@@ -95,36 +114,53 @@ struct AccountsView: View {
                         // Tracking accounts
                         if !trackingAccounts.isEmpty {
                             Section {
-                                // Section header row (inline, styled like budget tab)
-                                HStack {
-                                    Text("TRACKING ACCOUNTS")
-                                        .font(.caption.bold())
-                                        .foregroundStyle(.secondary)
-                                    Spacer()
-                                    GBPText(amount: trackingBalance, font: .caption)
+                                // Collapsible section header
+                                Button {
+                                    withAnimation {
+                                        if expandedSections.contains("Tracking") {
+                                            expandedSections.remove("Tracking")
+                                        } else {
+                                            expandedSections.insert("Tracking")
+                                        }
+                                    }
+                                } label: {
+                                    HStack(spacing: 6) {
+                                        Image(systemName: expandedSections.contains("Tracking") ? "chevron.down" : "chevron.right")
+                                            .font(.system(size: 10, weight: .bold))
+                                            .foregroundStyle(.secondary)
+                                            .frame(width: 12)
+                                        Text("TRACKING ACCOUNTS")
+                                            .font(.caption.bold())
+                                            .foregroundStyle(.secondary)
+                                        Spacer()
+                                        GBPText(amount: trackingBalance, font: .caption)
+                                    }
                                 }
+                                .tint(.primary)
                                 .listRowBackground(Color(.secondarySystemGroupedBackground).opacity(0.5))
                                 .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
 
-                                ForEach(trackingAccounts) { account in
-                                    if isEditing {
-                                        Button {
-                                            editingAccount = account
-                                        } label: {
-                                            AccountRow(account: account)
-                                        }
-                                        .tint(.primary)
-                                    } else {
-                                        NavigationLink(value: account) {
-                                            AccountRow(account: account)
+                                if expandedSections.contains("Tracking") {
+                                    ForEach(trackingAccounts) { account in
+                                        if isEditing {
+                                            Button {
+                                                editingAccount = account
+                                            } label: {
+                                                AccountRow(account: account)
+                                            }
+                                            .tint(.primary)
+                                        } else {
+                                            NavigationLink(value: account) {
+                                                AccountRow(account: account)
+                                            }
                                         }
                                     }
-                                }
-                                .onDelete { offsets in
-                                    deleteAccounts(offsets, from: trackingAccounts)
-                                }
-                                .onMove { source, destination in
-                                    moveAccounts(source: source, destination: destination, inList: trackingAccounts)
+                                    .onDelete { offsets in
+                                        deleteAccounts(offsets, from: trackingAccounts)
+                                    }
+                                    .onMove { source, destination in
+                                        moveAccounts(source: source, destination: destination, inList: trackingAccounts)
+                                    }
                                 }
                             }
                         }
@@ -236,6 +272,7 @@ struct AddAccountView: View {
                         .foregroundStyle(.secondary)
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle("New Account")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -316,6 +353,7 @@ struct EditAccountView: View {
                     }
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle("Edit Account")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

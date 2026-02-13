@@ -280,6 +280,7 @@ struct AddHeaderView: View {
                         .font(.title)
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle("New Header")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -335,6 +336,7 @@ struct AddSubcategoryView: View {
                         .font(.title)
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle("New Subcategory")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -382,6 +384,7 @@ struct RenameCategoryView: View {
                         .font(.title)
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle(category.isHeader ? "Rename Header" : "Rename Category")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

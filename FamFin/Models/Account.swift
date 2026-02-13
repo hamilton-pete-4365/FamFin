@@ -51,6 +51,8 @@ enum AccountType: String, Codable, CaseIterable, Identifiable {
     case creditCard = "Credit Card"
     case loan = "Loan"
     case mortgage = "Mortgage"
+    case asset = "Asset"
+    case liability = "Liability"
 
     var id: String { rawValue }
 
@@ -58,7 +60,7 @@ enum AccountType: String, Codable, CaseIterable, Identifiable {
         switch self {
         case .current, .savings, .creditCard:
             return true
-        case .loan, .mortgage:
+        case .loan, .mortgage, .asset, .liability:
             return false
         }
     }

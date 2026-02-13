@@ -32,6 +32,14 @@ struct TransactionsView: View {
         return accounts.reduce(Decimal.zero) { $0 + $1.balance }
     }
 
+    var budgetAccounts: [Account] {
+        accounts.filter { $0.isBudget }
+    }
+
+    var trackingAccounts: [Account] {
+        accounts.filter { !$0.isBudget }
+    }
+
     var navigationTitle: String {
         filterAccount?.name ?? "Transactions"
     }
@@ -62,14 +70,33 @@ struct TransactionsView: View {
                         }
                     }
                     Divider()
-                    ForEach(accounts) { account in
-                        Button {
-                            filterAccountID = account.persistentModelID
-                        } label: {
-                            if filterAccountID == account.persistentModelID {
-                                Label(account.name, systemImage: "checkmark")
-                            } else {
-                                Text(account.name)
+                    if !budgetAccounts.isEmpty {
+                        Section("Budget Accounts") {
+                            ForEach(budgetAccounts) { account in
+                                Button {
+                                    filterAccountID = account.persistentModelID
+                                } label: {
+                                    if filterAccountID == account.persistentModelID {
+                                        Label(account.name, systemImage: "checkmark")
+                                    } else {
+                                        Text(account.name)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if !trackingAccounts.isEmpty {
+                        Section("Tracking Accounts") {
+                            ForEach(trackingAccounts) { account in
+                                Button {
+                                    filterAccountID = account.persistentModelID
+                                } label: {
+                                    if filterAccountID == account.persistentModelID {
+                                        Label(account.name, systemImage: "checkmark")
+                                    } else {
+                                        Text(account.name)
+                                    }
+                                }
                             }
                         }
                     }
@@ -111,6 +138,7 @@ struct TransactionsView: View {
                     .onDelete(perform: deleteTransactions)
                 }
                 .listStyle(.plain)
+                .scrollDismissesKeyboard(.interactively)
             }
         }
         .navigationTitle(navigationTitle)
@@ -174,8 +202,9 @@ struct TransactionRow: View {
                 Text(category.emoji)
                     .font(.title2)
             } else {
-                Text("❓")
+                Image(systemName: "banknote")
                     .font(.title2)
+                    .foregroundStyle(.secondary)
             }
 
             VStack(alignment: .leading, spacing: 2) {
@@ -301,9 +330,18 @@ struct TransactionFormFields: View {
     let categories: [Category]
     var autoFocusAmount: Bool = false
 
+    var budgetAccounts: [Account] {
+        accounts.filter { $0.isBudget }
+    }
+
+    var trackingAccounts: [Account] {
+        accounts.filter { !$0.isBudget }
+    }
+
     /// Raw digits string — user types "1536", we store "1536" and display £15.36
     @State private var rawDigits: String = ""
     @State private var hasLoadedAmount = false
+    @State private var showDatePicker = false
     @FocusState private var amountFocused: Bool
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
@@ -503,7 +541,28 @@ struct TransactionFormFields: View {
                 isOptional: type == .transfer
             )
             TextField("Memo (optional)", text: $memo)
-            DatePicker("Date", selection: $date, displayedComponents: .date)
+
+            // Date row: tap to toggle inline picker
+            Button {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                withAnimation { showDatePicker.toggle() }
+            } label: {
+                HStack {
+                    Text("Date")
+                        .foregroundStyle(.primary)
+                    Spacer()
+                    Text(date, format: .dateTime.day().month().year())
+                        .foregroundStyle(showDatePicker ? Color.accentColor : .secondary)
+                }
+            }
+
+            if showDatePicker {
+                DatePicker("", selection: $date, displayedComponents: .date)
+                    .datePickerStyle(.graphical)
+                    .onChange(of: date) { _, _ in
+                        withAnimation { showDatePicker = false }
+                    }
+            }
         }
 
         // Account(s)
@@ -515,8 +574,19 @@ struct TransactionFormFields: View {
                 } else {
                     Picker("From", selection: $selectedAccount) {
                         Text("Select account").tag(Account?.none)
-                        ForEach(accounts) { account in
-                            Text(account.name).tag(Account?.some(account))
+                        if !budgetAccounts.isEmpty {
+                            Section("Budget Accounts") {
+                                ForEach(budgetAccounts) { account in
+                                    Text(account.name).tag(Account?.some(account))
+                                }
+                            }
+                        }
+                        if !trackingAccounts.isEmpty {
+                            Section("Tracking Accounts") {
+                                ForEach(trackingAccounts) { account in
+                                    Text(account.name).tag(Account?.some(account))
+                                }
+                            }
                         }
                     }
                 }
@@ -524,9 +594,24 @@ struct TransactionFormFields: View {
             Section("Transfer To") {
                 Picker("To", selection: $selectedTransferTo) {
                     Text("Select account").tag(Account?.none)
-                    ForEach(accounts) { account in
-                        if account.persistentModelID != selectedAccount?.persistentModelID {
-                            Text(account.name).tag(Account?.some(account))
+                    let filteredBudget = budgetAccounts.filter {
+                        $0.persistentModelID != selectedAccount?.persistentModelID
+                    }
+                    let filteredTracking = trackingAccounts.filter {
+                        $0.persistentModelID != selectedAccount?.persistentModelID
+                    }
+                    if !filteredBudget.isEmpty {
+                        Section("Budget Accounts") {
+                            ForEach(filteredBudget) { account in
+                                Text(account.name).tag(Account?.some(account))
+                            }
+                        }
+                    }
+                    if !filteredTracking.isEmpty {
+                        Section("Tracking Accounts") {
+                            ForEach(filteredTracking) { account in
+                                Text(account.name).tag(Account?.some(account))
+                            }
                         }
                     }
                 }
@@ -546,8 +631,19 @@ struct TransactionFormFields: View {
                 } else {
                     Picker("Account", selection: $selectedAccount) {
                         Text("Select account").tag(Account?.none)
-                        ForEach(accounts) { account in
-                            Text(account.name).tag(Account?.some(account))
+                        if !budgetAccounts.isEmpty {
+                            Section("Budget Accounts") {
+                                ForEach(budgetAccounts) { account in
+                                    Text(account.name).tag(Account?.some(account))
+                                }
+                            }
+                        }
+                        if !trackingAccounts.isEmpty {
+                            Section("Tracking Accounts") {
+                                ForEach(trackingAccounts) { account in
+                                    Text(account.name).tag(Account?.some(account))
+                                }
+                            }
                         }
                     }
 
@@ -680,6 +776,12 @@ struct AddTransactionView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { saveTransaction() }
                         .disabled(!canSave)
+                }
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") {
+                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                    }
                 }
             }
             .onAppear {
@@ -828,6 +930,12 @@ struct EditTransactionView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { updateTransaction() }
                         .disabled(!canSave)
+                }
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") {
+                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                    }
                 }
             }
             .onAppear {

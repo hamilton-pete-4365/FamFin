@@ -57,6 +57,7 @@ struct EditBudgetAmountView: View {
                     }
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle("Set Budget")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
