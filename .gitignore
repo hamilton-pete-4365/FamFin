@@ -1,0 +1,25 @@
+# Xcode build artifacts
+build/
+DerivedData/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+
+# Xcode personal settings (window positions, breakpoints, etc.)
+*.xcuserstate
+*.xcscmblueprint
+
+# Swift Package Manager
+.build/
+Packages/
+
+# CocoaPods (not used but just in case)
+Pods/
+
+# macOS system files
+.DS_Store
+*.swp
+*~
+
+# Temporary files
+*.orig
+*.bak
