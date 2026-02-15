@@ -30,6 +30,7 @@ struct BudgetView: View {
     /// Updated immediately on save so the "Available" column reflects changes without waiting for @Query.
     @State private var localAvailable: [String: Decimal] = [:]
     @State private var showingSettings = false
+    @State private var overspentExpanded = false
     @State private var detailCategory: Category? = nil
     /// The category currently being edited (keyboard is up)
     @State private var focusedCategory: Category? = nil
@@ -232,21 +233,48 @@ struct BudgetView: View {
 
     var overspentWarnings: some View {
         Group {
-            if !overspentCategories.isEmpty {
+            if !overspentCategories.isEmpty && focusedCategory == nil {
+                let totalOverspent = overspentCategories.reduce(Decimal.zero) { $0 + $1.amount }
+                let count = overspentCategories.count
                 VStack(spacing: 0) {
-                    ForEach(overspentCategories, id: \.name) { item in
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            overspentExpanded.toggle()
+                        }
+                    } label: {
                         HStack(spacing: 6) {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .font(.caption2)
-                            Text("\(item.name) is overspent by \(formatGBP(-item.amount, currencyCode: currencyCode))")
+                            Text("\(count) \(count == 1 ? "category" : "categories") overspent by \(formatGBP(-totalOverspent, currencyCode: currencyCode))")
                                 .font(.caption2)
                                 .fontWeight(.medium)
                             Spacer()
+                            Image(systemName: overspentExpanded ? "chevron.up" : "chevron.down")
+                                .font(.caption2)
                         }
                         .foregroundStyle(.white)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 6)
-                        .background(Color.orange.opacity(0.85))
+                    }
+                    .background(Color.orange.opacity(0.85))
+
+                    if overspentExpanded {
+                        VStack(spacing: 0) {
+                            ForEach(overspentCategories, id: \.name) { item in
+                                HStack(spacing: 6) {
+                                    Text(item.name)
+                                        .font(.caption2)
+                                    Spacer()
+                                    Text(formatGBP(-item.amount, currencyCode: currencyCode))
+                                        .font(.caption2)
+                                        .fontWeight(.medium)
+                                }
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 4)
+                            }
+                        }
+                        .background(Color.orange.opacity(0.7))
                     }
                 }
             }

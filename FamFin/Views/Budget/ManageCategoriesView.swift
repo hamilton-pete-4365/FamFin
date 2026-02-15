@@ -169,7 +169,7 @@ struct ManageCategoriesView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Category.sortOrder) private var allCategories: [Category]
 
-    @State private var isEditing = false
+    @State private var isEditing = true
     @State private var showingAddHeader = false
     @State private var addingSubcategoryTo: Category?
     @State private var renamingCategory: Category?

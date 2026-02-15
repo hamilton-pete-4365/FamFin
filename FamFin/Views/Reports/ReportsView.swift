@@ -98,15 +98,13 @@ struct ReportsView: View {
 
         let calendar = Calendar.current
 
-        // Always show 13 months: 12 months back + current month
+        // Start from the earliest transaction month through to current month
         let currentMonth = calendar.dateInterval(of: .month, for: Date())?.start ?? Date()
-        let startMonth = calendar.date(byAdding: .month, value: -12, to: currentMonth) ?? currentMonth
-
-        // Find earliest transaction to know which months have real data
         let earliestDate = allTransactions.map(\.date).min() ?? Date()
         let earliestMonth = calendar.dateInterval(of: .month, for: earliestDate)?.start ?? earliestDate
+        let startMonth = min(earliestMonth, currentMonth)
 
-        // Generate 13 months
+        // Generate all months from earliest data to now
         var months: [Date] = []
         var cursor = startMonth
         while cursor <= currentMonth {
