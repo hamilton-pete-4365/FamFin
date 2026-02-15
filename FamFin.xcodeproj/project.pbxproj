@@ -26,7 +26,6 @@
 		A1B2C3D4E5F60001000A0011 /* CurrencyFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0011 /* CurrencyFormatter.swift */; };
 		A1B2C3D4E5F60001000A0012 /* Payee.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0012 /* Payee.swift */; };
 		A1B2C3D4E5F60001000A0013 /* BudgetCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0013 /* BudgetCalculator.swift */; };
-		A1B2C3D4E5F60001000A0014 /* EditBudgetAmountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0014 /* EditBudgetAmountView.swift */; };
 		A1B2C3D4E5F60001000A0015 /* ManageCategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0015 /* ManageCategoriesView.swift */; };
 		A1B2C3D4E5F60001000A0016 /* CurrencySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0016 /* CurrencySettings.swift */; };
 		A1B2C3D4E5F60001000A0017 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0017 /* SettingsView.swift */; };
@@ -53,7 +52,6 @@
 		A1B2C3D4E5F60002000A0011 /* CurrencyFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyFormatter.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0012 /* Payee.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Payee.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0013 /* BudgetCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetCalculator.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60002000A0014 /* EditBudgetAmountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditBudgetAmountView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0015 /* ManageCategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageCategoriesView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0016 /* CurrencySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySettings.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0017 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -125,7 +123,6 @@
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60002000A0009 /* BudgetView.swift */,
-				A1B2C3D4E5F60002000A0014 /* EditBudgetAmountView.swift */,
 				A1B2C3D4E5F60002000A0015 /* ManageCategoriesView.swift */,
 			);
 			path = Budget;
@@ -286,7 +283,6 @@
 				A1B2C3D4E5F60001000A0011 /* CurrencyFormatter.swift in Sources */,
 				A1B2C3D4E5F60001000A0012 /* Payee.swift in Sources */,
 				A1B2C3D4E5F60001000A0013 /* BudgetCalculator.swift in Sources */,
-				A1B2C3D4E5F60001000A0014 /* EditBudgetAmountView.swift in Sources */,
 				A1B2C3D4E5F60001000A0015 /* ManageCategoriesView.swift in Sources */,
 				A1B2C3D4E5F60001000A0016 /* CurrencySettings.swift in Sources */,
 				A1B2C3D4E5F60001000A0017 /* SettingsView.swift in Sources */,

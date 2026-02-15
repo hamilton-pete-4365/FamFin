@@ -10,6 +10,9 @@ struct AccountsView: View {
     @State private var isEditing = false
     @State private var expandedSections: Set<String> = ["Budget", "Tracking"]
 
+    /// Called when user taps an account to view its transactions
+    var onSelectAccount: ((PersistentIdentifier) -> Void)?
+
     var budgetAccounts: [Account] {
         accounts.filter { $0.isBudget }.sorted { $0.sortOrder < $1.sortOrder }
     }
@@ -86,20 +89,16 @@ struct AccountsView: View {
 
                                 if expandedSections.contains("Budget") {
                                     ForEach(budgetAccounts) { account in
-                                        if isEditing {
-                                            // In edit mode: tap to edit, no navigation
-                                            Button {
+                                        Button {
+                                            if isEditing {
                                                 editingAccount = account
-                                            } label: {
-                                                AccountRow(account: account)
+                                            } else {
+                                                onSelectAccount?(account.persistentModelID)
                                             }
-                                            .tint(.primary)
-                                        } else {
-                                            // Normal mode: tap to navigate to transactions
-                                            NavigationLink(value: account) {
-                                                AccountRow(account: account)
-                                            }
+                                        } label: {
+                                            AccountRow(account: account)
                                         }
+                                        .tint(.primary)
                                     }
                                     .onDelete { offsets in
                                         deleteAccounts(offsets, from: budgetAccounts)
@@ -142,18 +141,16 @@ struct AccountsView: View {
 
                                 if expandedSections.contains("Tracking") {
                                     ForEach(trackingAccounts) { account in
-                                        if isEditing {
-                                            Button {
+                                        Button {
+                                            if isEditing {
                                                 editingAccount = account
-                                            } label: {
-                                                AccountRow(account: account)
+                                            } else {
+                                                onSelectAccount?(account.persistentModelID)
                                             }
-                                            .tint(.primary)
-                                        } else {
-                                            NavigationLink(value: account) {
-                                                AccountRow(account: account)
-                                            }
+                                        } label: {
+                                            AccountRow(account: account)
                                         }
+                                        .tint(.primary)
                                     }
                                     .onDelete { offsets in
                                         deleteAccounts(offsets, from: trackingAccounts)
@@ -167,9 +164,6 @@ struct AccountsView: View {
                     }
                     .listSectionSpacing(4)
                     .environment(\.editMode, .constant(isEditing ? .active : .inactive))
-                    .navigationDestination(for: Account.self) { account in
-                        TransactionsView(initialAccount: account)
-                    }
                 }
             }
             .navigationTitle("Accounts")

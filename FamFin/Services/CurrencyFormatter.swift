@@ -19,7 +19,7 @@ private func formatAbsCurrency(_ amount: Decimal, currency: SupportedCurrency) -
 }
 
 /// Formats currency values consistently across the app.
-/// Negative values shown in red with brackets: (£9.00)
+/// Negative values shown in secondary with brackets: (£9.00)
 /// Positive values optionally show + prefix.
 /// Uses @AppStorage to reactively update when currency changes.
 struct GBPText: View {
@@ -42,7 +42,7 @@ struct GBPText: View {
     var body: some View {
         Text(formatted)
             .font(font)
-            .foregroundStyle(amount < 0 ? .red : positiveStyle)
+            .foregroundStyle(amount < 0 ? .secondary : positiveStyle)
     }
 
     private var formatted: String {
@@ -58,11 +58,12 @@ struct GBPText: View {
 
 /// For transaction rows: shows the amount with appropriate formatting
 /// Income: +£150.00 in green
-/// Expense: (£150.00) in red
+/// Expense: (£150.00) in primary
 /// Transfer: £150.00 in secondary
 struct TransactionAmountText: View {
     let amount: Decimal
     let type: TransactionType
+    var font: Font = .headline
 
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
@@ -72,7 +73,7 @@ struct TransactionAmountText: View {
 
     var body: some View {
         Text(formatted)
-            .font(.headline)
+            .font(font)
             .foregroundStyle(color)
     }
 
@@ -91,7 +92,7 @@ struct TransactionAmountText: View {
     private var color: Color {
         switch type {
         case .income: return .green
-        case .expense: return .red
+        case .expense: return .primary
         case .transfer: return .secondary
         }
     }

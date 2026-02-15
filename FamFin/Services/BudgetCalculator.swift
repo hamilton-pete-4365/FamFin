@@ -84,6 +84,21 @@ struct BudgetCalculator {
             .reduce(Decimal.zero) { $0 + $1.budgeted }
     }
 
+    /// Sum of all BudgetAllocation.budgeted amounts in months AFTER the given month.
+    /// Used to determine if leftover "To Budget" money has been forward-budgeted.
+    static func futureBudgeted(after month: Date, context: ModelContext) -> Decimal {
+        let endOfMonth = endOfMonth(month)
+        let descriptor = FetchDescriptor<BudgetAllocation>()
+        guard let allAllocations = try? context.fetch(descriptor) else { return Decimal.zero }
+
+        return allAllocations
+            .filter { alloc in
+                guard let allocMonth = alloc.budgetMonth?.month else { return false }
+                return allocMonth >= endOfMonth
+            }
+            .reduce(Decimal.zero) { $0 + $1.budgeted }
+    }
+
     // MARK: - Helpers
 
     private static func endOfMonth(_ date: Date) -> Date {

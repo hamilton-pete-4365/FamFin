@@ -132,6 +132,46 @@ final class Category {
         cumulativeBudgeted(through: month) + cumulativeActivity(through: month)
     }
 
+    // MARK: - Historical averages
+
+    /// Average monthly spending (absolute value of activity) over the last N months before the given month.
+    /// Only counts months where there was any activity, to avoid diluting the average with zero months.
+    /// Returns zero if no history exists.
+    func averageMonthlySpending(before month: Date, months count: Int = 12) -> Decimal {
+        let calendar = Calendar.current
+        var totals: [Decimal] = []
+
+        for offset in 1...count {
+            guard let pastMonth = calendar.date(byAdding: .month, value: -offset, to: month) else { continue }
+            let monthActivity = activity(in: pastMonth)
+            // Activity is negative for spending, so negate to get positive spending amount
+            if monthActivity != .zero {
+                totals.append(-monthActivity)
+            }
+        }
+
+        guard !totals.isEmpty else { return Decimal.zero }
+        return totals.reduce(Decimal.zero, +) / Decimal(totals.count)
+    }
+
+    /// Average monthly budgeted over the last N months before the given month.
+    /// Only counts months where there was a budget set, to avoid diluting with zero months.
+    func averageMonthlyBudgeted(before month: Date, months count: Int = 12) -> Decimal {
+        let calendar = Calendar.current
+        var totals: [Decimal] = []
+
+        for offset in 1...count {
+            guard let pastMonth = calendar.date(byAdding: .month, value: -offset, to: month) else { continue }
+            let monthBudget = budgeted(in: pastMonth)
+            if monthBudget != .zero {
+                totals.append(monthBudget)
+            }
+        }
+
+        guard !totals.isEmpty else { return Decimal.zero }
+        return totals.reduce(Decimal.zero, +) / Decimal(totals.count)
+    }
+
     // MARK: - Helpers
 
     /// Helper: get the first moment of the month after the given month

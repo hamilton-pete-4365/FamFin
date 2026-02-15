@@ -1,6 +1,13 @@
 import SwiftUI
 import SwiftData
 
+/// A group of transactions sharing the same calendar day
+struct TransactionGroup: Identifiable {
+    let date: Date
+    let transactions: [Transaction]
+    var id: Date { date }
+}
+
 struct TransactionsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Transaction.date, order: .reverse) private var allTransactions: [Transaction]
@@ -9,20 +16,43 @@ struct TransactionsView: View {
     @State private var showingAddTransaction = false
     @State private var filterAccountID: PersistentIdentifier?  // nil = All Accounts
     @State private var editingTransaction: Transaction?
+    @State private var searchText = ""
 
-    var initialAccount: Account?
+    @Binding var navigateToAccountID: PersistentIdentifier?
 
     var filterAccount: Account? {
         guard let id = filterAccountID else { return nil }
         return accounts.first { $0.persistentModelID == id }
     }
 
-    var filteredTransactions: [Transaction] {
+    /// Step 1: filter by account
+    var accountFiltered: [Transaction] {
         guard let account = filterAccount else { return allTransactions }
         return allTransactions.filter {
             $0.account?.persistentModelID == account.persistentModelID ||
             $0.transferToAccount?.persistentModelID == account.persistentModelID
         }
+    }
+
+    /// Step 2: filter by search text (payee, memo, category name)
+    var filteredTransactions: [Transaction] {
+        guard !searchText.isEmpty else { return accountFiltered }
+        return accountFiltered.filter { transaction in
+            transaction.payee.localizedStandardContains(searchText) ||
+            transaction.memo.localizedStandardContains(searchText) ||
+            (transaction.category?.name.localizedStandardContains(searchText) ?? false)
+        }
+    }
+
+    /// Step 3: group by calendar day
+    var groupedTransactions: [TransactionGroup] {
+        let calendar = Calendar.current
+        let grouped = Dictionary(grouping: filteredTransactions) { transaction in
+            calendar.startOfDay(for: transaction.date)
+        }
+        return grouped
+            .sorted { $0.key > $1.key }
+            .map { TransactionGroup(date: $0.key, transactions: $0.value) }
     }
 
     var displayBalance: Decimal {
@@ -46,20 +76,21 @@ struct TransactionsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Balance header — shows sign
-            VStack(spacing: 4) {
-                Text(filterAccount == nil ? "Total Balance" : "Account Balance")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                GBPText(amount: displayBalance, font: .title.bold(), showSign: true)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .background(Color(.systemGroupedBackground))
+            // Top bar: balance + account filter — solid background, above the list
+            VStack(spacing: 0) {
+                // Balance header — shows sign
+                VStack(spacing: 4) {
+                    Text(filterAccount == nil ? "Total Balance" : "Account Balance")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    GBPText(amount: displayBalance, font: .title.bold(), showSign: true)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
 
-            // Account filter dropdown
-            if accounts.count > 1 {
-                Menu {
+                // Account filter dropdown
+                if accounts.count > 1 {
+                    Menu {
                     Button {
                         filterAccountID = nil
                     } label: {
@@ -114,33 +145,58 @@ struct TransactionsView: View {
                     .clipShape(.capsule)
                 }
                 .padding(.vertical, 8)
+                }
             }
+            .background(Color(.systemBackground))
+            .shadow(color: .black.opacity(0.06), radius: 2, x: 0, y: 2)
+            .zIndex(1)
 
             // Transaction list
-            if filteredTransactions.isEmpty {
+            if groupedTransactions.isEmpty {
                 Spacer()
-                ContentUnavailableView(
-                    "No Transactions",
-                    systemImage: "list.bullet.rectangle.fill",
-                    description: Text("Tap + to add your first transaction.")
-                )
+                if !searchText.isEmpty {
+                    ContentUnavailableView.search(text: searchText)
+                } else {
+                    ContentUnavailableView(
+                        "No Transactions",
+                        systemImage: "list.bullet.rectangle.fill",
+                        description: Text("Tap + to add your first transaction.")
+                    )
+                }
                 Spacer()
             } else {
                 List {
-                    ForEach(filteredTransactions) { transaction in
-                        Button {
-                            editingTransaction = transaction
-                        } label: {
-                            TransactionRow(transaction: transaction, showAccount: filterAccount == nil, viewingAccount: filterAccount)
+                    ForEach(groupedTransactions) { group in
+                        Section {
+                            ForEach(group.transactions) { transaction in
+                                Button {
+                                    editingTransaction = transaction
+                                } label: {
+                                    TransactionRow(transaction: transaction, showAccount: filterAccount == nil, viewingAccount: filterAccount)
+                                }
+                                .tint(.primary)
+                            }
+                            .onDelete { offsets in
+                                deleteTransactions(at: offsets, in: group)
+                            }
+                        } header: {
+                            Text(group.date, format: .dateTime.weekday(.wide).day().month(.wide).year())
+                                .font(.caption2.weight(.semibold))
+                                .foregroundStyle(.secondary)
+                                .textCase(.uppercase)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.vertical, 6)
+                                .padding(.horizontal, 16)
+                                .background(Color(.systemBackground))
+                                .listRowInsets(EdgeInsets())
                         }
-                        .tint(.primary)
                     }
-                    .onDelete(perform: deleteTransactions)
                 }
                 .listStyle(.plain)
                 .scrollDismissesKeyboard(.interactively)
             }
         }
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search payee, memo, or category")
         .navigationTitle(navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -157,24 +213,32 @@ struct TransactionsView: View {
             EditTransactionView(transaction: transaction)
         }
         .onAppear {
-            if let initial = initialAccount, filterAccountID == nil {
-                filterAccountID = initial.persistentModelID
+            if let accountID = navigateToAccountID {
+                filterAccountID = accountID
+                navigateToAccountID = nil
+            }
+        }
+        .onChange(of: navigateToAccountID) { _, newID in
+            if let accountID = newID {
+                filterAccountID = accountID
+                navigateToAccountID = nil
             }
         }
     }
 
-    private func deleteTransactions(at offsets: IndexSet) {
-        let toDelete = offsets.map { filteredTransactions[$0] }
-        for transaction in toDelete {
-            modelContext.delete(transaction)
+    private func deleteTransactions(at offsets: IndexSet, in group: TransactionGroup) {
+        for index in offsets {
+            modelContext.delete(group.transactions[index])
         }
     }
 }
 
 struct TransactionsTab: View {
+    @Binding var navigateToAccountID: PersistentIdentifier?
+
     var body: some View {
         NavigationStack {
-            TransactionsView()
+            TransactionsView(navigateToAccountID: $navigateToAccountID)
         }
     }
 }
@@ -367,7 +431,7 @@ struct TransactionFormFields: View {
     private var amountColor: Color {
         guard amountInPence > 0 else { return .secondary }
         switch type {
-        case .expense: return .red
+        case .expense: return .primary
         case .income: return .green
         case .transfer: return .primary
         }
@@ -478,16 +542,26 @@ struct TransactionFormFields: View {
                         syncAmountText()
                     }
 
-                // Visible display
-                HStack {
-                    Text(amountDisplayString)
-                        .font(.system(size: 34, weight: .medium, design: .rounded))
-                        .foregroundStyle(amountColor)
-                        .contentTransition(.numericText())
-                    Spacer()
-                    if amountInPence > 0 {
+                // Visible display — tap to focus the hidden field
+                Button {
+                    amountFocused = true
+                } label: {
+                    HStack {
+                        Text(amountDisplayString)
+                            .font(.system(size: 34, weight: .medium, design: .rounded))
+                            .foregroundStyle(amountColor)
+                            .contentTransition(.numericText())
+                        Spacer()
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+
+                if amountInPence > 0 {
+                    // Backspace overlay (top-right of ZStack area)
+                    HStack {
+                        Spacer()
                         Button {
-                            // Backspace: remove last digit
                             rawDigits = String(rawDigits.dropLast())
                             syncAmountText()
                         } label: {
@@ -497,10 +571,6 @@ struct TransactionFormFields: View {
                         }
                         .buttonStyle(.plain)
                     }
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    amountFocused = true
                 }
             }
         }
@@ -994,7 +1064,7 @@ struct EditTransactionView: View {
 
 #Preview {
     NavigationStack {
-        TransactionsView()
+        TransactionsView(navigateToAccountID: .constant(nil))
     }
     .modelContainer(for: [Transaction.self, Account.self, Category.self, Payee.self], inMemory: true)
 }

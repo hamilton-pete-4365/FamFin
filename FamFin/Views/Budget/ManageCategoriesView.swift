@@ -10,19 +10,25 @@ struct SubcategoryRow: View {
     let onRename: () -> Void
 
     var body: some View {
-        HStack {
-            if isEditing {
-                Image(systemName: "line.3.horizontal")
-                    .foregroundStyle(.secondary)
-            }
-            Text(subcategory.emoji)
-            Text(subcategory.name)
-                .font(.body)
-        }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            if isEditing {
+        if isEditing {
+            Button {
                 onRename()
+            } label: {
+                HStack {
+                    Image(systemName: "line.3.horizontal")
+                        .foregroundStyle(.secondary)
+                    Text(subcategory.emoji)
+                    Text(subcategory.name)
+                        .font(.body)
+                }
+                .contentShape(Rectangle())
+            }
+            .tint(.primary)
+        } else {
+            HStack {
+                Text(subcategory.emoji)
+                Text(subcategory.name)
+                    .font(.body)
             }
         }
     }
