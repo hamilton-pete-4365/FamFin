@@ -113,7 +113,7 @@ struct BudgetView: View {
                 }
             }
             .animation(.easeInOut(duration: 0.2), value: focusedCategory?.persistentModelID)
-            .navigationTitle("Budget")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
@@ -121,6 +121,10 @@ struct BudgetView: View {
                     } label: {
                         Image(systemName: "slider.horizontal.3")
                     }
+                }
+                ToolbarItem(placement: .principal) {
+                    Text("Budget")
+                        .font(.headline)
                 }
                 ToolbarItem(placement: .primaryAction) {
                     NavigationLink {
@@ -262,14 +266,15 @@ struct BudgetView: View {
                 .font(.caption2.bold())
                 .foregroundStyle(.secondary)
                 .textCase(.uppercase)
-                .frame(width: 76, alignment: .trailing)
+                .frame(width: 80, alignment: .trailing)
             Text("Available")
                 .font(.caption2.bold())
                 .foregroundStyle(.secondary)
                 .textCase(.uppercase)
                 .frame(width: 70, alignment: .trailing)
         }
-        .padding(.horizontal, 20)
+        .padding(.leading, 36)
+        .padding(.trailing, 36)
         .padding(.top, 10)
         .padding(.bottom, 4)
         .background(Color(.systemGroupedBackground))
@@ -291,7 +296,7 @@ struct BudgetView: View {
                             }
                         }
                     } label: {
-                        HStack(spacing: 6) {
+                        HStack(spacing: 4) {
                             Image(systemName: expandedHeaders.contains(header.name) ? "chevron.down" : "chevron.right")
                                 .font(.system(size: 10, weight: .bold))
                                 .foregroundStyle(.secondary)
@@ -308,7 +313,7 @@ struct BudgetView: View {
                             Text(formatGBP(headerBudgeted(header), currencyCode: currencyCode))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
-                                .frame(width: 70, alignment: .trailing)
+                                .frame(width: 80, alignment: .trailing)
 
                             // Header available total (accent orange)
                             let avail = headerAvailable(header)
@@ -677,7 +682,7 @@ struct BudgetCategoryRow: View {
                     .keyboardType(.numberPad)
                     .focused($isFocused)
                     .opacity(0.01)
-                    .frame(width: 70, height: 24)
+                    .frame(width: 68, height: 24)
                     .onChange(of: isFocused) { _, focused in
                         if focused {
                             previousDigits = rawDigits
@@ -742,12 +747,12 @@ struct BudgetCategoryRow: View {
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.trailing)
-                        .frame(width: 70, alignment: .trailing)
+                        .frame(width: 68, alignment: .trailing)
                         .contentTransition(.numericText())
                 }
                 .buttonStyle(.plain)
             }
-            .padding(.horizontal, 5)
+            .padding(.horizontal, 6)
             .padding(.vertical, 3)
             .background(
                 RoundedRectangle(cornerRadius: 5)
@@ -767,6 +772,7 @@ struct BudgetCategoryRow: View {
             .buttonStyle(.plain)
         }
         .padding(.vertical, 1)
+        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
         .listRowBackground(
             isFocused ? Color.accentColor.opacity(0.06) : Color(.systemBackground)
         )

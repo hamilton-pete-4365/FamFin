@@ -28,17 +28,11 @@ struct ContentView: View {
                 }
                 .tag(2)
 
-            GoalsView()
-                .tabItem {
-                    Label("Goals", systemImage: "target")
-                }
-                .tag(3)
-
             ReportsView()
                 .tabItem {
                     Label("Reports", systemImage: "chart.bar.fill")
                 }
-                .tag(4)
+                .tag(3)
         }
     }
 }

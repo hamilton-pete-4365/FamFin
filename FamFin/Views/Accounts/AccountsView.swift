@@ -4,7 +4,6 @@ import SwiftData
 struct AccountsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Account.sortOrder) private var accounts: [Account]
-    @Environment(\.colorScheme) private var colorScheme
     @State private var showingAddAccount = false
     @State private var editingAccount: Account?
     @State private var isEditing = false
@@ -29,10 +28,6 @@ struct AccountsView: View {
         trackingAccounts.reduce(Decimal.zero) { $0 + $1.balance }
     }
 
-    var totalBalance: Decimal {
-        accounts.reduce(Decimal.zero) { $0 + $1.balance }
-    }
-
     var body: some View {
         NavigationStack {
             Group {
@@ -44,20 +39,6 @@ struct AccountsView: View {
                     )
                 } else {
                     List {
-                        // Net worth header
-                        Section {
-                            VStack(spacing: 4) {
-                                GBPText(amount: totalBalance, font: .title2.bold())
-                                Text("Net Worth")
-                                    .font(.caption)
-                                    .fontWeight(.medium)
-                                    .foregroundStyle(.secondary)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .listRowBackground(Color.accentColor.opacity(colorScheme == .dark ? 0.2 : 0.1))
-                        }
-
                         // Budget accounts
                         if !budgetAccounts.isEmpty {
                             Section {
@@ -166,7 +147,7 @@ struct AccountsView: View {
                     .environment(\.editMode, .constant(isEditing ? .active : .inactive))
                 }
             }
-            .navigationTitle("Accounts")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     if !accounts.isEmpty {
@@ -176,6 +157,10 @@ struct AccountsView: View {
                             }
                         }
                     }
+                }
+                ToolbarItem(placement: .principal) {
+                    Text("Accounts")
+                        .font(.headline)
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
