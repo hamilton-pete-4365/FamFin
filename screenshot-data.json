@@ -1,0 +1,7643 @@
+{
+  "exportDate": "2026-02-15T12:00:00Z",
+  "appVersion": "1.0",
+  "accounts": [
+    {
+      "id": "",
+      "name": "Joint Current",
+      "type": "Current",
+      "isBudget": true,
+      "sortOrder": 0,
+      "createdAt": "2025-01-15T10:00:00Z"
+    },
+    {
+      "id": "",
+      "name": "Savings",
+      "type": "Savings",
+      "isBudget": true,
+      "sortOrder": 1,
+      "createdAt": "2025-01-15T10:00:00Z"
+    },
+    {
+      "id": "",
+      "name": "Credit Card",
+      "type": "Credit Card",
+      "isBudget": true,
+      "sortOrder": 2,
+      "createdAt": "2025-01-15T10:00:00Z"
+    },
+    {
+      "id": "",
+      "name": "ISA",
+      "type": "Savings",
+      "isBudget": false,
+      "sortOrder": 3,
+      "createdAt": "2025-01-15T10:00:00Z"
+    },
+    {
+      "id": "",
+      "name": "Mortgage",
+      "type": "Mortgage",
+      "isBudget": false,
+      "sortOrder": 4,
+      "createdAt": "2025-01-15T10:00:00Z"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "",
+      "amount": "3800.00",
+      "payee": "Employer - Salary",
+      "memo": "",
+      "date": "2025-01-28T08:00:00Z",
+      "type": "Income",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "To Budget"
+    },
+    {
+      "id": "",
+      "amount": "895.00",
+      "payee": "Nationwide BS",
+      "memo": "",
+      "date": "2025-02-01T07:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mortgage Payment",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "165.00",
+      "payee": "Bristol City Council",
+      "memo": "",
+      "date": "2025-02-01T07:30:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Council Tax",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "182.51",
+      "payee": "Octopus Energy",
+      "memo": "",
+      "date": "2025-02-03T19:17:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Energy",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "42.00",
+      "payee": "Bristol Water",
+      "memo": "",
+      "date": "2025-02-05T08:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Water",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "32.00",
+      "payee": "BT Broadband",
+      "memo": "",
+      "date": "2025-02-04T09:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Internet",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "45.00",
+      "payee": "Three Mobile",
+      "memo": "",
+      "date": "2025-02-09T11:08:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mobile Phones",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "85.00",
+      "payee": "Aviva",
+      "memo": "",
+      "date": "2025-02-15T09:43:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Insurance",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "80.65",
+      "payee": "Lidl",
+      "memo": "",
+      "date": "2025-02-01T08:05:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "89.12",
+      "payee": "M&S Food",
+      "memo": "",
+      "date": "2025-02-09T08:35:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "87.85",
+      "payee": "Waitrose",
+      "memo": "",
+      "date": "2025-02-13T14:14:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "103.96",
+      "payee": "Aldi",
+      "memo": "",
+      "date": "2025-02-13T20:51:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "85.33",
+      "payee": "Lidl",
+      "memo": "",
+      "date": "2025-02-19T12:09:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "88.91",
+      "payee": "Co-op",
+      "memo": "",
+      "date": "2025-02-23T09:05:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "99.50",
+      "payee": "Aldi",
+      "memo": "",
+      "date": "2025-02-27T17:16:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "57.76",
+      "payee": "The Crown",
+      "memo": "",
+      "date": "2025-02-03T16:18:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "74.11",
+      "payee": "Wagamama",
+      "memo": "",
+      "date": "2025-02-28T13:36:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "38.59",
+      "payee": "Nandos",
+      "memo": "",
+      "date": "2025-02-02T18:14:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "65.60",
+      "payee": "Shell",
+      "memo": "",
+      "date": "2025-02-15T18:53:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "63.75",
+      "payee": "Trainline",
+      "memo": "",
+      "date": "2025-02-22T12:44:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "50.03",
+      "payee": "BP",
+      "memo": "",
+      "date": "2025-02-24T11:10:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "111.03",
+      "payee": "TfL",
+      "memo": "",
+      "date": "2025-02-21T19:35:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Netflix",
+      "memo": "",
+      "date": "2025-02-04T18:20:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Spotify",
+      "memo": "",
+      "date": "2025-02-01T11:52:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "7.99",
+      "payee": "Disney+",
+      "memo": "",
+      "date": "2025-02-01T20:20:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "2.99",
+      "payee": "iCloud",
+      "memo": "",
+      "date": "2025-02-07T12:04:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "76.57",
+      "payee": "Amazon",
+      "memo": "",
+      "date": "2025-02-11T18:31:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Entertainment",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "45.24",
+      "payee": "IKEA",
+      "memo": "",
+      "date": "2025-02-07T11:47:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Household",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "84.03",
+      "payee": "Nursery Fees",
+      "memo": "",
+      "date": "2025-02-03T19:37:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "44.18",
+      "payee": "Book People",
+      "memo": "",
+      "date": "2025-02-12T10:32:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "49.44",
+      "payee": "John Lewis",
+      "memo": "",
+      "date": "2025-02-21T10:50:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Gifts",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "200.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-02-02T09:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Savings"
+    },
+    {
+      "id": "",
+      "amount": "100.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-02-02T09:30:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "ISA"
+    },
+    {
+      "id": "",
+      "amount": "1280.83",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-02-20T10:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Credit Card"
+    },
+    {
+      "id": "",
+      "amount": "3800.00",
+      "payee": "Employer - Salary",
+      "memo": "",
+      "date": "2025-02-28T08:00:00Z",
+      "type": "Income",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "To Budget"
+    },
+    {
+      "id": "",
+      "amount": "895.00",
+      "payee": "Nationwide BS",
+      "memo": "",
+      "date": "2025-03-01T07:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mortgage Payment",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "165.00",
+      "payee": "Bristol City Council",
+      "memo": "",
+      "date": "2025-03-01T07:30:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Council Tax",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "142.53",
+      "payee": "Octopus Energy",
+      "memo": "",
+      "date": "2025-03-07T09:24:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Energy",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "42.00",
+      "payee": "Bristol Water",
+      "memo": "",
+      "date": "2025-03-05T08:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Water",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "32.00",
+      "payee": "BT Broadband",
+      "memo": "",
+      "date": "2025-03-04T09:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Internet",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "45.00",
+      "payee": "Three Mobile",
+      "memo": "",
+      "date": "2025-03-11T17:29:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mobile Phones",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "85.00",
+      "payee": "Aviva",
+      "memo": "",
+      "date": "2025-03-14T12:35:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Insurance",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "110.03",
+      "payee": "M&S Food",
+      "memo": "",
+      "date": "2025-03-03T20:41:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "129.41",
+      "payee": "Aldi",
+      "memo": "",
+      "date": "2025-03-09T10:29:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "100.47",
+      "payee": "Waitrose",
+      "memo": "",
+      "date": "2025-03-16T12:32:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "165.63",
+      "payee": "M&S Food",
+      "memo": "",
+      "date": "2025-03-16T18:19:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "172.48",
+      "payee": "M&S Food",
+      "memo": "",
+      "date": "2025-03-25T11:09:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "44.09",
+      "payee": "Pret",
+      "memo": "",
+      "date": "2025-03-17T08:38:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "34.96",
+      "payee": "Nandos",
+      "memo": "",
+      "date": "2025-03-04T13:56:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "63.01",
+      "payee": "Pret",
+      "memo": "",
+      "date": "2025-03-10T11:03:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "31.43",
+      "payee": "Wagamama",
+      "memo": "",
+      "date": "2025-03-03T09:46:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "43.52",
+      "payee": "Uber",
+      "memo": "",
+      "date": "2025-03-16T16:10:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "76.63",
+      "payee": "Trainline",
+      "memo": "",
+      "date": "2025-03-07T16:48:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "62.26",
+      "payee": "Shell",
+      "memo": "",
+      "date": "2025-03-22T18:23:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "65.89",
+      "payee": "TfL",
+      "memo": "",
+      "date": "2025-03-08T11:04:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Netflix",
+      "memo": "",
+      "date": "2025-03-06T08:37:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Spotify",
+      "memo": "",
+      "date": "2025-03-09T11:37:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "7.99",
+      "payee": "Disney+",
+      "memo": "",
+      "date": "2025-03-04T08:04:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "2.99",
+      "payee": "iCloud",
+      "memo": "",
+      "date": "2025-03-01T11:04:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "71.58",
+      "payee": "Vue Cinema",
+      "memo": "",
+      "date": "2025-03-21T11:17:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Entertainment",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "57.14",
+      "payee": "Primark",
+      "memo": "",
+      "date": "2025-03-26T17:36:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Clothing",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "63.15",
+      "payee": "Dunelm",
+      "memo": "",
+      "date": "2025-03-09T09:06:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Household",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "86.47",
+      "payee": "Nursery Fees",
+      "memo": "",
+      "date": "2025-03-03T14:26:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "51.45",
+      "payee": "Smyths Toys",
+      "memo": "",
+      "date": "2025-03-06T14:46:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "24.95",
+      "payee": "John Lewis",
+      "memo": "",
+      "date": "2025-03-18T15:08:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Gifts",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "200.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-03-02T09:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Savings"
+    },
+    {
+      "id": "",
+      "amount": "100.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-03-02T09:30:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "ISA"
+    },
+    {
+      "id": "",
+      "amount": "1401.04",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-03-20T10:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Credit Card"
+    },
+    {
+      "id": "",
+      "amount": "3800.00",
+      "payee": "Employer - Salary",
+      "memo": "",
+      "date": "2025-03-28T08:00:00Z",
+      "type": "Income",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "To Budget"
+    },
+    {
+      "id": "",
+      "amount": "895.00",
+      "payee": "Nationwide BS",
+      "memo": "",
+      "date": "2025-04-01T07:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mortgage Payment",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "165.00",
+      "payee": "Bristol City Council",
+      "memo": "",
+      "date": "2025-04-01T07:30:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Council Tax",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "138.91",
+      "payee": "Octopus Energy",
+      "memo": "",
+      "date": "2025-04-05T15:15:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Energy",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "42.00",
+      "payee": "Bristol Water",
+      "memo": "",
+      "date": "2025-04-05T08:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Water",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "32.00",
+      "payee": "BT Broadband",
+      "memo": "",
+      "date": "2025-04-04T09:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Internet",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "45.00",
+      "payee": "Three Mobile",
+      "memo": "",
+      "date": "2025-04-08T15:51:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mobile Phones",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "85.00",
+      "payee": "Aviva",
+      "memo": "",
+      "date": "2025-04-14T09:03:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Insurance",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "131.87",
+      "payee": "Tesco",
+      "memo": "",
+      "date": "2025-04-02T10:26:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "108.80",
+      "payee": "Sainsburys",
+      "memo": "",
+      "date": "2025-04-08T08:10:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "101.77",
+      "payee": "Lidl",
+      "memo": "",
+      "date": "2025-04-11T20:50:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "106.78",
+      "payee": "Lidl",
+      "memo": "",
+      "date": "2025-04-17T18:45:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "108.87",
+      "payee": "Sainsburys",
+      "memo": "",
+      "date": "2025-04-19T11:03:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "114.96",
+      "payee": "M&S Food",
+      "memo": "",
+      "date": "2025-04-21T19:20:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "80.58",
+      "payee": "M&S Food",
+      "memo": "",
+      "date": "2025-04-28T16:58:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "36.32",
+      "payee": "Nandos",
+      "memo": "",
+      "date": "2025-04-28T10:04:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "27.22",
+      "payee": "Greggs",
+      "memo": "",
+      "date": "2025-04-28T11:25:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "15.41",
+      "payee": "Wagamama",
+      "memo": "",
+      "date": "2025-04-08T17:38:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "13.42",
+      "payee": "Nandos",
+      "memo": "",
+      "date": "2025-04-14T18:37:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "26.48",
+      "payee": "Pizza Express",
+      "memo": "",
+      "date": "2025-04-09T11:42:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "50.21",
+      "payee": "Trainline",
+      "memo": "",
+      "date": "2025-04-10T15:20:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "48.05",
+      "payee": "BP",
+      "memo": "",
+      "date": "2025-04-19T09:04:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "32.79",
+      "payee": "Uber",
+      "memo": "",
+      "date": "2025-04-12T09:56:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "28.19",
+      "payee": "Shell",
+      "memo": "",
+      "date": "2025-04-27T16:45:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "63.73",
+      "payee": "Trainline",
+      "memo": "",
+      "date": "2025-04-21T16:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Netflix",
+      "memo": "",
+      "date": "2025-04-09T12:59:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Spotify",
+      "memo": "",
+      "date": "2025-04-02T10:16:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "7.99",
+      "payee": "Disney+",
+      "memo": "",
+      "date": "2025-04-02T09:47:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "2.99",
+      "payee": "iCloud",
+      "memo": "",
+      "date": "2025-04-09T10:17:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "32.64",
+      "payee": "Amazon",
+      "memo": "",
+      "date": "2025-04-11T18:40:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Entertainment",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "80.43",
+      "payee": "John Lewis",
+      "memo": "",
+      "date": "2025-04-04T09:40:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Clothing",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "76.92",
+      "payee": "Nursery Fees",
+      "memo": "",
+      "date": "2025-04-01T13:49:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "18.95",
+      "payee": "Specsavers",
+      "memo": "",
+      "date": "2025-04-18T19:27:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Health",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "19.47",
+      "payee": "John Lewis",
+      "memo": "",
+      "date": "2025-04-18T08:53:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Gifts",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "200.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-04-02T09:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Savings"
+    },
+    {
+      "id": "",
+      "amount": "100.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-04-02T09:30:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "ISA"
+    },
+    {
+      "id": "",
+      "amount": "1199.06",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-04-20T10:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Credit Card"
+    },
+    {
+      "id": "",
+      "amount": "3800.00",
+      "payee": "Employer - Salary",
+      "memo": "",
+      "date": "2025-04-28T08:00:00Z",
+      "type": "Income",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "To Budget"
+    },
+    {
+      "id": "",
+      "amount": "895.00",
+      "payee": "Nationwide BS",
+      "memo": "",
+      "date": "2025-05-01T07:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mortgage Payment",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "165.00",
+      "payee": "Bristol City Council",
+      "memo": "",
+      "date": "2025-05-01T07:30:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Council Tax",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "138.17",
+      "payee": "Octopus Energy",
+      "memo": "",
+      "date": "2025-05-07T10:27:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Energy",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "42.00",
+      "payee": "Bristol Water",
+      "memo": "",
+      "date": "2025-05-05T08:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Water",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "32.00",
+      "payee": "BT Broadband",
+      "memo": "",
+      "date": "2025-05-04T09:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Internet",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "45.00",
+      "payee": "Three Mobile",
+      "memo": "",
+      "date": "2025-05-09T08:19:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mobile Phones",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "85.00",
+      "payee": "Aviva",
+      "memo": "",
+      "date": "2025-05-12T20:55:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Insurance",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "124.18",
+      "payee": "Sainsburys",
+      "memo": "",
+      "date": "2025-05-06T09:22:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "175.60",
+      "payee": "Co-op",
+      "memo": "",
+      "date": "2025-05-09T17:47:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "119.18",
+      "payee": "Sainsburys",
+      "memo": "",
+      "date": "2025-05-12T20:51:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "121.21",
+      "payee": "Lidl",
+      "memo": "",
+      "date": "2025-05-16T10:47:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "188.63",
+      "payee": "Co-op",
+      "memo": "",
+      "date": "2025-05-24T20:42:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "26.58",
+      "payee": "Pret",
+      "memo": "",
+      "date": "2025-05-23T09:24:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "47.56",
+      "payee": "Pret",
+      "memo": "",
+      "date": "2025-05-16T11:12:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "45.63",
+      "payee": "The Crown",
+      "memo": "",
+      "date": "2025-05-12T12:52:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "44.90",
+      "payee": "Costa",
+      "memo": "",
+      "date": "2025-05-08T08:42:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "24.02",
+      "payee": "Pizza Express",
+      "memo": "",
+      "date": "2025-05-09T09:49:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "81.05",
+      "payee": "Uber",
+      "memo": "",
+      "date": "2025-05-18T13:01:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "41.66",
+      "payee": "BP",
+      "memo": "",
+      "date": "2025-05-19T12:02:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "46.28",
+      "payee": "BP",
+      "memo": "",
+      "date": "2025-05-26T13:27:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "33.69",
+      "payee": "Uber",
+      "memo": "",
+      "date": "2025-05-19T11:16:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Netflix",
+      "memo": "",
+      "date": "2025-05-01T19:27:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Spotify",
+      "memo": "",
+      "date": "2025-05-01T16:59:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "7.99",
+      "payee": "Disney+",
+      "memo": "",
+      "date": "2025-05-09T18:46:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "2.99",
+      "payee": "iCloud",
+      "memo": "",
+      "date": "2025-05-04T13:27:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "66.42",
+      "payee": "John Lewis",
+      "memo": "",
+      "date": "2025-05-24T09:46:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Clothing",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "47.89",
+      "payee": "Dunelm",
+      "memo": "",
+      "date": "2025-05-13T14:44:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Household",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "77.39",
+      "payee": "Nursery Fees",
+      "memo": "",
+      "date": "2025-05-02T11:26:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "33.96",
+      "payee": "Clarks",
+      "memo": "",
+      "date": "2025-05-24T17:19:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "27.15",
+      "payee": "John Lewis",
+      "memo": "",
+      "date": "2025-05-14T20:37:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Gifts",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "200.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-05-02T09:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Savings"
+    },
+    {
+      "id": "",
+      "amount": "100.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-05-02T09:30:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "ISA"
+    },
+    {
+      "id": "",
+      "amount": "1328.55",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-05-20T10:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Credit Card"
+    },
+    {
+      "id": "",
+      "amount": "4100.00",
+      "payee": "Employer - Salary",
+      "memo": "",
+      "date": "2025-05-28T08:00:00Z",
+      "type": "Income",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "To Budget"
+    },
+    {
+      "id": "",
+      "amount": "895.00",
+      "payee": "Nationwide BS",
+      "memo": "",
+      "date": "2025-06-01T07:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mortgage Payment",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "165.00",
+      "payee": "Bristol City Council",
+      "memo": "",
+      "date": "2025-06-01T07:30:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Council Tax",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "141.49",
+      "payee": "Octopus Energy",
+      "memo": "",
+      "date": "2025-06-05T15:28:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Energy",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "42.00",
+      "payee": "Bristol Water",
+      "memo": "",
+      "date": "2025-06-05T08:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Water",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "32.00",
+      "payee": "BT Broadband",
+      "memo": "",
+      "date": "2025-06-04T09:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Internet",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "45.00",
+      "payee": "Three Mobile",
+      "memo": "",
+      "date": "2025-06-11T18:13:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mobile Phones",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "85.00",
+      "payee": "Aviva",
+      "memo": "",
+      "date": "2025-06-14T15:50:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Insurance",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "67.75",
+      "payee": "M&S Food",
+      "memo": "",
+      "date": "2025-06-05T13:05:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "107.47",
+      "payee": "Co-op",
+      "memo": "",
+      "date": "2025-06-06T18:19:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "75.32",
+      "payee": "Sainsburys",
+      "memo": "",
+      "date": "2025-06-10T08:02:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "76.42",
+      "payee": "Lidl",
+      "memo": "",
+      "date": "2025-06-17T20:04:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "87.82",
+      "payee": "Waitrose",
+      "memo": "",
+      "date": "2025-06-21T11:45:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "100.86",
+      "payee": "Lidl",
+      "memo": "",
+      "date": "2025-06-24T11:09:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "98.68",
+      "payee": "Tesco",
+      "memo": "",
+      "date": "2025-06-25T20:27:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "61.08",
+      "payee": "Wagamama",
+      "memo": "",
+      "date": "2025-06-15T08:35:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "31.39",
+      "payee": "Pret",
+      "memo": "",
+      "date": "2025-06-04T15:08:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "54.53",
+      "payee": "Greggs",
+      "memo": "",
+      "date": "2025-06-17T16:38:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "89.54",
+      "payee": "TfL",
+      "memo": "",
+      "date": "2025-06-17T14:53:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "48.41",
+      "payee": "Uber",
+      "memo": "",
+      "date": "2025-06-28T15:28:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "98.40",
+      "payee": "Trainline",
+      "memo": "",
+      "date": "2025-06-09T20:49:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "54.29",
+      "payee": "Uber",
+      "memo": "",
+      "date": "2025-06-15T09:45:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Netflix",
+      "memo": "",
+      "date": "2025-06-05T11:17:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Spotify",
+      "memo": "",
+      "date": "2025-06-06T13:57:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "7.99",
+      "payee": "Disney+",
+      "memo": "",
+      "date": "2025-06-09T09:08:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "2.99",
+      "payee": "iCloud",
+      "memo": "",
+      "date": "2025-06-03T11:24:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "62.39",
+      "payee": "Vue Cinema",
+      "memo": "",
+      "date": "2025-06-18T14:21:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Entertainment",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "73.26",
+      "payee": "Primark",
+      "memo": "",
+      "date": "2025-06-16T14:57:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Clothing",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "72.03",
+      "payee": "B&Q",
+      "memo": "",
+      "date": "2025-06-27T17:24:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Household",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "81.92",
+      "payee": "Nursery Fees",
+      "memo": "",
+      "date": "2025-06-03T12:48:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "59.58",
+      "payee": "JoJo Maman",
+      "memo": "",
+      "date": "2025-06-22T19:47:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "23.82",
+      "payee": "John Lewis",
+      "memo": "",
+      "date": "2025-06-09T14:31:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Gifts",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "200.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-06-02T09:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Savings"
+    },
+    {
+      "id": "",
+      "amount": "100.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-06-02T09:30:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "ISA"
+    },
+    {
+      "id": "",
+      "amount": "1376.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-06-20T10:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Credit Card"
+    },
+    {
+      "id": "",
+      "amount": "3800.00",
+      "payee": "Employer - Salary",
+      "memo": "",
+      "date": "2025-06-28T08:00:00Z",
+      "type": "Income",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "To Budget"
+    },
+    {
+      "id": "",
+      "amount": "895.00",
+      "payee": "Nationwide BS",
+      "memo": "",
+      "date": "2025-07-01T07:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mortgage Payment",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "165.00",
+      "payee": "Bristol City Council",
+      "memo": "",
+      "date": "2025-07-01T07:30:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Council Tax",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "133.41",
+      "payee": "Octopus Energy",
+      "memo": "",
+      "date": "2025-07-05T18:43:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Energy",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "42.00",
+      "payee": "Bristol Water",
+      "memo": "",
+      "date": "2025-07-05T08:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Water",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "32.00",
+      "payee": "BT Broadband",
+      "memo": "",
+      "date": "2025-07-04T09:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Internet",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "45.00",
+      "payee": "Three Mobile",
+      "memo": "",
+      "date": "2025-07-11T19:10:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mobile Phones",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "85.00",
+      "payee": "Aviva",
+      "memo": "",
+      "date": "2025-07-13T10:39:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Insurance",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "81.35",
+      "payee": "M&S Food",
+      "memo": "",
+      "date": "2025-07-01T09:41:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "83.15",
+      "payee": "Co-op",
+      "memo": "",
+      "date": "2025-07-08T10:03:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "74.37",
+      "payee": "Aldi",
+      "memo": "",
+      "date": "2025-07-10T15:20:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "78.40",
+      "payee": "Lidl",
+      "memo": "",
+      "date": "2025-07-15T20:53:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "82.79",
+      "payee": "Co-op",
+      "memo": "",
+      "date": "2025-07-17T15:01:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "99.85",
+      "payee": "Tesco",
+      "memo": "",
+      "date": "2025-07-23T11:41:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "64.39",
+      "payee": "Waitrose",
+      "memo": "",
+      "date": "2025-07-25T20:01:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "22.11",
+      "payee": "Costa",
+      "memo": "",
+      "date": "2025-07-08T10:30:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "49.68",
+      "payee": "Wagamama",
+      "memo": "",
+      "date": "2025-07-07T15:44:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "32.13",
+      "payee": "Pizza Express",
+      "memo": "",
+      "date": "2025-07-06T17:38:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "32.20",
+      "payee": "Shell",
+      "memo": "",
+      "date": "2025-07-01T12:36:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "64.35",
+      "payee": "TfL",
+      "memo": "",
+      "date": "2025-07-03T17:44:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "67.39",
+      "payee": "Shell",
+      "memo": "",
+      "date": "2025-07-28T18:38:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "56.45",
+      "payee": "BP",
+      "memo": "",
+      "date": "2025-07-02T13:34:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "30.13",
+      "payee": "TfL",
+      "memo": "",
+      "date": "2025-07-21T13:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Netflix",
+      "memo": "",
+      "date": "2025-07-07T15:06:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Spotify",
+      "memo": "",
+      "date": "2025-07-07T13:40:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "7.99",
+      "payee": "Disney+",
+      "memo": "",
+      "date": "2025-07-08T19:09:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "2.99",
+      "payee": "iCloud",
+      "memo": "",
+      "date": "2025-07-07T10:46:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "59.03",
+      "payee": "Waterstones",
+      "memo": "",
+      "date": "2025-07-19T14:52:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Entertainment",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "61.47",
+      "payee": "Primark",
+      "memo": "",
+      "date": "2025-07-05T12:56:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Clothing",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "61.28",
+      "payee": "Robert Dyas",
+      "memo": "",
+      "date": "2025-07-22T18:24:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Household",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "78.41",
+      "payee": "Nursery Fees",
+      "memo": "",
+      "date": "2025-07-04T13:11:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "32.74",
+      "payee": "Book People",
+      "memo": "",
+      "date": "2025-07-15T12:56:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "37.23",
+      "payee": "John Lewis",
+      "memo": "",
+      "date": "2025-07-03T11:46:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Gifts",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "200.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-07-02T09:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Savings"
+    },
+    {
+      "id": "",
+      "amount": "100.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-07-02T09:30:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "ISA"
+    },
+    {
+      "id": "",
+      "amount": "1136.06",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-07-20T10:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Credit Card"
+    },
+    {
+      "id": "",
+      "amount": "3800.00",
+      "payee": "Employer - Salary",
+      "memo": "",
+      "date": "2025-07-28T08:00:00Z",
+      "type": "Income",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "To Budget"
+    },
+    {
+      "id": "",
+      "amount": "895.00",
+      "payee": "Nationwide BS",
+      "memo": "",
+      "date": "2025-08-01T07:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mortgage Payment",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "165.00",
+      "payee": "Bristol City Council",
+      "memo": "",
+      "date": "2025-08-01T07:30:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Council Tax",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "138.69",
+      "payee": "Octopus Energy",
+      "memo": "",
+      "date": "2025-08-07T20:15:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Energy",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "42.00",
+      "payee": "Bristol Water",
+      "memo": "",
+      "date": "2025-08-05T08:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Water",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "32.00",
+      "payee": "BT Broadband",
+      "memo": "",
+      "date": "2025-08-04T09:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Internet",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "45.00",
+      "payee": "Three Mobile",
+      "memo": "",
+      "date": "2025-08-11T18:45:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mobile Phones",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "85.00",
+      "payee": "Aviva",
+      "memo": "",
+      "date": "2025-08-13T15:50:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Insurance",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "103.12",
+      "payee": "Waitrose",
+      "memo": "",
+      "date": "2025-08-02T12:42:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "129.86",
+      "payee": "Lidl",
+      "memo": "",
+      "date": "2025-08-10T16:22:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "118.27",
+      "payee": "Waitrose",
+      "memo": "",
+      "date": "2025-08-15T13:22:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "138.87",
+      "payee": "Aldi",
+      "memo": "",
+      "date": "2025-08-18T12:14:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "95.62",
+      "payee": "Sainsburys",
+      "memo": "",
+      "date": "2025-08-23T09:47:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "43.75",
+      "payee": "Costa",
+      "memo": "",
+      "date": "2025-08-07T19:30:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "28.55",
+      "payee": "Wagamama",
+      "memo": "",
+      "date": "2025-08-25T16:38:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "28.79",
+      "payee": "Nandos",
+      "memo": "",
+      "date": "2025-08-27T11:18:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "26.74",
+      "payee": "Costa",
+      "memo": "",
+      "date": "2025-08-10T08:45:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "38.02",
+      "payee": "Pizza Express",
+      "memo": "",
+      "date": "2025-08-02T08:35:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "82.11",
+      "payee": "Shell",
+      "memo": "",
+      "date": "2025-08-04T08:36:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "61.64",
+      "payee": "Trainline",
+      "memo": "",
+      "date": "2025-08-06T08:16:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "37.06",
+      "payee": "TfL",
+      "memo": "",
+      "date": "2025-08-16T09:36:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "85.94",
+      "payee": "BP",
+      "memo": "",
+      "date": "2025-08-10T09:15:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Netflix",
+      "memo": "",
+      "date": "2025-08-02T16:48:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Spotify",
+      "memo": "",
+      "date": "2025-08-07T17:38:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "7.99",
+      "payee": "Disney+",
+      "memo": "",
+      "date": "2025-08-10T11:49:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "2.99",
+      "payee": "iCloud",
+      "memo": "",
+      "date": "2025-08-09T14:28:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "37.84",
+      "payee": "Waterstones",
+      "memo": "",
+      "date": "2025-08-14T17:39:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Entertainment",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "25.46",
+      "payee": "Wilko",
+      "memo": "",
+      "date": "2025-08-23T11:16:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Household",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "86.51",
+      "payee": "Nursery Fees",
+      "memo": "",
+      "date": "2025-08-02T11:11:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "22.83",
+      "payee": "JoJo Maman",
+      "memo": "",
+      "date": "2025-08-19T19:38:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "200.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-08-02T09:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Savings"
+    },
+    {
+      "id": "",
+      "amount": "100.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-08-02T09:30:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "ISA"
+    },
+    {
+      "id": "",
+      "amount": "1014.43",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-08-20T10:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Credit Card"
+    },
+    {
+      "id": "",
+      "amount": "3800.00",
+      "payee": "Employer - Salary",
+      "memo": "",
+      "date": "2025-08-28T08:00:00Z",
+      "type": "Income",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "To Budget"
+    },
+    {
+      "id": "",
+      "amount": "895.00",
+      "payee": "Nationwide BS",
+      "memo": "",
+      "date": "2025-09-01T07:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mortgage Payment",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "165.00",
+      "payee": "Bristol City Council",
+      "memo": "",
+      "date": "2025-09-01T07:30:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Council Tax",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "137.03",
+      "payee": "Octopus Energy",
+      "memo": "",
+      "date": "2025-09-05T19:55:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Energy",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "42.00",
+      "payee": "Bristol Water",
+      "memo": "",
+      "date": "2025-09-05T08:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Water",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "32.00",
+      "payee": "BT Broadband",
+      "memo": "",
+      "date": "2025-09-04T09:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Internet",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "45.00",
+      "payee": "Three Mobile",
+      "memo": "",
+      "date": "2025-09-11T09:43:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mobile Phones",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "85.00",
+      "payee": "Aviva",
+      "memo": "",
+      "date": "2025-09-11T12:50:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Insurance",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "118.37",
+      "payee": "Sainsburys",
+      "memo": "",
+      "date": "2025-09-04T09:34:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "83.58",
+      "payee": "Sainsburys",
+      "memo": "",
+      "date": "2025-09-07T10:04:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "73.66",
+      "payee": "Co-op",
+      "memo": "",
+      "date": "2025-09-11T17:47:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "119.59",
+      "payee": "Aldi",
+      "memo": "",
+      "date": "2025-09-16T09:29:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "111.45",
+      "payee": "Waitrose",
+      "memo": "",
+      "date": "2025-09-20T12:32:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "102.51",
+      "payee": "Lidl",
+      "memo": "",
+      "date": "2025-09-21T17:02:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "123.50",
+      "payee": "Waitrose",
+      "memo": "",
+      "date": "2025-09-27T17:16:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "58.16",
+      "payee": "Pret",
+      "memo": "",
+      "date": "2025-09-28T17:37:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "57.72",
+      "payee": "Pret",
+      "memo": "",
+      "date": "2025-09-22T12:36:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "21.49",
+      "payee": "Pret",
+      "memo": "",
+      "date": "2025-09-06T15:33:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "49.99",
+      "payee": "Trainline",
+      "memo": "",
+      "date": "2025-09-21T15:05:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "38.38",
+      "payee": "TfL",
+      "memo": "",
+      "date": "2025-09-22T09:54:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "54.98",
+      "payee": "Shell",
+      "memo": "",
+      "date": "2025-09-10T18:25:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "27.08",
+      "payee": "Uber",
+      "memo": "",
+      "date": "2025-09-09T13:07:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "61.02",
+      "payee": "TfL",
+      "memo": "",
+      "date": "2025-09-01T18:55:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Netflix",
+      "memo": "",
+      "date": "2025-09-09T15:26:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Spotify",
+      "memo": "",
+      "date": "2025-09-01T11:33:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "7.99",
+      "payee": "Disney+",
+      "memo": "",
+      "date": "2025-09-06T17:48:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "2.99",
+      "payee": "iCloud",
+      "memo": "",
+      "date": "2025-09-08T18:28:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "32.21",
+      "payee": "Cineworld",
+      "memo": "",
+      "date": "2025-09-14T15:56:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Entertainment",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "49.71",
+      "payee": "Zara",
+      "memo": "",
+      "date": "2025-09-28T11:45:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Clothing",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "83.77",
+      "payee": "Nursery Fees",
+      "memo": "",
+      "date": "2025-09-05T14:05:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "16.88",
+      "payee": "Boots",
+      "memo": "",
+      "date": "2025-09-21T10:31:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Health",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "26.67",
+      "payee": "Moonpig",
+      "memo": "",
+      "date": "2025-09-14T15:30:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Gifts",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "200.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-09-02T09:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Savings"
+    },
+    {
+      "id": "",
+      "amount": "100.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-09-02T09:30:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "ISA"
+    },
+    {
+      "id": "",
+      "amount": "1182.84",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-09-20T10:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Credit Card"
+    },
+    {
+      "id": "",
+      "amount": "3800.00",
+      "payee": "Employer - Salary",
+      "memo": "",
+      "date": "2025-09-28T08:00:00Z",
+      "type": "Income",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "To Budget"
+    },
+    {
+      "id": "",
+      "amount": "895.00",
+      "payee": "Nationwide BS",
+      "memo": "",
+      "date": "2025-10-01T07:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mortgage Payment",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "165.00",
+      "payee": "Bristol City Council",
+      "memo": "",
+      "date": "2025-10-01T07:30:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Council Tax",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "136.41",
+      "payee": "Octopus Energy",
+      "memo": "",
+      "date": "2025-10-07T10:24:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Energy",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "42.00",
+      "payee": "Bristol Water",
+      "memo": "",
+      "date": "2025-10-05T08:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Water",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "32.00",
+      "payee": "BT Broadband",
+      "memo": "",
+      "date": "2025-10-04T09:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Internet",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "45.00",
+      "payee": "Three Mobile",
+      "memo": "",
+      "date": "2025-10-09T17:32:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mobile Phones",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "85.00",
+      "payee": "Aviva",
+      "memo": "",
+      "date": "2025-10-15T10:55:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Insurance",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "152.42",
+      "payee": "Lidl",
+      "memo": "",
+      "date": "2025-10-03T20:32:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "111.70",
+      "payee": "Tesco",
+      "memo": "",
+      "date": "2025-10-08T19:19:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "156.12",
+      "payee": "M&S Food",
+      "memo": "",
+      "date": "2025-10-16T15:55:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "102.46",
+      "payee": "M&S Food",
+      "memo": "",
+      "date": "2025-10-19T13:21:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "133.88",
+      "payee": "M&S Food",
+      "memo": "",
+      "date": "2025-10-24T15:59:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "65.79",
+      "payee": "Costa",
+      "memo": "",
+      "date": "2025-10-19T14:14:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "60.25",
+      "payee": "The Crown",
+      "memo": "",
+      "date": "2025-10-02T13:47:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "43.23",
+      "payee": "Pret",
+      "memo": "",
+      "date": "2025-10-13T14:42:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "57.42",
+      "payee": "Greggs",
+      "memo": "",
+      "date": "2025-10-05T15:02:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "47.59",
+      "payee": "Uber",
+      "memo": "",
+      "date": "2025-10-28T15:06:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "40.85",
+      "payee": "Uber",
+      "memo": "",
+      "date": "2025-10-05T14:55:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "101.58",
+      "payee": "Shell",
+      "memo": "",
+      "date": "2025-10-09T13:39:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Netflix",
+      "memo": "",
+      "date": "2025-10-07T18:05:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Spotify",
+      "memo": "",
+      "date": "2025-10-06T18:54:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "7.99",
+      "payee": "Disney+",
+      "memo": "",
+      "date": "2025-10-09T14:20:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "2.99",
+      "payee": "iCloud",
+      "memo": "",
+      "date": "2025-10-08T16:02:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "34.09",
+      "payee": "Amazon",
+      "memo": "",
+      "date": "2025-10-12T19:05:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Entertainment",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "47.88",
+      "payee": "Next",
+      "memo": "",
+      "date": "2025-10-17T10:44:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Clothing",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "70.72",
+      "payee": "Nursery Fees",
+      "memo": "",
+      "date": "2025-10-03T20:03:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "200.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-10-02T09:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Savings"
+    },
+    {
+      "id": "",
+      "amount": "100.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-10-02T09:30:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "ISA"
+    },
+    {
+      "id": "",
+      "amount": "1086.64",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-10-20T10:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Credit Card"
+    },
+    {
+      "id": "",
+      "amount": "3800.00",
+      "payee": "Employer - Salary",
+      "memo": "",
+      "date": "2025-10-28T08:00:00Z",
+      "type": "Income",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "To Budget"
+    },
+    {
+      "id": "",
+      "amount": "895.00",
+      "payee": "Nationwide BS",
+      "memo": "",
+      "date": "2025-11-01T07:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mortgage Payment",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "165.00",
+      "payee": "Bristol City Council",
+      "memo": "",
+      "date": "2025-11-01T07:30:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Council Tax",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "185.58",
+      "payee": "Octopus Energy",
+      "memo": "",
+      "date": "2025-11-07T18:50:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Energy",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "42.00",
+      "payee": "Bristol Water",
+      "memo": "",
+      "date": "2025-11-05T08:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Water",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "32.00",
+      "payee": "BT Broadband",
+      "memo": "",
+      "date": "2025-11-04T09:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Internet",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "45.00",
+      "payee": "Three Mobile",
+      "memo": "",
+      "date": "2025-11-09T10:11:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mobile Phones",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "85.00",
+      "payee": "Aviva",
+      "memo": "",
+      "date": "2025-11-10T17:55:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Insurance",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "99.33",
+      "payee": "M&S Food",
+      "memo": "",
+      "date": "2025-11-02T11:29:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "127.35",
+      "payee": "Lidl",
+      "memo": "",
+      "date": "2025-11-07T18:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "145.77",
+      "payee": "Lidl",
+      "memo": "",
+      "date": "2025-11-11T18:34:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "93.48",
+      "payee": "Lidl",
+      "memo": "",
+      "date": "2025-11-15T17:19:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "127.42",
+      "payee": "Lidl",
+      "memo": "",
+      "date": "2025-11-19T15:54:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "103.65",
+      "payee": "Lidl",
+      "memo": "",
+      "date": "2025-11-24T09:15:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "41.75",
+      "payee": "Greggs",
+      "memo": "",
+      "date": "2025-11-10T08:53:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "45.00",
+      "payee": "Pizza Express",
+      "memo": "",
+      "date": "2025-11-01T17:55:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "46.07",
+      "payee": "Greggs",
+      "memo": "",
+      "date": "2025-11-02T17:47:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "38.72",
+      "payee": "Pizza Express",
+      "memo": "",
+      "date": "2025-11-25T20:14:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "61.70",
+      "payee": "Shell",
+      "memo": "",
+      "date": "2025-11-22T20:46:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "77.25",
+      "payee": "Shell",
+      "memo": "",
+      "date": "2025-11-21T08:19:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "47.61",
+      "payee": "TfL",
+      "memo": "",
+      "date": "2025-11-05T09:58:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "50.40",
+      "payee": "Trainline",
+      "memo": "",
+      "date": "2025-11-07T10:50:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "47.66",
+      "payee": "Uber",
+      "memo": "",
+      "date": "2025-11-17T12:53:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Netflix",
+      "memo": "",
+      "date": "2025-11-03T12:58:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Spotify",
+      "memo": "",
+      "date": "2025-11-08T20:18:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "7.99",
+      "payee": "Disney+",
+      "memo": "",
+      "date": "2025-11-06T20:07:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "2.99",
+      "payee": "iCloud",
+      "memo": "",
+      "date": "2025-11-08T09:09:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "33.54",
+      "payee": "Waterstones",
+      "memo": "",
+      "date": "2025-11-22T13:05:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Entertainment",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "41.11",
+      "payee": "Zara",
+      "memo": "",
+      "date": "2025-11-06T15:23:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Clothing",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "56.98",
+      "payee": "Robert Dyas",
+      "memo": "",
+      "date": "2025-11-15T18:23:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Household",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "72.71",
+      "payee": "Nursery Fees",
+      "memo": "",
+      "date": "2025-11-02T15:01:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "62.16",
+      "payee": "Book People",
+      "memo": "",
+      "date": "2025-11-24T11:41:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "51.38",
+      "payee": "Moonpig",
+      "memo": "",
+      "date": "2025-11-21T14:07:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Gifts",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "200.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-11-02T09:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Savings"
+    },
+    {
+      "id": "",
+      "amount": "100.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-11-02T09:30:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "ISA"
+    },
+    {
+      "id": "",
+      "amount": "1383.68",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-11-20T10:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Credit Card"
+    },
+    {
+      "id": "",
+      "amount": "4350.00",
+      "payee": "Employer - Salary",
+      "memo": "",
+      "date": "2025-11-28T08:00:00Z",
+      "type": "Income",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "To Budget"
+    },
+    {
+      "id": "",
+      "amount": "895.00",
+      "payee": "Nationwide BS",
+      "memo": "",
+      "date": "2025-12-01T07:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mortgage Payment",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "165.00",
+      "payee": "Bristol City Council",
+      "memo": "",
+      "date": "2025-12-01T07:30:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Council Tax",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "187.98",
+      "payee": "Octopus Energy",
+      "memo": "",
+      "date": "2025-12-03T12:31:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Energy",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "42.00",
+      "payee": "Bristol Water",
+      "memo": "",
+      "date": "2025-12-05T08:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Water",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "32.00",
+      "payee": "BT Broadband",
+      "memo": "",
+      "date": "2025-12-04T09:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Internet",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "45.00",
+      "payee": "Three Mobile",
+      "memo": "",
+      "date": "2025-12-08T09:15:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mobile Phones",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "85.00",
+      "payee": "Aviva",
+      "memo": "",
+      "date": "2025-12-14T10:24:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Insurance",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "140.67",
+      "payee": "Waitrose",
+      "memo": "",
+      "date": "2025-12-05T14:37:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "126.90",
+      "payee": "Sainsburys",
+      "memo": "",
+      "date": "2025-12-08T18:06:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "132.98",
+      "payee": "M&S Food",
+      "memo": "",
+      "date": "2025-12-12T12:02:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "123.44",
+      "payee": "Sainsburys",
+      "memo": "",
+      "date": "2025-12-16T15:15:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "134.42",
+      "payee": "Tesco",
+      "memo": "",
+      "date": "2025-12-19T16:57:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "142.56",
+      "payee": "Aldi",
+      "memo": "",
+      "date": "2025-12-21T14:17:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "89.41",
+      "payee": "Pret",
+      "memo": "",
+      "date": "2025-12-15T09:42:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "43.94",
+      "payee": "Greggs",
+      "memo": "",
+      "date": "2025-12-20T08:03:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "79.40",
+      "payee": "Costa",
+      "memo": "",
+      "date": "2025-12-05T20:36:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "43.81",
+      "payee": "Uber",
+      "memo": "",
+      "date": "2025-12-28T11:21:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "67.07",
+      "payee": "Shell",
+      "memo": "",
+      "date": "2025-12-09T10:08:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "41.27",
+      "payee": "Uber",
+      "memo": "",
+      "date": "2025-12-22T08:08:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Netflix",
+      "memo": "",
+      "date": "2025-12-01T13:50:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Spotify",
+      "memo": "",
+      "date": "2025-12-04T17:20:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "7.99",
+      "payee": "Disney+",
+      "memo": "",
+      "date": "2025-12-01T10:16:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "2.99",
+      "payee": "iCloud",
+      "memo": "",
+      "date": "2025-12-01T10:47:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "26.82",
+      "payee": "Vue Cinema",
+      "memo": "",
+      "date": "2025-12-20T15:49:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Entertainment",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "44.86",
+      "payee": "Wilko",
+      "memo": "",
+      "date": "2025-12-22T08:46:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Household",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "89.58",
+      "payee": "Nursery Fees",
+      "memo": "",
+      "date": "2025-12-05T12:29:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "16.56",
+      "payee": "JoJo Maman",
+      "memo": "",
+      "date": "2025-12-17T14:43:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "57.06",
+      "payee": "Not On The High Street",
+      "memo": "",
+      "date": "2025-12-03T09:20:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Gifts",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "52.37",
+      "payee": "Amazon",
+      "memo": "",
+      "date": "2025-12-05T12:39:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Gifts",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "53.49",
+      "payee": "Moonpig",
+      "memo": "",
+      "date": "2025-12-13T17:33:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Gifts",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "38.27",
+      "payee": "Not On The High Street",
+      "memo": "",
+      "date": "2025-12-04T20:44:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Gifts",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "200.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-12-02T09:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Savings"
+    },
+    {
+      "id": "",
+      "amount": "100.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-12-02T09:30:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "ISA"
+    },
+    {
+      "id": "",
+      "amount": "1403.18",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2025-12-20T10:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Credit Card"
+    },
+    {
+      "id": "",
+      "amount": "3800.00",
+      "payee": "Employer - Salary",
+      "memo": "",
+      "date": "2025-12-28T08:00:00Z",
+      "type": "Income",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "To Budget"
+    },
+    {
+      "id": "",
+      "amount": "895.00",
+      "payee": "Nationwide BS",
+      "memo": "",
+      "date": "2026-01-01T07:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mortgage Payment",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "165.00",
+      "payee": "Bristol City Council",
+      "memo": "",
+      "date": "2026-01-01T07:30:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Council Tax",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "182.67",
+      "payee": "Octopus Energy",
+      "memo": "",
+      "date": "2026-01-07T19:55:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Energy",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "42.00",
+      "payee": "Bristol Water",
+      "memo": "",
+      "date": "2026-01-05T08:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Water",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "32.00",
+      "payee": "BT Broadband",
+      "memo": "",
+      "date": "2026-01-04T09:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Internet",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "45.00",
+      "payee": "Three Mobile",
+      "memo": "",
+      "date": "2026-01-09T14:28:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mobile Phones",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "85.00",
+      "payee": "Aviva",
+      "memo": "",
+      "date": "2026-01-11T14:21:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Insurance",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "126.92",
+      "payee": "Aldi",
+      "memo": "",
+      "date": "2026-01-04T13:42:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "95.15",
+      "payee": "Sainsburys",
+      "memo": "",
+      "date": "2026-01-08T09:05:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "133.76",
+      "payee": "Tesco",
+      "memo": "",
+      "date": "2026-01-12T09:47:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "127.54",
+      "payee": "Co-op",
+      "memo": "",
+      "date": "2026-01-14T16:03:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "117.34",
+      "payee": "M&S Food",
+      "memo": "",
+      "date": "2026-01-21T13:42:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "86.27",
+      "payee": "Aldi",
+      "memo": "",
+      "date": "2026-01-24T19:03:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "33.54",
+      "payee": "Wagamama",
+      "memo": "",
+      "date": "2026-01-17T11:09:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "45.56",
+      "payee": "Costa",
+      "memo": "",
+      "date": "2026-01-28T09:22:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "52.98",
+      "payee": "Pizza Express",
+      "memo": "",
+      "date": "2026-01-04T20:17:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "42.30",
+      "payee": "Pret",
+      "memo": "",
+      "date": "2026-01-14T16:49:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "71.94",
+      "payee": "Uber",
+      "memo": "",
+      "date": "2026-01-27T19:17:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "60.54",
+      "payee": "BP",
+      "memo": "",
+      "date": "2026-01-10T13:22:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "32.38",
+      "payee": "BP",
+      "memo": "",
+      "date": "2026-01-22T14:04:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "74.09",
+      "payee": "Shell",
+      "memo": "",
+      "date": "2026-01-03T19:33:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "48.01",
+      "payee": "Shell",
+      "memo": "",
+      "date": "2026-01-06T13:19:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Netflix",
+      "memo": "",
+      "date": "2026-01-06T20:36:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Spotify",
+      "memo": "",
+      "date": "2026-01-10T09:56:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "7.99",
+      "payee": "Disney+",
+      "memo": "",
+      "date": "2026-01-01T10:10:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "2.99",
+      "payee": "iCloud",
+      "memo": "",
+      "date": "2026-01-10T08:43:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "73.92",
+      "payee": "Zara",
+      "memo": "",
+      "date": "2026-01-17T14:17:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Clothing",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "82.81",
+      "payee": "Nursery Fees",
+      "memo": "",
+      "date": "2026-01-03T14:07:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "32.93",
+      "payee": "Dentist",
+      "memo": "",
+      "date": "2026-01-10T08:14:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Health",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "200.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2026-01-02T09:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Savings"
+    },
+    {
+      "id": "",
+      "amount": "100.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2026-01-02T09:30:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "ISA"
+    },
+    {
+      "id": "",
+      "amount": "1123.27",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2026-01-20T10:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Credit Card"
+    },
+    {
+      "id": "",
+      "amount": "3800.00",
+      "payee": "Employer - Salary",
+      "memo": "",
+      "date": "2026-01-28T08:00:00Z",
+      "type": "Income",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "To Budget"
+    },
+    {
+      "id": "",
+      "amount": "895.00",
+      "payee": "Nationwide BS",
+      "memo": "",
+      "date": "2026-02-01T07:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mortgage Payment",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "165.00",
+      "payee": "Bristol City Council",
+      "memo": "",
+      "date": "2026-02-01T07:30:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Council Tax",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "181.79",
+      "payee": "Octopus Energy",
+      "memo": "",
+      "date": "2026-02-03T11:19:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Energy",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "42.00",
+      "payee": "Bristol Water",
+      "memo": "",
+      "date": "2026-02-05T08:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Water",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "32.00",
+      "payee": "BT Broadband",
+      "memo": "",
+      "date": "2026-02-04T09:00:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Internet",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "45.00",
+      "payee": "Three Mobile",
+      "memo": "",
+      "date": "2026-02-09T20:08:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Mobile Phones",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "85.00",
+      "payee": "Aviva",
+      "memo": "",
+      "date": "2026-02-12T12:20:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Insurance",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "amount": "207.49",
+      "payee": "Lidl",
+      "memo": "",
+      "date": "2026-02-02T10:24:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "211.87",
+      "payee": "Sainsburys",
+      "memo": "",
+      "date": "2026-02-09T16:53:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "228.76",
+      "payee": "Aldi",
+      "memo": "",
+      "date": "2026-02-09T14:55:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Groceries",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "78.71",
+      "payee": "The Crown",
+      "memo": "",
+      "date": "2026-02-02T13:36:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "78.13",
+      "payee": "The Crown",
+      "memo": "",
+      "date": "2026-02-12T18:26:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Eating Out",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "87.09",
+      "payee": "TfL",
+      "memo": "",
+      "date": "2026-02-13T17:29:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "141.97",
+      "payee": "Trainline",
+      "memo": "",
+      "date": "2026-02-04T14:37:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Transport",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Netflix",
+      "memo": "",
+      "date": "2026-02-07T16:05:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "10.99",
+      "payee": "Spotify",
+      "memo": "",
+      "date": "2026-02-07T12:47:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "2.99",
+      "payee": "iCloud",
+      "memo": "",
+      "date": "2026-02-06T11:21:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Subscriptions",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "24.58",
+      "payee": "Vue Cinema",
+      "memo": "",
+      "date": "2026-02-13T16:12:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Entertainment",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "67.95",
+      "payee": "Primark",
+      "memo": "",
+      "date": "2026-02-06T09:09:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Clothing",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "amount": "74.34",
+      "payee": "Nursery Fees",
+      "memo": "",
+      "date": "2026-02-02T20:48:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "23.86",
+      "payee": "JoJo Maman",
+      "memo": "",
+      "date": "2026-02-12T20:36:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Kids",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "31.30",
+      "payee": "Dentist",
+      "memo": "",
+      "date": "2026-02-11T18:39:00Z",
+      "type": "Expense",
+      "isCleared": true,
+      "accountName": "Credit Card",
+      "categoryName": "Health",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "amount": "200.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2026-02-02T09:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Savings"
+    },
+    {
+      "id": "",
+      "amount": "100.00",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2026-02-02T09:30:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "ISA"
+    },
+    {
+      "id": "",
+      "amount": "977.62",
+      "payee": "Transfer",
+      "memo": "",
+      "date": "2026-02-14T10:00:00Z",
+      "type": "Transfer",
+      "isCleared": true,
+      "accountName": "Joint Current",
+      "transferToAccountName": "Credit Card"
+    }
+  ],
+  "categories": [
+    {
+      "id": "",
+      "name": "To Budget",
+      "emoji": "💰",
+      "isHeader": false,
+      "isSystem": true,
+      "sortOrder": 0
+    },
+    {
+      "id": "",
+      "name": "Bills",
+      "emoji": "🏠",
+      "isHeader": true,
+      "isSystem": false,
+      "sortOrder": 1
+    },
+    {
+      "id": "",
+      "name": "Mortgage Payment",
+      "emoji": "🏠",
+      "isHeader": false,
+      "isSystem": false,
+      "sortOrder": 0,
+      "parentName": "Bills"
+    },
+    {
+      "id": "",
+      "name": "Council Tax",
+      "emoji": "🏛️",
+      "isHeader": false,
+      "isSystem": false,
+      "sortOrder": 1,
+      "parentName": "Bills"
+    },
+    {
+      "id": "",
+      "name": "Energy",
+      "emoji": "⚡",
+      "isHeader": false,
+      "isSystem": false,
+      "sortOrder": 2,
+      "parentName": "Bills"
+    },
+    {
+      "id": "",
+      "name": "Water",
+      "emoji": "💧",
+      "isHeader": false,
+      "isSystem": false,
+      "sortOrder": 3,
+      "parentName": "Bills"
+    },
+    {
+      "id": "",
+      "name": "Internet",
+      "emoji": "📡",
+      "isHeader": false,
+      "isSystem": false,
+      "sortOrder": 4,
+      "parentName": "Bills"
+    },
+    {
+      "id": "",
+      "name": "Mobile Phones",
+      "emoji": "📱",
+      "isHeader": false,
+      "isSystem": false,
+      "sortOrder": 5,
+      "parentName": "Bills"
+    },
+    {
+      "id": "",
+      "name": "Insurance",
+      "emoji": "🛡️",
+      "isHeader": false,
+      "isSystem": false,
+      "sortOrder": 6,
+      "parentName": "Bills"
+    },
+    {
+      "id": "",
+      "name": "Living",
+      "emoji": "🛒",
+      "isHeader": true,
+      "isSystem": false,
+      "sortOrder": 2
+    },
+    {
+      "id": "",
+      "name": "Groceries",
+      "emoji": "🛒",
+      "isHeader": false,
+      "isSystem": false,
+      "sortOrder": 0,
+      "parentName": "Living"
+    },
+    {
+      "id": "",
+      "name": "Eating Out",
+      "emoji": "🍽️",
+      "isHeader": false,
+      "isSystem": false,
+      "sortOrder": 1,
+      "parentName": "Living"
+    },
+    {
+      "id": "",
+      "name": "Transport",
+      "emoji": "🚗",
+      "isHeader": false,
+      "isSystem": false,
+      "sortOrder": 2,
+      "parentName": "Living"
+    },
+    {
+      "id": "",
+      "name": "Clothing",
+      "emoji": "👕",
+      "isHeader": false,
+      "isSystem": false,
+      "sortOrder": 3,
+      "parentName": "Living"
+    },
+    {
+      "id": "",
+      "name": "Household",
+      "emoji": "🏡",
+      "isHeader": false,
+      "isSystem": false,
+      "sortOrder": 4,
+      "parentName": "Living"
+    },
+    {
+      "id": "",
+      "name": "Personal",
+      "emoji": "🧑",
+      "isHeader": true,
+      "isSystem": false,
+      "sortOrder": 3
+    },
+    {
+      "id": "",
+      "name": "Entertainment",
+      "emoji": "🎬",
+      "isHeader": false,
+      "isSystem": false,
+      "sortOrder": 0,
+      "parentName": "Personal"
+    },
+    {
+      "id": "",
+      "name": "Subscriptions",
+      "emoji": "📺",
+      "isHeader": false,
+      "isSystem": false,
+      "sortOrder": 1,
+      "parentName": "Personal"
+    },
+    {
+      "id": "",
+      "name": "Health",
+      "emoji": "💊",
+      "isHeader": false,
+      "isSystem": false,
+      "sortOrder": 2,
+      "parentName": "Personal"
+    },
+    {
+      "id": "",
+      "name": "Kids",
+      "emoji": "👶",
+      "isHeader": false,
+      "isSystem": false,
+      "sortOrder": 3,
+      "parentName": "Personal"
+    },
+    {
+      "id": "",
+      "name": "Gifts",
+      "emoji": "🎁",
+      "isHeader": false,
+      "isSystem": false,
+      "sortOrder": 4,
+      "parentName": "Personal"
+    },
+    {
+      "id": "",
+      "name": "Savings Goals",
+      "emoji": "🎯",
+      "isHeader": true,
+      "isSystem": false,
+      "sortOrder": 4
+    },
+    {
+      "id": "",
+      "name": "Holiday Fund",
+      "emoji": "✈️",
+      "isHeader": false,
+      "isSystem": false,
+      "sortOrder": 0,
+      "parentName": "Savings Goals"
+    },
+    {
+      "id": "",
+      "name": "Emergency Fund",
+      "emoji": "🆘",
+      "isHeader": false,
+      "isSystem": false,
+      "sortOrder": 1,
+      "parentName": "Savings Goals"
+    }
+  ],
+  "budgetMonths": [
+    {
+      "id": "",
+      "month": "2025-02-01T00:00:00Z",
+      "note": ""
+    },
+    {
+      "id": "",
+      "month": "2025-03-01T00:00:00Z",
+      "note": ""
+    },
+    {
+      "id": "",
+      "month": "2025-04-01T00:00:00Z",
+      "note": ""
+    },
+    {
+      "id": "",
+      "month": "2025-05-01T00:00:00Z",
+      "note": ""
+    },
+    {
+      "id": "",
+      "month": "2025-06-01T00:00:00Z",
+      "note": ""
+    },
+    {
+      "id": "",
+      "month": "2025-07-01T00:00:00Z",
+      "note": ""
+    },
+    {
+      "id": "",
+      "month": "2025-08-01T00:00:00Z",
+      "note": ""
+    },
+    {
+      "id": "",
+      "month": "2025-09-01T00:00:00Z",
+      "note": ""
+    },
+    {
+      "id": "",
+      "month": "2025-10-01T00:00:00Z",
+      "note": ""
+    },
+    {
+      "id": "",
+      "month": "2025-11-01T00:00:00Z",
+      "note": ""
+    },
+    {
+      "id": "",
+      "month": "2025-12-01T00:00:00Z",
+      "note": ""
+    },
+    {
+      "id": "",
+      "month": "2026-01-01T00:00:00Z",
+      "note": ""
+    },
+    {
+      "id": "",
+      "month": "2026-02-01T00:00:00Z",
+      "note": ""
+    }
+  ],
+  "budgetAllocations": [
+    {
+      "id": "",
+      "budgeted": "895.00",
+      "categoryName": "Mortgage Payment",
+      "month": "2025-02-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "165.00",
+      "categoryName": "Council Tax",
+      "month": "2025-02-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "180.00",
+      "categoryName": "Energy",
+      "month": "2025-02-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "42.00",
+      "categoryName": "Water",
+      "month": "2025-02-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "32.00",
+      "categoryName": "Internet",
+      "month": "2025-02-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "45.00",
+      "categoryName": "Mobile Phones",
+      "month": "2025-02-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "85.00",
+      "categoryName": "Insurance",
+      "month": "2025-02-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "686.00",
+      "categoryName": "Groceries",
+      "month": "2025-02-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "150.00",
+      "categoryName": "Eating Out",
+      "month": "2025-02-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Transport",
+      "month": "2025-02-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Clothing",
+      "month": "2025-02-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Household",
+      "month": "2025-02-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Entertainment",
+      "month": "2025-02-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "35.00",
+      "categoryName": "Subscriptions",
+      "month": "2025-02-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "40.00",
+      "categoryName": "Health",
+      "month": "2025-02-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "175.00",
+      "categoryName": "Kids",
+      "month": "2025-02-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Gifts",
+      "month": "2025-02-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "500.00",
+      "categoryName": "Holiday Fund",
+      "month": "2025-02-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Emergency Fund",
+      "month": "2025-02-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "895.00",
+      "categoryName": "Mortgage Payment",
+      "month": "2025-03-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "165.00",
+      "categoryName": "Council Tax",
+      "month": "2025-03-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "140.00",
+      "categoryName": "Energy",
+      "month": "2025-03-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "42.00",
+      "categoryName": "Water",
+      "month": "2025-03-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "32.00",
+      "categoryName": "Internet",
+      "month": "2025-03-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "45.00",
+      "categoryName": "Mobile Phones",
+      "month": "2025-03-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "85.00",
+      "categoryName": "Insurance",
+      "month": "2025-03-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "686.00",
+      "categoryName": "Groceries",
+      "month": "2025-03-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "150.00",
+      "categoryName": "Eating Out",
+      "month": "2025-03-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Transport",
+      "month": "2025-03-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Clothing",
+      "month": "2025-03-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Household",
+      "month": "2025-03-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Entertainment",
+      "month": "2025-03-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "35.00",
+      "categoryName": "Subscriptions",
+      "month": "2025-03-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "40.00",
+      "categoryName": "Health",
+      "month": "2025-03-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "175.00",
+      "categoryName": "Kids",
+      "month": "2025-03-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Gifts",
+      "month": "2025-03-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "500.00",
+      "categoryName": "Holiday Fund",
+      "month": "2025-03-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Emergency Fund",
+      "month": "2025-03-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "895.00",
+      "categoryName": "Mortgage Payment",
+      "month": "2025-04-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "165.00",
+      "categoryName": "Council Tax",
+      "month": "2025-04-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "140.00",
+      "categoryName": "Energy",
+      "month": "2025-04-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "42.00",
+      "categoryName": "Water",
+      "month": "2025-04-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "32.00",
+      "categoryName": "Internet",
+      "month": "2025-04-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "45.00",
+      "categoryName": "Mobile Phones",
+      "month": "2025-04-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "85.00",
+      "categoryName": "Insurance",
+      "month": "2025-04-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "686.00",
+      "categoryName": "Groceries",
+      "month": "2025-04-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "150.00",
+      "categoryName": "Eating Out",
+      "month": "2025-04-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Transport",
+      "month": "2025-04-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Clothing",
+      "month": "2025-04-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Household",
+      "month": "2025-04-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Entertainment",
+      "month": "2025-04-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "35.00",
+      "categoryName": "Subscriptions",
+      "month": "2025-04-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "40.00",
+      "categoryName": "Health",
+      "month": "2025-04-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "175.00",
+      "categoryName": "Kids",
+      "month": "2025-04-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Gifts",
+      "month": "2025-04-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "500.00",
+      "categoryName": "Holiday Fund",
+      "month": "2025-04-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Emergency Fund",
+      "month": "2025-04-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "895.00",
+      "categoryName": "Mortgage Payment",
+      "month": "2025-05-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "165.00",
+      "categoryName": "Council Tax",
+      "month": "2025-05-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "140.00",
+      "categoryName": "Energy",
+      "month": "2025-05-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "42.00",
+      "categoryName": "Water",
+      "month": "2025-05-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "32.00",
+      "categoryName": "Internet",
+      "month": "2025-05-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "45.00",
+      "categoryName": "Mobile Phones",
+      "month": "2025-05-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "85.00",
+      "categoryName": "Insurance",
+      "month": "2025-05-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "686.00",
+      "categoryName": "Groceries",
+      "month": "2025-05-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "150.00",
+      "categoryName": "Eating Out",
+      "month": "2025-05-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Transport",
+      "month": "2025-05-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Clothing",
+      "month": "2025-05-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Household",
+      "month": "2025-05-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Entertainment",
+      "month": "2025-05-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "35.00",
+      "categoryName": "Subscriptions",
+      "month": "2025-05-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "40.00",
+      "categoryName": "Health",
+      "month": "2025-05-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "175.00",
+      "categoryName": "Kids",
+      "month": "2025-05-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Gifts",
+      "month": "2025-05-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "500.00",
+      "categoryName": "Holiday Fund",
+      "month": "2025-05-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Emergency Fund",
+      "month": "2025-05-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "895.00",
+      "categoryName": "Mortgage Payment",
+      "month": "2025-06-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "165.00",
+      "categoryName": "Council Tax",
+      "month": "2025-06-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "140.00",
+      "categoryName": "Energy",
+      "month": "2025-06-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "42.00",
+      "categoryName": "Water",
+      "month": "2025-06-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "32.00",
+      "categoryName": "Internet",
+      "month": "2025-06-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "45.00",
+      "categoryName": "Mobile Phones",
+      "month": "2025-06-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "85.00",
+      "categoryName": "Insurance",
+      "month": "2025-06-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "686.00",
+      "categoryName": "Groceries",
+      "month": "2025-06-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "150.00",
+      "categoryName": "Eating Out",
+      "month": "2025-06-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Transport",
+      "month": "2025-06-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Clothing",
+      "month": "2025-06-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Household",
+      "month": "2025-06-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Entertainment",
+      "month": "2025-06-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "35.00",
+      "categoryName": "Subscriptions",
+      "month": "2025-06-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "40.00",
+      "categoryName": "Health",
+      "month": "2025-06-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "175.00",
+      "categoryName": "Kids",
+      "month": "2025-06-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Gifts",
+      "month": "2025-06-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "500.00",
+      "categoryName": "Holiday Fund",
+      "month": "2025-06-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Emergency Fund",
+      "month": "2025-06-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "895.00",
+      "categoryName": "Mortgage Payment",
+      "month": "2025-07-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "165.00",
+      "categoryName": "Council Tax",
+      "month": "2025-07-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "140.00",
+      "categoryName": "Energy",
+      "month": "2025-07-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "42.00",
+      "categoryName": "Water",
+      "month": "2025-07-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "32.00",
+      "categoryName": "Internet",
+      "month": "2025-07-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "45.00",
+      "categoryName": "Mobile Phones",
+      "month": "2025-07-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "85.00",
+      "categoryName": "Insurance",
+      "month": "2025-07-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "686.00",
+      "categoryName": "Groceries",
+      "month": "2025-07-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "150.00",
+      "categoryName": "Eating Out",
+      "month": "2025-07-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Transport",
+      "month": "2025-07-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Clothing",
+      "month": "2025-07-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Household",
+      "month": "2025-07-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Entertainment",
+      "month": "2025-07-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "35.00",
+      "categoryName": "Subscriptions",
+      "month": "2025-07-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "40.00",
+      "categoryName": "Health",
+      "month": "2025-07-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "175.00",
+      "categoryName": "Kids",
+      "month": "2025-07-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Gifts",
+      "month": "2025-07-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "500.00",
+      "categoryName": "Holiday Fund",
+      "month": "2025-07-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Emergency Fund",
+      "month": "2025-07-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "895.00",
+      "categoryName": "Mortgage Payment",
+      "month": "2025-08-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "165.00",
+      "categoryName": "Council Tax",
+      "month": "2025-08-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "140.00",
+      "categoryName": "Energy",
+      "month": "2025-08-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "42.00",
+      "categoryName": "Water",
+      "month": "2025-08-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "32.00",
+      "categoryName": "Internet",
+      "month": "2025-08-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "45.00",
+      "categoryName": "Mobile Phones",
+      "month": "2025-08-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "85.00",
+      "categoryName": "Insurance",
+      "month": "2025-08-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "686.00",
+      "categoryName": "Groceries",
+      "month": "2025-08-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "150.00",
+      "categoryName": "Eating Out",
+      "month": "2025-08-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Transport",
+      "month": "2025-08-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Clothing",
+      "month": "2025-08-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Household",
+      "month": "2025-08-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Entertainment",
+      "month": "2025-08-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "35.00",
+      "categoryName": "Subscriptions",
+      "month": "2025-08-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "40.00",
+      "categoryName": "Health",
+      "month": "2025-08-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "175.00",
+      "categoryName": "Kids",
+      "month": "2025-08-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Gifts",
+      "month": "2025-08-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "500.00",
+      "categoryName": "Holiday Fund",
+      "month": "2025-08-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Emergency Fund",
+      "month": "2025-08-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "895.00",
+      "categoryName": "Mortgage Payment",
+      "month": "2025-09-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "165.00",
+      "categoryName": "Council Tax",
+      "month": "2025-09-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "140.00",
+      "categoryName": "Energy",
+      "month": "2025-09-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "42.00",
+      "categoryName": "Water",
+      "month": "2025-09-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "32.00",
+      "categoryName": "Internet",
+      "month": "2025-09-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "45.00",
+      "categoryName": "Mobile Phones",
+      "month": "2025-09-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "85.00",
+      "categoryName": "Insurance",
+      "month": "2025-09-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "686.00",
+      "categoryName": "Groceries",
+      "month": "2025-09-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "150.00",
+      "categoryName": "Eating Out",
+      "month": "2025-09-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Transport",
+      "month": "2025-09-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Clothing",
+      "month": "2025-09-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Household",
+      "month": "2025-09-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Entertainment",
+      "month": "2025-09-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "35.00",
+      "categoryName": "Subscriptions",
+      "month": "2025-09-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "40.00",
+      "categoryName": "Health",
+      "month": "2025-09-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "175.00",
+      "categoryName": "Kids",
+      "month": "2025-09-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Gifts",
+      "month": "2025-09-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "500.00",
+      "categoryName": "Holiday Fund",
+      "month": "2025-09-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Emergency Fund",
+      "month": "2025-09-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "895.00",
+      "categoryName": "Mortgage Payment",
+      "month": "2025-10-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "165.00",
+      "categoryName": "Council Tax",
+      "month": "2025-10-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "140.00",
+      "categoryName": "Energy",
+      "month": "2025-10-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "42.00",
+      "categoryName": "Water",
+      "month": "2025-10-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "32.00",
+      "categoryName": "Internet",
+      "month": "2025-10-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "45.00",
+      "categoryName": "Mobile Phones",
+      "month": "2025-10-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "85.00",
+      "categoryName": "Insurance",
+      "month": "2025-10-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "686.00",
+      "categoryName": "Groceries",
+      "month": "2025-10-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "150.00",
+      "categoryName": "Eating Out",
+      "month": "2025-10-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Transport",
+      "month": "2025-10-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Clothing",
+      "month": "2025-10-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Household",
+      "month": "2025-10-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Entertainment",
+      "month": "2025-10-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "35.00",
+      "categoryName": "Subscriptions",
+      "month": "2025-10-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "40.00",
+      "categoryName": "Health",
+      "month": "2025-10-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "175.00",
+      "categoryName": "Kids",
+      "month": "2025-10-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Gifts",
+      "month": "2025-10-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "500.00",
+      "categoryName": "Holiday Fund",
+      "month": "2025-10-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Emergency Fund",
+      "month": "2025-10-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "895.00",
+      "categoryName": "Mortgage Payment",
+      "month": "2025-11-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "165.00",
+      "categoryName": "Council Tax",
+      "month": "2025-11-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "185.00",
+      "categoryName": "Energy",
+      "month": "2025-11-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "42.00",
+      "categoryName": "Water",
+      "month": "2025-11-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "32.00",
+      "categoryName": "Internet",
+      "month": "2025-11-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "45.00",
+      "categoryName": "Mobile Phones",
+      "month": "2025-11-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "85.00",
+      "categoryName": "Insurance",
+      "month": "2025-11-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "686.00",
+      "categoryName": "Groceries",
+      "month": "2025-11-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "150.00",
+      "categoryName": "Eating Out",
+      "month": "2025-11-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Transport",
+      "month": "2025-11-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Clothing",
+      "month": "2025-11-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Household",
+      "month": "2025-11-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Entertainment",
+      "month": "2025-11-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "35.00",
+      "categoryName": "Subscriptions",
+      "month": "2025-11-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "40.00",
+      "categoryName": "Health",
+      "month": "2025-11-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "175.00",
+      "categoryName": "Kids",
+      "month": "2025-11-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Gifts",
+      "month": "2025-11-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "500.00",
+      "categoryName": "Holiday Fund",
+      "month": "2025-11-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Emergency Fund",
+      "month": "2025-11-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "895.00",
+      "categoryName": "Mortgage Payment",
+      "month": "2025-12-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "165.00",
+      "categoryName": "Council Tax",
+      "month": "2025-12-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "195.00",
+      "categoryName": "Energy",
+      "month": "2025-12-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "42.00",
+      "categoryName": "Water",
+      "month": "2025-12-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "32.00",
+      "categoryName": "Internet",
+      "month": "2025-12-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "45.00",
+      "categoryName": "Mobile Phones",
+      "month": "2025-12-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "85.00",
+      "categoryName": "Insurance",
+      "month": "2025-12-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "686.00",
+      "categoryName": "Groceries",
+      "month": "2025-12-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "150.00",
+      "categoryName": "Eating Out",
+      "month": "2025-12-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Transport",
+      "month": "2025-12-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Clothing",
+      "month": "2025-12-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Household",
+      "month": "2025-12-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Entertainment",
+      "month": "2025-12-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "35.00",
+      "categoryName": "Subscriptions",
+      "month": "2025-12-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "40.00",
+      "categoryName": "Health",
+      "month": "2025-12-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "175.00",
+      "categoryName": "Kids",
+      "month": "2025-12-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "200.00",
+      "categoryName": "Gifts",
+      "month": "2025-12-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "500.00",
+      "categoryName": "Holiday Fund",
+      "month": "2025-12-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Emergency Fund",
+      "month": "2025-12-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "895.00",
+      "categoryName": "Mortgage Payment",
+      "month": "2026-01-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "165.00",
+      "categoryName": "Council Tax",
+      "month": "2026-01-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "190.00",
+      "categoryName": "Energy",
+      "month": "2026-01-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "42.00",
+      "categoryName": "Water",
+      "month": "2026-01-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "32.00",
+      "categoryName": "Internet",
+      "month": "2026-01-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "45.00",
+      "categoryName": "Mobile Phones",
+      "month": "2026-01-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "85.00",
+      "categoryName": "Insurance",
+      "month": "2026-01-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "686.00",
+      "categoryName": "Groceries",
+      "month": "2026-01-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "150.00",
+      "categoryName": "Eating Out",
+      "month": "2026-01-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Transport",
+      "month": "2026-01-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Clothing",
+      "month": "2026-01-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Household",
+      "month": "2026-01-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Entertainment",
+      "month": "2026-01-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "35.00",
+      "categoryName": "Subscriptions",
+      "month": "2026-01-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "40.00",
+      "categoryName": "Health",
+      "month": "2026-01-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "175.00",
+      "categoryName": "Kids",
+      "month": "2026-01-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Gifts",
+      "month": "2026-01-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "500.00",
+      "categoryName": "Holiday Fund",
+      "month": "2026-01-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Emergency Fund",
+      "month": "2026-01-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "895.00",
+      "categoryName": "Mortgage Payment",
+      "month": "2026-02-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "165.00",
+      "categoryName": "Council Tax",
+      "month": "2026-02-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "180.00",
+      "categoryName": "Energy",
+      "month": "2026-02-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "42.00",
+      "categoryName": "Water",
+      "month": "2026-02-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "32.00",
+      "categoryName": "Internet",
+      "month": "2026-02-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "45.00",
+      "categoryName": "Mobile Phones",
+      "month": "2026-02-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "85.00",
+      "categoryName": "Insurance",
+      "month": "2026-02-01T00:00:00Z",
+      "categoryParent": "Bills"
+    },
+    {
+      "id": "",
+      "budgeted": "686.00",
+      "categoryName": "Groceries",
+      "month": "2026-02-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "150.00",
+      "categoryName": "Eating Out",
+      "month": "2026-02-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Transport",
+      "month": "2026-02-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Clothing",
+      "month": "2026-02-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Household",
+      "month": "2026-02-01T00:00:00Z",
+      "categoryParent": "Living"
+    },
+    {
+      "id": "",
+      "budgeted": "75.00",
+      "categoryName": "Entertainment",
+      "month": "2026-02-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "35.00",
+      "categoryName": "Subscriptions",
+      "month": "2026-02-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "40.00",
+      "categoryName": "Health",
+      "month": "2026-02-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "175.00",
+      "categoryName": "Kids",
+      "month": "2026-02-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "55.00",
+      "categoryName": "Gifts",
+      "month": "2026-02-01T00:00:00Z",
+      "categoryParent": "Personal"
+    },
+    {
+      "id": "",
+      "budgeted": "500.00",
+      "categoryName": "Holiday Fund",
+      "month": "2026-02-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    },
+    {
+      "id": "",
+      "budgeted": "250.00",
+      "categoryName": "Emergency Fund",
+      "month": "2026-02-01T00:00:00Z",
+      "categoryParent": "Savings Goals"
+    }
+  ],
+  "payees": [
+    {
+      "id": "",
+      "name": "Employer - Salary",
+      "lastUsedDate": "2026-01-28T08:00:00Z",
+      "useCount": 13,
+      "lastUsedCategoryName": "To Budget"
+    },
+    {
+      "id": "",
+      "name": "Nationwide BS",
+      "lastUsedDate": "2026-02-01T07:00:00Z",
+      "useCount": 13,
+      "lastUsedCategoryName": "Mortgage Payment"
+    },
+    {
+      "id": "",
+      "name": "Bristol City Council",
+      "lastUsedDate": "2026-02-01T07:30:00Z",
+      "useCount": 13,
+      "lastUsedCategoryName": "Council Tax"
+    },
+    {
+      "id": "",
+      "name": "Octopus Energy",
+      "lastUsedDate": "2026-02-03T11:19:00Z",
+      "useCount": 13,
+      "lastUsedCategoryName": "Energy"
+    },
+    {
+      "id": "",
+      "name": "Bristol Water",
+      "lastUsedDate": "2026-02-05T08:00:00Z",
+      "useCount": 13,
+      "lastUsedCategoryName": "Water"
+    },
+    {
+      "id": "",
+      "name": "BT Broadband",
+      "lastUsedDate": "2026-02-04T09:00:00Z",
+      "useCount": 13,
+      "lastUsedCategoryName": "Internet"
+    },
+    {
+      "id": "",
+      "name": "Three Mobile",
+      "lastUsedDate": "2026-02-09T20:08:00Z",
+      "useCount": 13,
+      "lastUsedCategoryName": "Mobile Phones"
+    },
+    {
+      "id": "",
+      "name": "Aviva",
+      "lastUsedDate": "2026-02-12T12:20:00Z",
+      "useCount": 13,
+      "lastUsedCategoryName": "Insurance"
+    },
+    {
+      "id": "",
+      "name": "Lidl",
+      "lastUsedDate": "2026-02-02T10:24:00Z",
+      "useCount": 17,
+      "lastUsedCategoryName": "Groceries"
+    },
+    {
+      "id": "",
+      "name": "M&S Food",
+      "lastUsedDate": "2026-01-21T13:42:00Z",
+      "useCount": 14,
+      "lastUsedCategoryName": "Groceries"
+    },
+    {
+      "id": "",
+      "name": "Waitrose",
+      "lastUsedDate": "2025-12-05T14:37:00Z",
+      "useCount": 9,
+      "lastUsedCategoryName": "Groceries"
+    },
+    {
+      "id": "",
+      "name": "Aldi",
+      "lastUsedDate": "2026-02-09T14:55:00Z",
+      "useCount": 10,
+      "lastUsedCategoryName": "Groceries"
+    },
+    {
+      "id": "",
+      "name": "Co-op",
+      "lastUsedDate": "2026-01-14T16:03:00Z",
+      "useCount": 8,
+      "lastUsedCategoryName": "Groceries"
+    },
+    {
+      "id": "",
+      "name": "The Crown",
+      "lastUsedDate": "2026-02-12T18:26:00Z",
+      "useCount": 5,
+      "lastUsedCategoryName": "Eating Out"
+    },
+    {
+      "id": "",
+      "name": "Wagamama",
+      "lastUsedDate": "2026-01-17T11:09:00Z",
+      "useCount": 7,
+      "lastUsedCategoryName": "Eating Out"
+    },
+    {
+      "id": "",
+      "name": "Nandos",
+      "lastUsedDate": "2025-08-27T11:18:00Z",
+      "useCount": 5,
+      "lastUsedCategoryName": "Eating Out"
+    },
+    {
+      "id": "",
+      "name": "Shell",
+      "lastUsedDate": "2026-01-06T13:19:00Z",
+      "useCount": 13,
+      "lastUsedCategoryName": "Transport"
+    },
+    {
+      "id": "",
+      "name": "Trainline",
+      "lastUsedDate": "2026-02-04T14:37:00Z",
+      "useCount": 9,
+      "lastUsedCategoryName": "Transport"
+    },
+    {
+      "id": "",
+      "name": "BP",
+      "lastUsedDate": "2026-01-22T14:04:00Z",
+      "useCount": 8,
+      "lastUsedCategoryName": "Transport"
+    },
+    {
+      "id": "",
+      "name": "TfL",
+      "lastUsedDate": "2026-02-13T17:29:00Z",
+      "useCount": 10,
+      "lastUsedCategoryName": "Transport"
+    },
+    {
+      "id": "",
+      "name": "Netflix",
+      "lastUsedDate": "2026-02-07T16:05:00Z",
+      "useCount": 13,
+      "lastUsedCategoryName": "Subscriptions"
+    },
+    {
+      "id": "",
+      "name": "Spotify",
+      "lastUsedDate": "2026-02-07T12:47:00Z",
+      "useCount": 13,
+      "lastUsedCategoryName": "Subscriptions"
+    },
+    {
+      "id": "",
+      "name": "Disney+",
+      "lastUsedDate": "2026-01-01T10:10:00Z",
+      "useCount": 12,
+      "lastUsedCategoryName": "Subscriptions"
+    },
+    {
+      "id": "",
+      "name": "iCloud",
+      "lastUsedDate": "2026-02-06T11:21:00Z",
+      "useCount": 13,
+      "lastUsedCategoryName": "Subscriptions"
+    },
+    {
+      "id": "",
+      "name": "Amazon",
+      "lastUsedDate": "2025-12-05T12:39:00Z",
+      "useCount": 4,
+      "lastUsedCategoryName": "Gifts"
+    },
+    {
+      "id": "",
+      "name": "IKEA",
+      "lastUsedDate": "2025-02-07T11:47:00Z",
+      "useCount": 1,
+      "lastUsedCategoryName": "Household"
+    },
+    {
+      "id": "",
+      "name": "Nursery Fees",
+      "lastUsedDate": "2026-02-02T20:48:00Z",
+      "useCount": 13,
+      "lastUsedCategoryName": "Kids"
+    },
+    {
+      "id": "",
+      "name": "Book People",
+      "lastUsedDate": "2025-11-24T11:41:00Z",
+      "useCount": 3,
+      "lastUsedCategoryName": "Kids"
+    },
+    {
+      "id": "",
+      "name": "John Lewis",
+      "lastUsedDate": "2025-07-03T11:46:00Z",
+      "useCount": 8,
+      "lastUsedCategoryName": "Gifts"
+    },
+    {
+      "id": "",
+      "name": "Pret",
+      "lastUsedDate": "2026-01-14T16:49:00Z",
+      "useCount": 11,
+      "lastUsedCategoryName": "Eating Out"
+    },
+    {
+      "id": "",
+      "name": "Uber",
+      "lastUsedDate": "2026-01-27T19:17:00Z",
+      "useCount": 13,
+      "lastUsedCategoryName": "Transport"
+    },
+    {
+      "id": "",
+      "name": "Vue Cinema",
+      "lastUsedDate": "2026-02-13T16:12:00Z",
+      "useCount": 4,
+      "lastUsedCategoryName": "Entertainment"
+    },
+    {
+      "id": "",
+      "name": "Primark",
+      "lastUsedDate": "2026-02-06T09:09:00Z",
+      "useCount": 4,
+      "lastUsedCategoryName": "Clothing"
+    },
+    {
+      "id": "",
+      "name": "Dunelm",
+      "lastUsedDate": "2025-05-13T14:44:00Z",
+      "useCount": 2,
+      "lastUsedCategoryName": "Household"
+    },
+    {
+      "id": "",
+      "name": "Smyths Toys",
+      "lastUsedDate": "2025-03-06T14:46:00Z",
+      "useCount": 1,
+      "lastUsedCategoryName": "Kids"
+    },
+    {
+      "id": "",
+      "name": "Tesco",
+      "lastUsedDate": "2026-01-12T09:47:00Z",
+      "useCount": 6,
+      "lastUsedCategoryName": "Groceries"
+    },
+    {
+      "id": "",
+      "name": "Sainsburys",
+      "lastUsedDate": "2026-02-09T16:53:00Z",
+      "useCount": 12,
+      "lastUsedCategoryName": "Groceries"
+    },
+    {
+      "id": "",
+      "name": "Greggs",
+      "lastUsedDate": "2025-12-20T08:03:00Z",
+      "useCount": 6,
+      "lastUsedCategoryName": "Eating Out"
+    },
+    {
+      "id": "",
+      "name": "Pizza Express",
+      "lastUsedDate": "2026-01-04T20:17:00Z",
+      "useCount": 7,
+      "lastUsedCategoryName": "Eating Out"
+    },
+    {
+      "id": "",
+      "name": "Specsavers",
+      "lastUsedDate": "2025-04-18T19:27:00Z",
+      "useCount": 1,
+      "lastUsedCategoryName": "Health"
+    },
+    {
+      "id": "",
+      "name": "Costa",
+      "lastUsedDate": "2026-01-28T09:22:00Z",
+      "useCount": 7,
+      "lastUsedCategoryName": "Eating Out"
+    },
+    {
+      "id": "",
+      "name": "Clarks",
+      "lastUsedDate": "2025-05-24T17:19:00Z",
+      "useCount": 1,
+      "lastUsedCategoryName": "Kids"
+    },
+    {
+      "id": "",
+      "name": "B&Q",
+      "lastUsedDate": "2025-06-27T17:24:00Z",
+      "useCount": 1,
+      "lastUsedCategoryName": "Household"
+    },
+    {
+      "id": "",
+      "name": "JoJo Maman",
+      "lastUsedDate": "2026-02-12T20:36:00Z",
+      "useCount": 4,
+      "lastUsedCategoryName": "Kids"
+    },
+    {
+      "id": "",
+      "name": "Waterstones",
+      "lastUsedDate": "2025-11-22T13:05:00Z",
+      "useCount": 3,
+      "lastUsedCategoryName": "Entertainment"
+    },
+    {
+      "id": "",
+      "name": "Robert Dyas",
+      "lastUsedDate": "2025-11-15T18:23:00Z",
+      "useCount": 2,
+      "lastUsedCategoryName": "Household"
+    },
+    {
+      "id": "",
+      "name": "Wilko",
+      "lastUsedDate": "2025-12-22T08:46:00Z",
+      "useCount": 2,
+      "lastUsedCategoryName": "Household"
+    },
+    {
+      "id": "",
+      "name": "Cineworld",
+      "lastUsedDate": "2025-09-14T15:56:00Z",
+      "useCount": 1,
+      "lastUsedCategoryName": "Entertainment"
+    },
+    {
+      "id": "",
+      "name": "Zara",
+      "lastUsedDate": "2026-01-17T14:17:00Z",
+      "useCount": 3,
+      "lastUsedCategoryName": "Clothing"
+    },
+    {
+      "id": "",
+      "name": "Boots",
+      "lastUsedDate": "2025-09-21T10:31:00Z",
+      "useCount": 1,
+      "lastUsedCategoryName": "Health"
+    },
+    {
+      "id": "",
+      "name": "Moonpig",
+      "lastUsedDate": "2025-12-13T17:33:00Z",
+      "useCount": 3,
+      "lastUsedCategoryName": "Gifts"
+    },
+    {
+      "id": "",
+      "name": "Next",
+      "lastUsedDate": "2025-10-17T10:44:00Z",
+      "useCount": 1,
+      "lastUsedCategoryName": "Clothing"
+    },
+    {
+      "id": "",
+      "name": "Not On The High Street",
+      "lastUsedDate": "2025-12-04T20:44:00Z",
+      "useCount": 2,
+      "lastUsedCategoryName": "Gifts"
+    },
+    {
+      "id": "",
+      "name": "Dentist",
+      "lastUsedDate": "2026-02-11T18:39:00Z",
+      "useCount": 2,
+      "lastUsedCategoryName": "Health"
+    }
+  ]
+}
