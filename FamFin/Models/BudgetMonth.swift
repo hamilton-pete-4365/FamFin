@@ -6,7 +6,7 @@ final class BudgetMonth {
     var month: Date  // first day of the month
     var note: String
 
-    @Relationship(deleteRule: .cascade)
+    @Relationship(deleteRule: .cascade, inverse: \BudgetAllocation.budgetMonth)
     var allocations: [BudgetAllocation] = []
 
     /// Total amount budgeted (assigned to envelopes) this month
