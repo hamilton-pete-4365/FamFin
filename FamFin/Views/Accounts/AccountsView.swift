@@ -54,19 +54,19 @@ struct AccountsView: View {
                                 } label: {
                                     HStack(spacing: 6) {
                                         Image(systemName: expandedSections.contains("Budget") ? "chevron.down" : "chevron.right")
-                                            .font(.system(size: 10, weight: .bold))
+                                            .font(.caption2.bold())
                                             .foregroundStyle(.secondary)
-                                            .frame(width: 12)
+                                            .frame(width: 14)
                                         Text("BUDGET ACCOUNTS")
-                                            .font(.caption.bold())
+                                            .font(.subheadline.bold())
                                             .foregroundStyle(.secondary)
                                         Spacer()
-                                        GBPText(amount: budgetBalance, font: .caption)
+                                        GBPText(amount: budgetBalance, font: .subheadline)
                                     }
                                 }
                                 .tint(.primary)
-                                .listRowBackground(Color(.secondarySystemGroupedBackground).opacity(0.5))
-                                .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+                                .listRowBackground(Color(.secondarySystemGroupedBackground))
+                                .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
 
                                 if expandedSections.contains("Budget") {
                                     ForEach(budgetAccounts) { account in
@@ -106,19 +106,19 @@ struct AccountsView: View {
                                 } label: {
                                     HStack(spacing: 6) {
                                         Image(systemName: expandedSections.contains("Tracking") ? "chevron.down" : "chevron.right")
-                                            .font(.system(size: 10, weight: .bold))
+                                            .font(.caption2.bold())
                                             .foregroundStyle(.secondary)
-                                            .frame(width: 12)
+                                            .frame(width: 14)
                                         Text("TRACKING ACCOUNTS")
-                                            .font(.caption.bold())
+                                            .font(.subheadline.bold())
                                             .foregroundStyle(.secondary)
                                         Spacer()
-                                        GBPText(amount: trackingBalance, font: .caption)
+                                        GBPText(amount: trackingBalance, font: .subheadline)
                                     }
                                 }
                                 .tint(.primary)
-                                .listRowBackground(Color(.secondarySystemGroupedBackground).opacity(0.5))
-                                .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+                                .listRowBackground(Color(.secondarySystemGroupedBackground))
+                                .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
 
                                 if expandedSections.contains("Tracking") {
                                     ForEach(trackingAccounts) { account in
@@ -163,10 +163,8 @@ struct AccountsView: View {
                         .font(.headline)
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
+                    Button("Add", systemImage: "plus") {
                         showingAddAccount = true
-                    } label: {
-                        Image(systemName: "plus")
                     }
                 }
             }
@@ -199,16 +197,17 @@ struct AccountRow: View {
 
     var body: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(account.name)
-                    .font(.subheadline)
+                    .font(.body)
                 Text(account.type.rawValue)
-                    .font(.caption2)
+                    .font(.caption)
                     .foregroundStyle(.secondary)
             }
             Spacer()
-            GBPText(amount: account.balance, font: .subheadline)
+            GBPText(amount: account.balance, font: .body)
         }
+        .padding(.vertical, 2)
     }
 }
 
@@ -292,6 +291,17 @@ struct EditAccountView: View {
     @State private var isBudget: Bool = true
     @State private var hasLoaded = false
     @State private var showingDeleteConfirm = false
+    @State private var showingReclassifyConfirm = false
+
+    /// Whether the user is changing the Budget/Tracking classification
+    private var isBudgetChanged: Bool {
+        hasLoaded && isBudget != account.isBudget
+    }
+
+    /// Whether this reclassification affects existing transactions
+    private var reclassifyAffectsTransactions: Bool {
+        isBudgetChanged && !account.transactions.isEmpty
+    }
 
     var body: some View {
         NavigationStack {
@@ -320,6 +330,17 @@ struct EditAccountView: View {
                         .foregroundStyle(.secondary)
                 }
 
+                if reclassifyAffectsTransactions {
+                    let count = account.transactions.count
+                    HStack(spacing: 6) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(Color("WarningColor"))
+                        Text("Changing this will affect \(count) existing \(count == 1 ? "transaction" : "transactions") and recalculate your budget.")
+                            .font(.caption)
+                            .foregroundStyle(Color("WarningColor"))
+                    }
+                }
+
                 Section {
                     Button(role: .destructive) {
                         showingDeleteConfirm = true
@@ -341,10 +362,11 @@ struct EditAccountView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        account.name = name
-                        account.type = type
-                        account.isBudget = isBudget
-                        dismiss()
+                        if reclassifyAffectsTransactions {
+                            showingReclassifyConfirm = true
+                        } else {
+                            saveAndDismiss()
+                        }
                     }
                     .disabled(name.isEmpty)
                 }
@@ -358,6 +380,16 @@ struct EditAccountView: View {
             } message: {
                 Text("This will also delete all transactions in this account. This cannot be undone.")
             }
+            .alert("Change Account Type?", isPresented: $showingReclassifyConfirm) {
+                Button("Change", role: .destructive) {
+                    saveAndDismiss()
+                }
+                Button("Cancel", role: .cancel) { }
+            } message: {
+                let destination = isBudget ? "Budget" : "Tracking"
+                let count = account.transactions.count
+                Text("Moving this account to \(destination) will affect how \(count) \(count == 1 ? "transaction is" : "transactions are") counted in your budget.")
+            }
             .onAppear {
                 guard !hasLoaded else { return }
                 hasLoaded = true
@@ -366,6 +398,13 @@ struct EditAccountView: View {
                 isBudget = account.isBudget
             }
         }
+    }
+
+    private func saveAndDismiss() {
+        account.name = name
+        account.type = type
+        account.isBudget = isBudget
+        dismiss()
     }
 }
 

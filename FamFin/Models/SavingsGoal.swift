@@ -12,16 +12,18 @@ final class SavingsGoal {
 
     var progress: Double {
         guard targetAmount > 0 else { return 0 }
-        return NSDecimalNumber(decimal: savedAmount / targetAmount).doubleValue
+        let ratio = NSDecimalNumber(decimal: savedAmount / targetAmount).doubleValue
+        return max(0, min(ratio, 1))
     }
 
     var isComplete: Bool {
-        savedAmount >= targetAmount
+        targetAmount > 0 && savedAmount >= targetAmount
     }
 
     /// How much you need to save per month to reach your goal
     var monthlyTarget: Decimal? {
         guard let targetDate = targetDate else { return nil }
+        guard targetAmount > 0 else { return Decimal.zero }
         let remaining = targetAmount - savedAmount
         guard remaining > 0 else { return Decimal.zero }
 

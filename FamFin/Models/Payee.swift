@@ -6,6 +6,7 @@ import SwiftData
 @Model
 final class Payee {
     var name: String
+    @Relationship(deleteRule: .nullify)
     var lastUsedCategory: Category?
     var lastUsedDate: Date
     var useCount: Int

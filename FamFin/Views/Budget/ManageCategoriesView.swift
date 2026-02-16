@@ -50,19 +50,22 @@ struct CategorySectionHeader: View {
                 .textCase(nil)
             Spacer()
             if isEditing {
-                Button {
+                Button("Rename", systemImage: "pencil") {
                     onRename()
-                } label: {
-                    Image(systemName: "pencil")
-                        .font(.caption)
                 }
-                Button {
+                .labelStyle(.iconOnly)
+                .font(.body)
+                .padding(8)
+                .contentShape(Rectangle())
+
+                Button("Delete", systemImage: "trash") {
                     onDelete()
-                } label: {
-                    Image(systemName: "trash")
-                        .font(.caption)
-                        .foregroundStyle(.red)
                 }
+                .labelStyle(.iconOnly)
+                .font(.body)
+                .foregroundStyle(.red)
+                .padding(8)
+                .contentShape(Rectangle())
             }
         }
     }
@@ -128,10 +131,13 @@ struct CategoryHeaderSection: View {
         }
         .onDelete { offsets in
             let children = header.sortedChildren
+            let deletedIDs = Set(offsets.map { children[$0].persistentModelID })
             for index in offsets {
                 modelContext.delete(children[index])
             }
-            for (i, child) in header.sortedChildren.enumerated() {
+            // Reindex only the remaining children (deleted ones may linger in the relationship)
+            let remaining = children.filter { !deletedIDs.contains($0.persistentModelID) }
+            for (i, child) in remaining.enumerated() {
                 child.sortOrder = i
             }
         }

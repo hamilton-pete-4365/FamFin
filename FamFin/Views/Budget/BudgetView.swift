@@ -8,6 +8,15 @@ struct BudgetView: View {
     @Query(sort: \Category.sortOrder) private var allCategories: [Category]
     @Query private var allTransactions: [Transaction]
 
+    /// Lightweight fingerprint that changes when transactions are added, deleted, or edited.
+    /// Watches count, total amount, and categorised count so budget recalculates on edits.
+    private var transactionFingerprint: String {
+        let count = allTransactions.count
+        let total = allTransactions.reduce(Decimal.zero) { $0 + $1.amount }
+        let categorised = allTransactions.filter { $0.category != nil }.count
+        return "\(count)-\(total)-\(categorised)"
+    }
+
     @State private var selectedMonth: Date = {
         let cal = Calendar.current
         let comps = cal.dateComponents([.year, .month], from: Date())
@@ -52,12 +61,12 @@ struct BudgetView: View {
     }
 
     /// Subcategories whose available balance is negative this month
-    var overspentCategories: [(name: String, amount: Decimal)] {
+    var overspentCategories: [(id: String, name: String, amount: Decimal)] {
         headerCategories.flatMap { $0.sortedChildren }
             .compactMap { cat in
                 let key = "\(cat.persistentModelID)"
                 let avail = localAvailable[key] ?? cat.available(through: selectedMonth)
-                return avail < 0 ? (name: cat.name, amount: avail) : nil
+                return avail < 0 ? (id: key, name: cat.name, amount: avail) : nil
             }
     }
 
@@ -86,11 +95,7 @@ struct BudgetView: View {
 
     /// Total budgeted in months after the selected month.
     func computeFutureBudgeted() -> Decimal {
-        if let _ = localToBudget {
-            // When we have a local override (just edited a budget), fetch fresh future total
-            return BudgetCalculator.futureBudgeted(after: selectedMonth, context: modelContext)
-        }
-        return BudgetCalculator.futureBudgeted(after: selectedMonth, context: modelContext)
+        BudgetCalculator.futureBudgeted(after: selectedMonth, context: modelContext)
     }
 
     // MARK: - Body
@@ -117,10 +122,8 @@ struct BudgetView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button {
+                    Button("Settings", systemImage: "slider.horizontal.3") {
                         showingSettings = true
-                    } label: {
-                        Image(systemName: "slider.horizontal.3")
                     }
                 }
                 ToolbarItem(placement: .principal) {
@@ -131,7 +134,7 @@ struct BudgetView: View {
                     NavigationLink {
                         ManageCategoriesView()
                     } label: {
-                        Image(systemName: "gear")
+                        Label("Categories", systemImage: "gear")
                     }
                 }
                 ToolbarItemGroup(placement: .keyboard) {
@@ -153,7 +156,7 @@ struct BudgetView: View {
                 if !hasInitialisedExpanded {
                     hasInitialisedExpanded = true
                     for header in headerCategories {
-                        expandedHeaders.insert(header.name)
+                        expandedHeaders.insert("\(header.persistentModelID)")
                     }
                 }
                 syncLocalBudgets()
@@ -161,8 +164,8 @@ struct BudgetView: View {
             .onChange(of: selectedMonth) { _, _ in
                 syncLocalBudgets()
             }
-            .onChange(of: allTransactions.count) { _, _ in
-                // Transaction added/deleted — clear local caches so Available recalculates
+            .onChange(of: transactionFingerprint) { _, _ in
+                // Transaction added/deleted/edited — clear local caches so Available recalculates
                 localAvailable = [:]
                 localToBudget = nil
             }
@@ -197,14 +200,14 @@ struct BudgetView: View {
     // MARK: - "To Budget" Banner
 
     /// Banner logic:
-    /// - If historic To Budget is negative → Overbudgeted (red)
+    /// - If historic To Budget is negative → Overbudgeted (warning amber)
     /// - If historic To Budget is positive and not absorbed by future → To Budget (green)
     /// - Otherwise (zero or fully absorbed) → hidden
     @ViewBuilder
     func toBudgetBanner(historic: Decimal, future: Decimal) -> some View {
         if historic < 0 {
             // Overbudgeted this month
-            bannerContent(amount: historic, label: "Overbudgeted", labelColor: .orange, bgColor: Color.orange.opacity(0.12))
+            bannerContent(amount: historic, label: "Overbudgeted", labelColor: Color("WarningColor"), bgColor: Color("WarningColor").opacity(0.12))
         } else if historic > 0 {
             let remainder = historic - future
             if remainder > 0 {
@@ -220,8 +223,8 @@ struct BudgetView: View {
         VStack(spacing: 4) {
             GBPText(amount: amount, font: .title2.bold())
             Text(label)
-                .font(.caption)
-                .fontWeight(.medium)
+                .font(.subheadline)
+                .bold()
                 .foregroundStyle(labelColor)
         }
         .frame(maxWidth: .infinity)
@@ -244,37 +247,37 @@ struct BudgetView: View {
                     } label: {
                         HStack(spacing: 6) {
                             Image(systemName: "exclamationmark.triangle.fill")
-                                .font(.caption2)
+                                .font(.caption)
                             Text("\(count) \(count == 1 ? "category" : "categories") overspent by \(formatGBP(-totalOverspent, currencyCode: currencyCode))")
-                                .font(.caption2)
-                                .fontWeight(.medium)
+                                .font(.caption)
+                                .bold()
                             Spacer()
                             Image(systemName: overspentExpanded ? "chevron.up" : "chevron.down")
-                                .font(.caption2)
+                                .font(.caption)
                         }
                         .foregroundStyle(.white)
                         .padding(.horizontal, 16)
-                        .padding(.vertical, 6)
+                        .padding(.vertical, 10)
                     }
-                    .background(Color.orange.opacity(0.85))
+                    .background(Color("WarningColor"))
 
                     if overspentExpanded {
                         VStack(spacing: 0) {
-                            ForEach(overspentCategories, id: \.name) { item in
+                            ForEach(overspentCategories, id: \.id) { item in
                                 HStack(spacing: 6) {
                                     Text(item.name)
-                                        .font(.caption2)
+                                        .font(.caption)
                                     Spacer()
                                     Text(formatGBP(-item.amount, currencyCode: currencyCode))
-                                        .font(.caption2)
-                                        .fontWeight(.medium)
+                                        .font(.caption)
+                                        .bold()
                                 }
                                 .foregroundStyle(.white)
                                 .padding(.horizontal, 16)
-                                .padding(.vertical, 4)
+                                .padding(.vertical, 6)
                             }
                         }
-                        .background(Color.orange.opacity(0.7))
+                        .background(Color("WarningColor").opacity(0.85))
                     }
                 }
             }
@@ -286,25 +289,25 @@ struct BudgetView: View {
     var columnHeaders: some View {
         HStack(spacing: 4) {
             Text("Category")
-                .font(.caption2.bold())
+                .font(.caption.bold())
                 .foregroundStyle(.secondary)
                 .textCase(.uppercase)
             Spacer()
             Text("Budgeted")
-                .font(.caption2.bold())
+                .font(.caption.bold())
                 .foregroundStyle(.secondary)
                 .textCase(.uppercase)
-                .frame(width: 80, alignment: .trailing)
+                .frame(width: 88, alignment: .trailing)
             Text("Available")
-                .font(.caption2.bold())
+                .font(.caption.bold())
                 .foregroundStyle(.secondary)
                 .textCase(.uppercase)
-                .frame(width: 70, alignment: .trailing)
+                .frame(width: 76, alignment: .trailing)
         }
         .padding(.leading, 36)
-        .padding(.trailing, 36)
+        .padding(.trailing, 20)
         .padding(.top, 10)
-        .padding(.bottom, 4)
+        .padding(.bottom, 6)
         .background(Color(.systemGroupedBackground))
     }
 
@@ -317,21 +320,22 @@ struct BudgetView: View {
                     // Collapsible header row
                     Button {
                         withAnimation {
-                            if expandedHeaders.contains(header.name) {
-                                expandedHeaders.remove(header.name)
+                            let headerKey = "\(header.persistentModelID)"
+                            if expandedHeaders.contains(headerKey) {
+                                expandedHeaders.remove(headerKey)
                             } else {
-                                expandedHeaders.insert(header.name)
+                                expandedHeaders.insert(headerKey)
                             }
                         }
                     } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: expandedHeaders.contains(header.name) ? "chevron.down" : "chevron.right")
-                                .font(.system(size: 10, weight: .bold))
+                        HStack(spacing: 6) {
+                            Image(systemName: expandedHeaders.contains("\(header.persistentModelID)") ? "chevron.down" : "chevron.right")
+                                .font(.caption2.bold())
                                 .foregroundStyle(.secondary)
-                                .frame(width: 12)
+                                .frame(width: 14)
 
                             Text(header.name.uppercased())
-                                .font(.caption.bold())
+                                .font(.subheadline.bold())
                                 .foregroundStyle(.secondary)
                                 .lineLimit(1)
 
@@ -339,23 +343,23 @@ struct BudgetView: View {
 
                             // Header budgeted total for this month
                             Text(formatGBP(headerBudgeted(header), currencyCode: currencyCode))
-                                .font(.caption)
+                                .font(.subheadline)
                                 .foregroundStyle(.secondary)
-                                .frame(width: 80, alignment: .trailing)
+                                .frame(width: 88, alignment: .trailing)
 
-                            // Header available total (accent orange)
+                            // Header available total
                             let avail = headerAvailable(header)
                             Text(formatGBP(avail, currencyCode: currencyCode))
-                                .font(.caption)
-                                .foregroundStyle(avail < 0 ? .secondary : Color.accentColor)
-                                .frame(width: 70, alignment: .trailing)
+                                .font(.subheadline)
+                                .foregroundStyle(avail < 0 ? .red : Color.accentColor)
+                                .frame(width: 76, alignment: .trailing)
                         }
                     }
-                    .listRowBackground(Color(.secondarySystemGroupedBackground).opacity(0.5))
-                    .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+                    .listRowBackground(Color(.secondarySystemGroupedBackground))
+                    .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
 
                     // Subcategories (only shown when expanded)
-                    if expandedHeaders.contains(header.name) {
+                    if expandedHeaders.contains("\(header.persistentModelID)") {
                         ForEach(header.sortedChildren) { subcategory in
                             let catKey = "\(subcategory.persistentModelID)"
                             let budgeted = localBudgets[catKey] ?? Decimal.zero
@@ -439,7 +443,7 @@ struct BudgetView: View {
                     // Header label
                     HStack {
                         Text("Quick fill: \(cat.name)")
-                            .font(.caption2.bold())
+                            .font(.caption.bold())
                             .foregroundStyle(.secondary)
                             .textCase(.uppercase)
                             .lineLimit(1)
@@ -482,7 +486,7 @@ struct BudgetView: View {
     private func hintRow(label: String, items: [(String, Decimal)]) -> some View {
         HStack(spacing: 0) {
             Text(label)
-                .font(.caption)
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
 
             Spacer()
@@ -492,14 +496,14 @@ struct BudgetView: View {
                     // Vertical separator between chips
                     Rectangle()
                         .fill(Color(.separator))
-                        .frame(width: 1, height: 20)
+                        .frame(width: 1, height: 24)
                         .padding(.horizontal, 10)
                 }
                 hintChip(label: item.0, amount: item.1)
             }
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 10)
+        .padding(.vertical, 12)
     }
 
     /// A tappable hint chip showing label and amount
@@ -507,12 +511,12 @@ struct BudgetView: View {
         Button {
             pendingHintAmount = amount
         } label: {
-            VStack(spacing: 1) {
+            VStack(spacing: 2) {
                 Text(formatGBP(amount, currencyCode: currencyCode))
                     .font(.subheadline.bold())
                     .foregroundStyle(Color.accentColor)
                 Text(label)
-                    .font(.caption2)
+                    .font(.caption)
                     .foregroundStyle(.secondary)
             }
         }
@@ -613,8 +617,13 @@ struct BudgetView: View {
         })
 
         if let existing = existingAlloc {
-            existing.budgeted = amount
-        } else {
+            if amount == .zero {
+                // Remove pointless zero-value allocations to keep the database clean
+                modelContext.delete(existing)
+            } else {
+                existing.budgeted = amount
+            }
+        } else if amount != .zero {
             let allocation = BudgetAllocation(budgeted: amount)
             allocation.category = category
             allocation.budgetMonth = bm
@@ -680,7 +689,8 @@ struct BudgetCategoryRow: View {
     private func applyHint(_ amount: Decimal) {
         let currency = SupportedCurrency(rawValue: currencyCode) ?? .gbp
         let multiplier = Decimal(currency.minorUnitMultiplier)
-        let minorUnits = NSDecimalNumber(decimal: amount * multiplier).intValue
+        let absAmount = amount < 0 ? -amount : amount
+        let minorUnits = NSDecimalNumber(decimal: absAmount * multiplier).intValue
         let digits = minorUnits > 0 ? String("\(minorUnits)".prefix(8)) : ""
         hintDigits = digits
         rawDigits = digits
@@ -695,7 +705,7 @@ struct BudgetCategoryRow: View {
             } label: {
                 HStack(spacing: 0) {
                     Text(category.name)
-                        .font(.footnote)
+                        .font(.subheadline)
                         .lineLimit(1)
                     Spacer()
                 }
@@ -710,7 +720,7 @@ struct BudgetCategoryRow: View {
                     .keyboardType(.numberPad)
                     .focused($isFocused)
                     .opacity(0.01)
-                    .frame(width: 68, height: 24)
+                    .frame(width: 80, height: 32)
                     .onChange(of: isFocused) { _, focused in
                         if focused {
                             previousDigits = rawDigits
@@ -772,37 +782,37 @@ struct BudgetCategoryRow: View {
                     isFocused = true
                 } label: {
                     Text(displayString)
-                        .font(.footnote)
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.trailing)
-                        .frame(width: 68, alignment: .trailing)
+                        .frame(width: 80, alignment: .trailing)
                         .contentTransition(.numericText())
                 }
                 .buttonStyle(.plain)
             }
-            .padding(.horizontal, 6)
-            .padding(.vertical, 3)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
             .background(
-                RoundedRectangle(cornerRadius: 5)
+                RoundedRectangle(cornerRadius: 8)
                     .fill(Color(.tertiarySystemGroupedBackground))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 5)
-                            .stroke(isFocused ? Color.accentColor : Color.clear, lineWidth: 1.5)
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(isFocused ? Color.accentColor : Color(.separator).opacity(0.3), lineWidth: isFocused ? 2 : 1)
                     )
             )
-            // Available balance (right, accent orange) — tap for detail
+            // Available balance (right, accent) — tap for detail
             Button {
                 onTapDetail?()
             } label: {
-                GBPText(amount: available, font: .footnote.bold(), accentPositive: true)
-                    .frame(width: 70, alignment: .trailing)
+                GBPText(amount: available, font: .subheadline.bold(), accentPositive: true)
+                    .frame(width: 76, alignment: .trailing)
             }
             .buttonStyle(.plain)
         }
-        .padding(.vertical, 1)
-        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+        .padding(.vertical, 4)
+        .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
         .listRowBackground(
-            isFocused ? Color.accentColor.opacity(0.06) : Color(.systemBackground)
+            isFocused ? Color.accentColor.opacity(0.12) : Color(.systemBackground)
         )
         .animation(.easeInOut(duration: 0.15), value: isFocused)
         .onAppear {
@@ -811,7 +821,8 @@ struct BudgetCategoryRow: View {
             if budgetedAmount != .zero {
                 let currency = SupportedCurrency(rawValue: currencyCode) ?? .gbp
                 let multiplier = Decimal(currency.minorUnitMultiplier)
-                let minorUnits = NSDecimalNumber(decimal: budgetedAmount * multiplier).intValue
+                let absAmount = budgetedAmount < 0 ? -budgetedAmount : budgetedAmount
+                let minorUnits = NSDecimalNumber(decimal: absAmount * multiplier).intValue
                 rawDigits = minorUnits > 0 ? "\(minorUnits)" : ""
             }
         }
@@ -819,7 +830,8 @@ struct BudgetCategoryRow: View {
             if !isFocused {
                 let currency = SupportedCurrency(rawValue: currencyCode) ?? .gbp
                 let multiplier = Decimal(currency.minorUnitMultiplier)
-                let minorUnits = NSDecimalNumber(decimal: newVal * multiplier).intValue
+                let absVal = newVal < 0 ? -newVal : newVal
+                let minorUnits = NSDecimalNumber(decimal: absVal * multiplier).intValue
                 rawDigits = minorUnits > 0 ? "\(minorUnits)" : ""
             }
         }
@@ -872,32 +884,32 @@ struct CategoryDetailSheet: View {
 
                     // Three-column summary: Budgeted | Activity | Available
                     HStack(spacing: 0) {
-                        VStack(spacing: 2) {
-                            GBPText(amount: budgeted, font: .subheadline.bold())
+                        VStack(spacing: 4) {
+                            GBPText(amount: budgeted, font: .headline)
                             Text("Budgeted")
-                                .font(.caption2)
+                                .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
                         .frame(maxWidth: .infinity)
 
-                        VStack(spacing: 2) {
-                            GBPText(amount: activity, font: .subheadline.bold())
+                        VStack(spacing: 4) {
+                            GBPText(amount: activity, font: .headline)
                             Text("Activity")
-                                .font(.caption2)
+                                .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
                         .frame(maxWidth: .infinity)
 
-                        VStack(spacing: 2) {
-                            GBPText(amount: available, font: .subheadline.bold(), accentPositive: true)
+                        VStack(spacing: 4) {
+                            GBPText(amount: available, font: .headline, accentPositive: true)
                             Text("Available")
-                                .font(.caption2)
+                                .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
                         .frame(maxWidth: .infinity)
                     }
                     .padding(.horizontal, 20)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 12)
                 }
                 .padding(.top, 16)
                 .background(Color(.systemBackground))
@@ -923,17 +935,17 @@ struct CategoryDetailSheet: View {
                                 editingTransaction = transaction
                             } label: {
                                 HStack {
-                                    VStack(alignment: .leading, spacing: 2) {
+                                    VStack(alignment: .leading, spacing: 4) {
                                         Text(transaction.payee)
-                                            .font(.subheadline)
+                                            .font(.body)
                                         Text(transaction.date, format: .dateTime.day().month(.abbreviated))
-                                            .font(.caption)
+                                            .font(.subheadline)
                                             .foregroundStyle(.secondary)
                                     }
                                     Spacer()
-                                    TransactionAmountText(amount: transaction.amount, type: transaction.type, font: .subheadline)
+                                    TransactionAmountText(amount: transaction.amount, type: transaction.type, font: .body)
                                 }
-                                .padding(.vertical, 2)
+                                .padding(.vertical, 4)
                             }
                             .tint(.primary)
                         }

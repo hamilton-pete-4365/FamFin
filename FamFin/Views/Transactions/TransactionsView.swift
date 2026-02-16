@@ -81,7 +81,7 @@ struct TransactionsView: View {
                 // Balance header — shows sign
                 VStack(spacing: 4) {
                     Text(filterAccount == nil ? "Total Balance" : "Account Balance")
-                        .font(.caption)
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
                     GBPText(amount: displayBalance, font: .title.bold(), showSign: true)
                 }
@@ -174,18 +174,18 @@ struct TransactionsView: View {
                                 } label: {
                                     TransactionRow(transaction: transaction, showAccount: filterAccount == nil, viewingAccount: filterAccount)
                                 }
-                                .tint(.primary)
+                                .buttonStyle(.plain)
                             }
                             .onDelete { offsets in
                                 deleteTransactions(at: offsets, in: group)
                             }
                         } header: {
                             Text(group.date, format: .dateTime.weekday(.wide).day().month(.wide).year())
-                                .font(.caption2.weight(.semibold))
+                                .font(.caption.weight(.semibold))
                                 .foregroundStyle(.secondary)
                                 .textCase(.uppercase)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.vertical, 6)
+                                .padding(.vertical, 8)
                                 .padding(.horizontal, 16)
                                 .background(Color(.systemBackground))
                                 .listRowInsets(EdgeInsets())
@@ -271,7 +271,7 @@ struct TransactionRow: View {
                     .foregroundStyle(.secondary)
             }
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(displayPayee)
                     .font(.headline)
                 HStack(spacing: 4) {
@@ -289,13 +289,13 @@ struct TransactionRow: View {
                         }
                     }
                 }
-                .font(.caption)
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
             }
 
             Spacer()
 
-            VStack(alignment: .trailing, spacing: 2) {
+            VStack(alignment: .trailing, spacing: 4) {
                 if transaction.type == .transfer {
                     if let viewing = viewingAccount {
                         if transaction.transferToAccount?.persistentModelID == viewing.persistentModelID {
@@ -310,11 +310,11 @@ struct TransactionRow: View {
                     TransactionAmountText(amount: transaction.amount, type: transaction.type)
                 }
                 Text(transaction.date, style: .date)
-                    .font(.caption2)
+                    .font(.caption)
                     .foregroundStyle(.secondary)
             }
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, 4)
     }
 }
 
@@ -419,7 +419,7 @@ struct TransactionFormFields: View {
         let base = formatPence(amountInPence, currencyCode: currencyCode)
         switch type {
         case .expense:
-            return "(\(base))"
+            return "-\(base)"
         case .income:
             return "+\(base)"
         case .transfer:
@@ -431,7 +431,7 @@ struct TransactionFormFields: View {
     private var amountColor: Color {
         guard amountInPence > 0 else { return .secondary }
         switch type {
-        case .expense: return .primary
+        case .expense: return .red
         case .income: return .green
         case .transfer: return .primary
         }
@@ -444,7 +444,8 @@ struct TransactionFormFields: View {
         if currency.hasMinorUnits {
             let major = units / 100
             let minor = units % 100
-            amountText = String(format: "%d.%02d", major, minor)
+            let minorStr = minor < 10 ? "0\(minor)" : "\(minor)"
+            amountText = "\(major).\(minorStr)"
         } else {
             amountText = "\(units)"
         }
@@ -523,11 +524,8 @@ struct TransactionFormFields: View {
                     .opacity(0.01)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .onChange(of: amountFocused) { _, focused in
-                        // Clear on focus so re-editing starts fresh
-                        if focused && !rawDigits.isEmpty {
-                            rawDigits = ""
-                            syncAmountText()
-                        }
+                        // When re-focusing, select all so next keypress replaces.
+                        // Don't clear immediately — keep the display until user types.
                     }
                     .onChange(of: rawDigits) { _, newValue in
                         // Strip any non-digit characters
@@ -548,7 +546,7 @@ struct TransactionFormFields: View {
                 } label: {
                     HStack {
                         Text(amountDisplayString)
-                            .font(.system(size: 34, weight: .medium, design: .rounded))
+                            .font(.largeTitle.weight(.medium))
                             .foregroundStyle(amountColor)
                             .contentTransition(.numericText())
                         Spacer()
@@ -686,10 +684,17 @@ struct TransactionFormFields: View {
                     }
                 }
 
+                if let from = selectedAccount, let to = selectedTransferTo,
+                   from.persistentModelID == to.persistentModelID {
+                    Text("From and To accounts must be different.")
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
+
                 if transferNeedsCategory {
                     Text("This transfer crosses Budget/Tracking boundary and needs a category.")
                         .font(.caption)
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(Color("WarningColor"))
                 }
             }
         } else {

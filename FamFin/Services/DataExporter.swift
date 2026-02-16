@@ -211,8 +211,11 @@ struct DataExporter {
                 context.insert(cat)
                 // Composite key for subcategories to avoid collisions
                 categoryByKey["\(parentName)/\(name)"] = cat
-                // Also store by name alone as fallback
-                categoryByKey[name] = cat
+                // Store by bare name only if no other category has claimed it,
+                // so duplicate names across headers don't overwrite each other
+                if categoryByKey[name] == nil {
+                    categoryByKey[name] = cat
+                }
             }
         }
 

@@ -16,16 +16,30 @@ struct MonthlyBalance: Identifiable {
 struct ReportsView: View {
     @Environment(\.modelContext) private var modelContext
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
+    @Query private var allTransactions: [Transaction]
 
-    @State private var netWorthData: [MonthlyBalance] = []
-    @State private var budgetData: [MonthlyBalance] = []
-    @State private var trackingData: [MonthlyBalance] = []
+    @State private var settings = ReportSettings()
+    @State private var showingSettings = false
+
+    /// Computed chart data keyed by chart config ID
+    @State private var chartDataMap: [UUID: [MonthlyBalance]] = [:]
+    /// Selected month index per chart
+    @State private var selectionMap: [UUID: Int] = [:]
     @State private var hasData = false
 
-    // Each chart tracks its own selected month index
-    @State private var netWorthSelection: Int?
-    @State private var budgetSelection: Int?
-    @State private var trackingSelection: Int?
+    /// Lightweight fingerprint that changes when transactions are added, deleted, or edited
+    private var transactionFingerprint: String {
+        let count = allTransactions.count
+        let total = allTransactions.reduce(Decimal.zero) { $0 + $1.amount }
+        return "\(count)-\(total)"
+    }
+
+    /// Fingerprint that changes when report settings change
+    private var settingsFingerprint: String {
+        settings.data.charts
+            .map { "\($0.id):\($0.name):\($0.accountFilter.rawValue):\($0.excludedAccountNames.sorted().joined(separator: ","))" }
+            .joined(separator: "|")
+    }
 
     var body: some View {
         NavigationStack {
@@ -33,26 +47,17 @@ struct ReportsView: View {
                 if hasData {
                     ScrollView {
                         VStack(spacing: 16) {
-                            BalanceChartCard(
-                                title: "Net Worth",
-                                data: netWorthData,
-                                currencyCode: currencyCode,
-                                selectedIndex: $netWorthSelection
-                            )
-
-                            BalanceChartCard(
-                                title: "Budget Accounts",
-                                data: budgetData,
-                                currencyCode: currencyCode,
-                                selectedIndex: $budgetSelection
-                            )
-
-                            BalanceChartCard(
-                                title: "Tracking Accounts",
-                                data: trackingData,
-                                currencyCode: currencyCode,
-                                selectedIndex: $trackingSelection
-                            )
+                            ForEach(settings.charts) { chart in
+                                BalanceChartCard(
+                                    title: chart.name,
+                                    data: chartDataMap[chart.id] ?? [],
+                                    currencyCode: currencyCode,
+                                    selectedIndex: Binding(
+                                        get: { selectionMap[chart.id] },
+                                        set: { selectionMap[chart.id] = $0 }
+                                    )
+                                )
+                            }
                         }
                         .padding(.horizontal, 16)
                         .padding(.top, 8)
@@ -73,8 +78,22 @@ struct ReportsView: View {
                     Text("Reports")
                         .font(.headline)
                 }
+                ToolbarItem(placement: .primaryAction) {
+                    Button("Settings", systemImage: "gearshape") {
+                        showingSettings = true
+                    }
+                }
+            }
+            .sheet(isPresented: $showingSettings) {
+                ReportSettingsView(settings: settings)
             }
             .onAppear { computeData() }
+            .onChange(of: transactionFingerprint) { _, _ in
+                computeData()
+            }
+            .onChange(of: settingsFingerprint) { _, _ in
+                computeData()
+            }
         }
     }
 
@@ -125,63 +144,65 @@ struct ReportsView: View {
             }
         }
 
-        var netWorth: [MonthlyBalance] = []
-        var budget: [MonthlyBalance] = []
-        var tracking: [MonthlyBalance] = []
+        // Compute balance for a set of accounts up to a given end-of-month date
+        func totalBalance(for accountSet: [Account], before endOfMonth: Date) -> Decimal {
+            var total: Decimal = .zero
+            for account in accountSet {
+                let accountID = account.persistentModelID
+                let owned = ownedByAccount[accountID] ?? []
+                let incoming = incomingByAccount[accountID] ?? []
+                var balance: Decimal = .zero
 
-        for month in months {
-            let endOfMonth = calendar.date(byAdding: .month, value: 1, to: month) ?? month
-            let monthHasData = month >= earliestMonth
-            var budgetTotal: Decimal = .zero
-            var trackingTotal: Decimal = .zero
-
-            if monthHasData {
-                for account in accounts {
-                    let accountID = account.persistentModelID
-                    let owned = ownedByAccount[accountID] ?? []
-                    let incoming = incomingByAccount[accountID] ?? []
-
-                    var balance: Decimal = .zero
-
-                    for tx in owned where tx.date < endOfMonth {
-                        switch tx.type {
-                        case .income:
-                            balance += tx.amount
-                        case .expense:
-                            balance -= tx.amount
-                        case .transfer:
-                            balance -= tx.amount
-                        }
-                    }
-
-                    for tx in incoming where tx.date < endOfMonth {
-                        balance += tx.amount
-                    }
-
-                    if account.isBudget {
-                        budgetTotal += balance
-                    } else {
-                        trackingTotal += balance
+                for tx in owned where tx.date < endOfMonth {
+                    switch tx.type {
+                    case .income: balance += tx.amount
+                    case .expense: balance -= tx.amount
+                    case .transfer: balance -= tx.amount
                     }
                 }
+                for tx in incoming where tx.date < endOfMonth {
+                    balance += tx.amount
+                }
+                total += balance
             }
-
-            let total = budgetTotal + trackingTotal
-            netWorth.append(MonthlyBalance(date: month, amount: total, hasData: monthHasData))
-            budget.append(MonthlyBalance(date: month, amount: budgetTotal, hasData: monthHasData))
-            tracking.append(MonthlyBalance(date: month, amount: trackingTotal, hasData: monthHasData))
+            return total
         }
 
-        self.netWorthData = netWorth
-        self.budgetData = budget
-        self.trackingData = tracking
-        self.hasData = true
-
-        // Default selection: latest month (last index)
+        // Compute data for each chart config
+        var newDataMap: [UUID: [MonthlyBalance]] = [:]
+        var newSelectionMap: [UUID: Int] = [:]
         let lastIndex = months.count - 1
-        self.netWorthSelection = lastIndex
-        self.budgetSelection = lastIndex
-        self.trackingSelection = lastIndex
+
+        for chart in settings.charts {
+            let filtered: [Account]
+            switch chart.accountFilter {
+            case .all: filtered = accounts
+            case .budgetOnly: filtered = accounts.filter(\.isBudget)
+            case .trackingOnly: filtered = accounts.filter { !$0.isBudget }
+            }
+            let excluded = chart.excludedAccountNames
+            let chartAccounts = filtered.filter { !excluded.contains($0.name) }
+
+            var balances: [MonthlyBalance] = []
+            for month in months {
+                let endOfMonth = calendar.date(byAdding: .month, value: 1, to: month) ?? month
+                let monthHasData = month >= earliestMonth
+                let amount = monthHasData ? totalBalance(for: chartAccounts, before: endOfMonth) : .zero
+                balances.append(MonthlyBalance(date: month, amount: amount, hasData: monthHasData))
+            }
+
+            newDataMap[chart.id] = balances
+            // Keep existing selection if still valid, otherwise default to latest
+            if let existing = selectionMap[chart.id], existing < months.count {
+                newSelectionMap[chart.id] = existing
+            } else {
+                newSelectionMap[chart.id] = lastIndex
+            }
+        }
+
+        self.chartDataMap = newDataMap
+        self.selectionMap = newSelectionMap
+        self.hasData = true
     }
 }
 
@@ -213,16 +234,16 @@ struct BalanceChartCard: View {
             // Header: title on left, selected month + amount on right
             HStack(alignment: .top) {
                 Text(title)
-                    .font(.subheadline.bold())
+                    .font(.headline)
                     .foregroundStyle(.secondary)
 
                 Spacer()
 
                 if let point = displayPoint {
-                    VStack(alignment: .trailing, spacing: 2) {
+                    VStack(alignment: .trailing, spacing: 4) {
                         GBPText(amount: point.amount, font: .title3.bold())
                         Text(Self.monthFormatter.string(from: point.date))
-                            .font(.caption)
+                            .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -239,6 +260,7 @@ struct BalanceChartCard: View {
         .padding(16)
         .background(Color(.systemBackground))
         .clipShape(.rect(cornerRadius: 12))
+        .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 2)
     }
 }
 
@@ -253,8 +275,8 @@ struct BalanceBarChart: View {
         SupportedCurrency(rawValue: currencyCode) ?? .gbp
     }
 
-    /// Width per bar — tuned for ~6 visible at a time in a standard card
-    private let barSlotWidth: CGFloat = 48
+    /// Width per bar — tuned for ~5–6 visible at a time in a standard card
+    private let barSlotWidth: CGFloat = 54
 
     /// Total chart width based on data count
     private var chartWidth: CGFloat {
@@ -274,7 +296,7 @@ struct BalanceBarChart: View {
             let chartHeight = geometry.size.height
 
             ScrollViewReader { proxy in
-                ScrollView(.horizontal, showsIndicators: false) {
+                ScrollView(.horizontal) {
                     HStack(alignment: .bottom, spacing: 6) {
                         ForEach(Array(data.enumerated()), id: \.element.id) { index, point in
                             barColumn(index: index, point: point, chartHeight: chartHeight)
@@ -284,6 +306,7 @@ struct BalanceBarChart: View {
                     .padding(.horizontal, 4)
                     .frame(minWidth: visibleWidth)
                 }
+                .scrollIndicators(.hidden)
                 .onAppear {
                     // Scroll to the rightmost (most recent) bar
                     if !data.isEmpty {
@@ -298,7 +321,7 @@ struct BalanceBarChart: View {
     private func barColumn(index: Int, point: MonthlyBalance, chartHeight: CGFloat) -> some View {
         let isSelected = index == selectedIndex
         // Reserve space for month label at bottom
-        let labelHeight: CGFloat = 18
+        let labelHeight: CGFloat = 20
         let barAreaHeight = chartHeight - labelHeight - 4
 
         let maxAmount = data.filter(\.hasData).map { NSDecimalNumber(decimal: $0.amount).doubleValue }.max() ?? 1
@@ -309,6 +332,7 @@ struct BalanceBarChart: View {
         let doubleAmount = point.hasData ? NSDecimalNumber(decimal: point.amount).doubleValue : 0
         let normalized = (doubleAmount - baseline) / range
         let barHeight = max(point.hasData ? CGFloat(normalized) * barAreaHeight : 2, 2)
+        let isNegative = point.hasData && point.amount < 0
 
         VStack(spacing: 2) {
             Spacer(minLength: 0)
@@ -318,28 +342,29 @@ struct BalanceBarChart: View {
                 selectedIndex = index
             } label: {
                 RoundedRectangle(cornerRadius: 4)
-                    .fill(barFill(isSelected: isSelected, hasData: point.hasData))
+                    .fill(barFill(isSelected: isSelected, hasData: point.hasData, isNegative: isNegative))
                     .frame(width: barSlotWidth - 10, height: barHeight)
             }
             .buttonStyle(.plain)
 
             // Month label
             Text(Self.monthLabel.string(from: point.date))
-                .font(.system(size: 9))
+                .font(.caption2)
                 .foregroundStyle(isSelected ? .primary : .secondary)
                 .frame(height: labelHeight)
         }
         .frame(width: barSlotWidth)
     }
 
-    private func barFill(isSelected: Bool, hasData: Bool) -> Color {
+    private func barFill(isSelected: Bool, hasData: Bool, isNegative: Bool = false) -> Color {
         if !hasData {
             return Color(.separator).opacity(0.15)
         }
+        let baseColor: Color = isNegative ? .red : .accentColor
         if isSelected {
-            return Color.accentColor
+            return baseColor
         }
-        return Color.accentColor.opacity(0.4)
+        return baseColor.opacity(0.4)
     }
 }
 

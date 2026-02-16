@@ -30,6 +30,8 @@
 		A1B2C3D4E5F60001000A0016 /* CurrencySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0016 /* CurrencySettings.swift */; };
 		A1B2C3D4E5F60001000A0017 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0017 /* SettingsView.swift */; };
 		A1B2C3D4E5F60001000A0018 /* DataExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0018 /* DataExporter.swift */; };
+		A1B2C3D4E5F60001000A0019 /* ReportSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0019 /* ReportSettings.swift */; };
+		A1B2C3D4E5F60001000A001A /* ReportSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A001A /* ReportSettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +58,8 @@
 		A1B2C3D4E5F60002000A0016 /* CurrencySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySettings.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0017 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0018 /* DataExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExporter.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60002000A0019 /* ReportSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSettings.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60002000A001A /* ReportSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSettingsView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60003000A0001 /* FamFin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FamFin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -176,6 +180,7 @@
 				A1B2C3D4E5F60002000A0013 /* BudgetCalculator.swift */,
 				A1B2C3D4E5F60002000A0016 /* CurrencySettings.swift */,
 				A1B2C3D4E5F60002000A0018 /* DataExporter.swift */,
+				A1B2C3D4E5F60002000A0019 /* ReportSettings.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -184,6 +189,7 @@
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60002000A000D /* ReportsView.swift */,
+				A1B2C3D4E5F60002000A001A /* ReportSettingsView.swift */,
 			);
 			path = Reports;
 			sourceTree = "<group>";
@@ -287,6 +293,8 @@
 				A1B2C3D4E5F60001000A0016 /* CurrencySettings.swift in Sources */,
 				A1B2C3D4E5F60001000A0017 /* SettingsView.swift in Sources */,
 				A1B2C3D4E5F60001000A0018 /* DataExporter.swift in Sources */,
+				A1B2C3D4E5F60001000A0019 /* ReportSettings.swift in Sources */,
+				A1B2C3D4E5F60001000A001A /* ReportSettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

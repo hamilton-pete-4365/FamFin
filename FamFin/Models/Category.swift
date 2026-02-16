@@ -47,9 +47,14 @@ final class Category {
     ///   Tracking → Budget = inflow (increases balance, like income)
     func activity(in month: Date) -> Decimal {
         let calendar = Calendar.current
+        let comps = calendar.dateComponents([.year, .month], from: month)
+        guard let startOfMonth = calendar.date(from: comps),
+              let endOfMonth = calendar.date(byAdding: .month, value: 1, to: startOfMonth) else {
+            return Decimal.zero
+        }
         var net = Decimal.zero
         for transaction in transactions {
-            guard calendar.isDate(transaction.date, equalTo: month, toGranularity: .month) else { continue }
+            guard transaction.date >= startOfMonth && transaction.date < endOfMonth else { continue }
             switch transaction.type {
             case .expense:
                 guard transaction.account?.isBudget == true else { continue }
@@ -115,10 +120,15 @@ final class Category {
     /// Budgeted in a specific month
     func budgeted(in month: Date) -> Decimal {
         let calendar = Calendar.current
+        let comps = calendar.dateComponents([.year, .month], from: month)
+        guard let startOfMonth = calendar.date(from: comps),
+              let endOfMonth = calendar.date(byAdding: .month, value: 1, to: startOfMonth) else {
+            return Decimal.zero
+        }
         return allocations
             .filter { allocation in
                 guard let allocMonth = allocation.budgetMonth?.month else { return false }
-                return calendar.isDate(allocMonth, equalTo: month, toGranularity: .month)
+                return allocMonth >= startOfMonth && allocMonth < endOfMonth
             }
             .reduce(Decimal.zero) { $0 + $1.budgeted }
     }
@@ -144,8 +154,9 @@ final class Category {
         for offset in 1...count {
             guard let pastMonth = calendar.date(byAdding: .month, value: -offset, to: month) else { continue }
             let monthActivity = activity(in: pastMonth)
-            // Activity is negative for spending, so negate to get positive spending amount
-            if monthActivity != .zero {
+            // Activity is negative for spending — only include months with net outflow.
+            // Positive activity (income/refunds) is excluded to avoid polluting the spending average.
+            if monthActivity < .zero {
                 totals.append(-monthActivity)
             }
         }

@@ -17,10 +17,10 @@ struct ContentView: View {
                 navigateToAccountID = accountID
                 selectedTab = 2
             })
-                .tabItem {
-                    Label("Accounts", systemImage: "banknote.fill")
-                }
-                .tag(1)
+            .tabItem {
+                Label("Accounts", systemImage: "banknote.fill")
+            }
+            .tag(1)
 
             TransactionsTab(navigateToAccountID: $navigateToAccountID)
                 .tabItem {

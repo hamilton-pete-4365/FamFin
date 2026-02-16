@@ -19,7 +19,7 @@ private func formatAbsCurrency(_ amount: Decimal, currency: SupportedCurrency) -
 }
 
 /// Formats currency values consistently across the app.
-/// Negative values shown in secondary with brackets: (£9.00)
+/// Negative values shown in red with minus prefix: -£9.00
 /// Positive values optionally show + prefix.
 /// Uses @AppStorage to reactively update when currency changes.
 struct GBPText: View {
@@ -42,13 +42,13 @@ struct GBPText: View {
     var body: some View {
         Text(formatted)
             .font(font)
-            .foregroundStyle(amount < 0 ? .secondary : positiveStyle)
+            .foregroundStyle(amount < 0 ? .red : positiveStyle)
     }
 
     private var formatted: String {
         let value = formatAbsCurrency(amount, currency: currency)
         if amount < 0 {
-            return "(\(value))"
+            return "-\(value)"
         } else if showSign && amount > 0 {
             return "+\(value)"
         }
@@ -58,7 +58,7 @@ struct GBPText: View {
 
 /// For transaction rows: shows the amount with appropriate formatting
 /// Income: +£150.00 in green
-/// Expense: (£150.00) in primary
+/// Expense: -£150.00 in red
 /// Transfer: £150.00 in secondary
 struct TransactionAmountText: View {
     let amount: Decimal
@@ -83,7 +83,7 @@ struct TransactionAmountText: View {
         case .income:
             return "+\(value)"
         case .expense:
-            return "(\(value))"
+            return "-\(value)"
         case .transfer:
             return value
         }
@@ -92,7 +92,7 @@ struct TransactionAmountText: View {
     private var color: Color {
         switch type {
         case .income: return .green
-        case .expense: return .primary
+        case .expense: return .red
         case .transfer: return .secondary
         }
     }
@@ -104,7 +104,7 @@ func formatGBP(_ amount: Decimal, currencyCode: String = "GBP") -> String {
     let currency = SupportedCurrency(rawValue: currencyCode) ?? .gbp
     let value = formatAbsCurrency(amount, currency: currency)
     if amount < 0 {
-        return "(\(value))"
+        return "-\(value)"
     }
     return value
 }
