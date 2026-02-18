@@ -5,7 +5,7 @@ import SwiftData
 /// This is the "envelope" in envelope budgeting
 @Model
 final class BudgetAllocation {
-    var budgeted: Decimal
+    var budgeted: Decimal = 0
     var category: Category?
     var budgetMonth: BudgetMonth?
 

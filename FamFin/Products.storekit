@@ -1,0 +1,128 @@
+{
+  "identifier" : "8A5E2F1B-3C4D-4E6F-9A8B-7C1D2E3F4A5B",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "9.99",
+      "familyShareable" : false,
+      "internalID" : "D1E2F3A4-5B6C-7D8E-9F0A-1B2C3D4E5F6A",
+      "localizations" : [
+        {
+          "description" : "Unlock FamFin forever with all core budgeting features.",
+          "displayName" : "FamFin Pro",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "Unlock FamFin forever with all core budgeting features.",
+          "displayName" : "FamFin Pro",
+          "locale" : "en_GB"
+        }
+      ],
+      "productID" : "com.famfin.app.pro",
+      "referenceName" : "FamFin Pro (Lifetime)",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Renewal"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "A1B2C3D4-E5F6-7A8B-9C0D-1E2F3A4B5C6D",
+      "localizations" : [
+
+      ],
+      "name" : "Premium",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "2.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "B2C3D4E5-F6A7-8B9C-0D1E-2F3A4B5C6D7E",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Pro features plus bank data import via CSV, OFX, and Open Banking.",
+              "displayName" : "FamFin Premium",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "Pro features plus bank data import via CSV, OFX, and Open Banking.",
+              "displayName" : "FamFin Premium",
+              "locale" : "en_GB"
+            }
+          ],
+          "productID" : "com.famfin.app.premium.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "FamFin Premium (Monthly)",
+          "subscriptionGroupID" : "A1B2C3D4-E5F6-7A8B-9C0D-1E2F3A4B5C6D",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

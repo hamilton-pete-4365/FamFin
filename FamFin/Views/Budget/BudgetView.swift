@@ -3,10 +3,14 @@ import SwiftData
 
 struct BudgetView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.requestReview) private var requestReview
+    @Environment(SharingManager.self) private var sharingManager
+    @Environment(ReviewPromptManager.self) private var reviewPromptManager
     @Query(sort: \Account.sortOrder) private var accounts: [Account]
     @Query private var allBudgetMonths: [BudgetMonth]
     @Query(sort: \Category.sortOrder) private var allCategories: [Category]
     @Query private var allTransactions: [Transaction]
+    @Query private var allGoals: [SavingsGoal]
 
     /// Lightweight fingerprint that changes when transactions are added, deleted, or edited.
     /// Watches count, total amount, and categorised count so budget recalculates on edits.
@@ -41,6 +45,7 @@ struct BudgetView: View {
     @State private var showingSettings = false
     @State private var overspentExpanded = false
     @State private var detailCategory: Category? = nil
+    @State private var navigationPath = NavigationPath()
     /// The category currently being edited (keyboard is up)
     @State private var focusedCategory: Category? = nil
     /// Set by keyboard toolbar hint buttons; consumed by the focused row
@@ -100,11 +105,13 @@ struct BudgetView: View {
 
     // MARK: - Body
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         let historicToBudget = computeHistoricToBudget()
         let futureBudgeted = computeFutureBudgeted()
 
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             VStack(spacing: 0) {
                 monthSelector
                 toBudgetBanner(historic: historicToBudget, future: futureBudgeted)
@@ -118,7 +125,7 @@ struct BudgetView: View {
                     categoryList
                 }
             }
-            .animation(.easeInOut(duration: 0.2), value: focusedCategory?.persistentModelID)
+            .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: focusedCategory?.persistentModelID)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -148,9 +155,14 @@ struct BudgetView: View {
                 SettingsView()
             }
             .sheet(item: $detailCategory) { category in
-                CategoryDetailSheet(category: category, month: selectedMonth)
-                    .presentationDetents([.medium, .large])
-                    .presentationDragIndicator(.visible)
+                CategoryDetailSheet(category: category, month: selectedMonth, onNavigateToGoal: { goalID in
+                    navigationPath.append(goalID)
+                })
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+            }
+            .navigationDestination(for: PersistentIdentifier.self) { goalID in
+                GoalDetailView(goalID: goalID)
             }
             .onAppear {
                 if !hasInitialisedExpanded {
@@ -176,22 +188,23 @@ struct BudgetView: View {
 
     var monthSelector: some View {
         HStack {
-            Button {
+            Button("Previous month", systemImage: "chevron.left") {
                 changeMonth(by: -1)
-            } label: {
-                Image(systemName: "chevron.left")
-                    .font(.title3.bold())
             }
+            .labelStyle(.iconOnly)
+            .font(.title3.bold())
+            .accessibilityHint("Double tap to go to the previous month")
             Spacer()
             Text(selectedMonth, format: .dateTime.month(.wide).year())
                 .font(.headline)
+                .accessibilityAddTraits(.isHeader)
             Spacer()
-            Button {
+            Button("Next month", systemImage: "chevron.right") {
                 changeMonth(by: 1)
-            } label: {
-                Image(systemName: "chevron.right")
-                    .font(.title3.bold())
             }
+            .labelStyle(.iconOnly)
+            .font(.title3.bold())
+            .accessibilityHint("Double tap to go to the next month")
         }
         .padding(.horizontal)
         .padding(.vertical, 12)
@@ -230,6 +243,8 @@ struct BudgetView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
         .background(bgColor)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(label): \(formatGBP(amount, currencyCode: currencyCode))")
     }
 
     // MARK: - Overspent Warnings
@@ -241,11 +256,11 @@ struct BudgetView: View {
                 let count = overspentCategories.count
                 VStack(spacing: 0) {
                     Button {
-                        withAnimation(.easeInOut(duration: 0.2)) {
+                        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
                             overspentExpanded.toggle()
                         }
                     } label: {
-                        HStack(spacing: 6) {
+                        HStack(spacing: 8) {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .font(.caption)
                             Text("\(count) \(count == 1 ? "category" : "categories") overspent by \(formatGBP(-totalOverspent, currencyCode: currencyCode))")
@@ -257,24 +272,29 @@ struct BudgetView: View {
                         }
                         .foregroundStyle(.white)
                         .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
+                        .padding(.vertical, 12)
                     }
+                    .accessibilityLabel("Warning: \(count) \(count == 1 ? "category" : "categories") overspent by \(formatGBP(-totalOverspent, currencyCode: currencyCode))")
+                    .accessibilityHint(overspentExpanded ? "Double tap to collapse details" : "Double tap to expand details")
                     .background(Color("WarningColor"))
 
                     if overspentExpanded {
                         VStack(spacing: 0) {
                             ForEach(overspentCategories, id: \.id) { item in
-                                HStack(spacing: 6) {
+                                HStack(spacing: 8) {
                                     Text(item.name)
                                         .font(.caption)
                                     Spacer()
                                     Text(formatGBP(-item.amount, currencyCode: currencyCode))
                                         .font(.caption)
+                                        .monospacedDigit()
                                         .bold()
                                 }
                                 .foregroundStyle(.white)
                                 .padding(.horizontal, 16)
-                                .padding(.vertical, 6)
+                                .padding(.vertical, 8)
+                                .accessibilityElement(children: .combine)
+                                .accessibilityLabel("\(item.name) overspent by \(formatGBP(-item.amount, currencyCode: currencyCode))")
                             }
                         }
                         .background(Color("WarningColor").opacity(0.85))
@@ -304,11 +324,12 @@ struct BudgetView: View {
                 .textCase(.uppercase)
                 .frame(width: 76, alignment: .trailing)
         }
-        .padding(.leading, 36)
-        .padding(.trailing, 20)
-        .padding(.top, 10)
-        .padding(.bottom, 6)
+        .padding(.leading, 32)
+        .padding(.trailing, 24)
+        .padding(.top, 12)
+        .padding(.bottom, 8)
         .background(Color(.systemGroupedBackground))
+        .accessibilityHidden(true)
     }
 
     // MARK: - Category List
@@ -319,7 +340,7 @@ struct BudgetView: View {
                 Section {
                     // Collapsible header row
                     Button {
-                        withAnimation {
+                        withAnimation(reduceMotion ? nil : .default) {
                             let headerKey = "\(header.persistentModelID)"
                             if expandedHeaders.contains(headerKey) {
                                 expandedHeaders.remove(headerKey)
@@ -328,11 +349,11 @@ struct BudgetView: View {
                             }
                         }
                     } label: {
-                        HStack(spacing: 6) {
+                        HStack(spacing: 8) {
                             Image(systemName: expandedHeaders.contains("\(header.persistentModelID)") ? "chevron.down" : "chevron.right")
                                 .font(.caption2.bold())
                                 .foregroundStyle(.secondary)
-                                .frame(width: 14)
+                                .frame(width: 16)
 
                             Text(header.name.uppercased())
                                 .font(.subheadline.bold())
@@ -344,6 +365,7 @@ struct BudgetView: View {
                             // Header budgeted total for this month
                             Text(formatGBP(headerBudgeted(header), currencyCode: currencyCode))
                                 .font(.subheadline)
+                                .monospacedDigit()
                                 .foregroundStyle(.secondary)
                                 .frame(width: 88, alignment: .trailing)
 
@@ -351,10 +373,15 @@ struct BudgetView: View {
                             let avail = headerAvailable(header)
                             Text(formatGBP(avail, currencyCode: currencyCode))
                                 .font(.subheadline)
+                                .monospacedDigit()
                                 .foregroundStyle(avail < 0 ? .red : Color.accentColor)
                                 .frame(width: 76, alignment: .trailing)
                         }
                     }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityLabel("\(header.name), budgeted \(formatGBP(headerBudgeted(header), currencyCode: currencyCode)), available \(formatGBP(headerAvailable(header), currencyCode: currencyCode))\(headerAvailable(header) < 0 ? ", overspent" : "")")
+                    .accessibilityHint(expandedHeaders.contains("\(header.persistentModelID)") ? "Double tap to collapse" : "Double tap to expand")
                     .listRowBackground(Color(.secondarySystemGroupedBackground))
                     .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
 
@@ -364,11 +391,13 @@ struct BudgetView: View {
                             let catKey = "\(subcategory.persistentModelID)"
                             let budgeted = localBudgets[catKey] ?? Decimal.zero
                             let avail = localAvailable[catKey] ?? subcategory.available(through: selectedMonth)
+                            let categoryHasGoal = !goalsForCategory(subcategory).isEmpty
                             BudgetCategoryRow(
                                 category: subcategory,
                                 month: selectedMonth,
                                 budgetedAmount: budgeted,
                                 available: avail,
+                                hasGoal: categoryHasGoal,
                                 onBudgetChanged: { newAmount in
                                     saveBudget(for: subcategory, amount: newAmount)
                                 },
@@ -405,27 +434,22 @@ struct BudgetView: View {
     // MARK: - Empty State
 
     var emptyState: some View {
-        VStack(spacing: 16) {
-            Spacer()
-            Image(systemName: "tray")
-                .font(.system(size: 48))
-                .foregroundStyle(.secondary)
-            Text("No categories yet")
-                .font(.headline)
-            Text("Tap the gear icon to set up your budget categories.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
-            Spacer()
-        }
+        ContentUnavailableView(
+            "No Categories Yet",
+            systemImage: "tray",
+            description: Text("Tap the gear icon to set up your budget categories.")
+        )
     }
 
-    // MARK: - Hint Bar
+    // MARK: - Quick Fill Card
 
-    /// Hint bar shown above the category list when editing a budget amount.
-    /// Always shows two rows with four chips (Last month + 12 month average × Budgeted + Spent).
-    /// Zero-value chips are shown greyed out and disabled for layout stability.
+    /// Goals linked to the currently focused category
+    private func goalsForCategory(_ category: Category) -> [SavingsGoal] {
+        allGoals.filter { $0.linkedCategory?.persistentModelID == category.persistentModelID }
+    }
+
+    /// Floating card shown above the category list when editing a budget amount.
+    /// Shows historical hints (last month, average) and goal target if a goal is linked.
     @ViewBuilder
     var keyboardHintBar: some View {
         if let cat = focusedCategory {
@@ -434,26 +458,28 @@ struct BudgetView: View {
             let lastSpent = lastMonth.map { -cat.activity(in: $0) } ?? .zero
             let avgBudgeted = cat.averageMonthlyBudgeted(before: selectedMonth, months: 12)
             let avgSpent = cat.averageMonthlySpending(before: selectedMonth, months: 12)
+            let linkedGoals = goalsForCategory(cat)
 
             VStack(spacing: 0) {
-                // Top divider
-                Divider()
-
                 VStack(spacing: 0) {
-                    // Header label
+                    // Card header
                     HStack {
-                        Text("Quick fill: \(cat.name)")
-                            .font(.caption.bold())
-                            .foregroundStyle(.secondary)
-                            .textCase(.uppercase)
+                        Text(cat.emoji)
+                        Text(cat.name)
+                            .bold()
                             .lineLimit(1)
                         Spacer()
+                        Text("Quick Fill")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .textCase(.uppercase)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 10)
+                    .font(.subheadline)
+                    .padding(.horizontal)
+                    .padding(.top, 12)
                     .padding(.bottom, 8)
 
-                    // Hint rows — always show both
+                    // Hint rows
                     VStack(spacing: 0) {
                         hintRow(label: "Last month", items: [
                             ("Budgeted", lastBudgeted),
@@ -461,24 +487,35 @@ struct BudgetView: View {
                         ])
 
                         Divider()
-                            .padding(.leading, 16)
+                            .padding(.leading)
 
-                        hintRow(label: "12 month average", items: [
+                        hintRow(label: "12mo average", items: [
                             ("Budgeted", avgBudgeted),
                             ("Spent", avgSpent),
                         ])
+
+                        // Goal hint rows
+                        ForEach(linkedGoals) { goal in
+                            if let monthlyTarget = goal.monthlyTarget(through: selectedMonth), monthlyTarget > 0 {
+                                Divider()
+                                    .padding(.leading)
+
+                                goalHintRow(goal: goal, monthlyTarget: monthlyTarget)
+                            }
+                        }
                     }
                     .background(Color(.systemBackground))
-                    .clipShape(.rect(cornerRadius: 10))
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 10)
+                    .clipShape(.rect(cornerRadius: 8))
+                    .padding(.horizontal, 12)
+                    .padding(.bottom, 12)
                 }
                 .background(Color(.secondarySystemBackground))
-
-                // Bottom divider
-                Divider()
+                .clipShape(.rect(cornerRadius: 12))
+                .shadow(color: .black.opacity(0.06), radius: 4, y: 2)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
             }
-            .transition(.move(edge: .top).combined(with: .opacity))
+            .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
         }
     }
 
@@ -491,18 +528,17 @@ struct BudgetView: View {
 
             Spacer()
 
-            ForEach(Array(items.enumerated()), id: \.offset) { index, item in
+            ForEach(items.enumerated(), id: \.offset) { index, item in
                 if index > 0 {
-                    // Vertical separator between chips
                     Rectangle()
                         .fill(Color(.separator))
                         .frame(width: 1, height: 24)
-                        .padding(.horizontal, 10)
+                        .padding(.horizontal, 12)
                 }
                 hintChip(label: item.0, amount: item.1)
             }
         }
-        .padding(.horizontal, 14)
+        .padding(.horizontal, 12)
         .padding(.vertical, 12)
     }
 
@@ -511,9 +547,10 @@ struct BudgetView: View {
         Button {
             pendingHintAmount = amount
         } label: {
-            VStack(spacing: 2) {
+            VStack(spacing: 4) {
                 Text(formatGBP(amount, currencyCode: currencyCode))
                     .font(.subheadline.bold())
+                    .monospacedDigit()
                     .foregroundStyle(Color.accentColor)
                 Text(label)
                     .font(.caption)
@@ -521,6 +558,37 @@ struct BudgetView: View {
             }
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("\(label): \(formatGBP(amount, currencyCode: currencyCode))")
+        .accessibilityHint("Double tap to fill budget with this amount")
+    }
+
+    /// Goal hint row showing the monthly target needed to stay on track
+    private func goalHintRow(goal: SavingsGoal, monthlyTarget: Decimal) -> some View {
+        HStack(spacing: 0) {
+            HStack(spacing: 4) {
+                Image(systemName: "target")
+                    .font(.caption)
+                    .foregroundStyle(.purple)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(goal.name)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                    if let days = goal.daysRemaining, days > 0 {
+                        Text("\(days)d left")
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
+                    }
+                }
+            }
+
+            Spacer()
+
+            hintChip(label: "Goal", amount: monthlyTarget)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 12)
     }
 
     // MARK: - Helpers
@@ -604,6 +672,9 @@ struct BudgetView: View {
             let newBM = BudgetMonth(month: selectedMonth)
             modelContext.insert(newBM)
             bm = newBM
+
+            // First budget allocation for this month — record as a meaningful event
+            reviewPromptManager.recordEvent(.budgetMonthCompleted, requestReview: requestReview)
         }
 
         // Find or create allocation — fetch directly from modelContext for fresh data
@@ -631,6 +702,17 @@ struct BudgetView: View {
         }
 
         try? modelContext.save()
+        HapticManager.light()
+
+        // Log activity for shared budgets
+        if sharingManager.isShared && delta != .zero {
+            let message = "\(sharingManager.currentUserName) updated \(category.name) budget to \(amount)"
+            sharingManager.logActivity(
+                message: message,
+                type: .editedBudget,
+                context: modelContext
+            )
+        }
     }
 
     /// Compute "To Budget" from persistent data (no local overrides)
@@ -653,12 +735,15 @@ struct BudgetCategoryRow: View {
     let month: Date
     let budgetedAmount: Decimal
     let available: Decimal
+    let hasGoal: Bool
     let onBudgetChanged: (Decimal) -> Void
     var onTapDetail: (() -> Void)? = nil
     /// Signals the parent when this row gains/loses focus
     var onFocusChanged: ((Bool) -> Void)? = nil
     /// Parent sets this to apply a hint amount; row clears it after applying
     @Binding var pendingHintAmount: Decimal?
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// Raw digits string — user types "1536", we store "1536" and display £15.36
     @State private var rawDigits: String = ""
@@ -703,15 +788,23 @@ struct BudgetCategoryRow: View {
             Button {
                 onTapDetail?()
             } label: {
-                HStack(spacing: 0) {
+                HStack(spacing: 4) {
                     Text(category.name)
                         .font(.subheadline)
                         .lineLimit(1)
+                    if hasGoal {
+                        Image(systemName: "target")
+                            .font(.caption2)
+                            .foregroundStyle(.purple)
+                            .accessibilityLabel("Has savings goal")
+                    }
                     Spacer()
                 }
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("\(category.name) details\(hasGoal ? ", has savings goal" : "")")
+            .accessibilityHint("Double tap to view category details")
 
             // Budgeted this month (middle, editable — pence-based ATM entry)
             ZStack {
@@ -721,6 +814,7 @@ struct BudgetCategoryRow: View {
                     .focused($isFocused)
                     .opacity(0.01)
                     .frame(width: 80, height: 32)
+                    .accessibilityHidden(true)
                     .onChange(of: isFocused) { _, focused in
                         if focused {
                             previousDigits = rawDigits
@@ -783,15 +877,18 @@ struct BudgetCategoryRow: View {
                 } label: {
                     Text(displayString)
                         .font(.subheadline)
+                        .monospacedDigit()
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.trailing)
                         .frame(width: 80, alignment: .trailing)
-                        .contentTransition(.numericText())
+                        .contentTransition(reduceMotion ? .identity : .numericText())
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Budgeted: \(displayString)")
+                .accessibilityHint("Double tap to edit budget amount")
             }
             .padding(.horizontal, 8)
-            .padding(.vertical, 6)
+            .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 8)
                     .fill(Color(.tertiarySystemGroupedBackground))
@@ -808,13 +905,16 @@ struct BudgetCategoryRow: View {
                     .frame(width: 76, alignment: .trailing)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Available: \(formatGBP(available, currencyCode: currencyCode))\(available < 0 ? ", overspent" : "")")
+            .accessibilityHint("Double tap to view category details")
         }
         .padding(.vertical, 4)
         .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
         .listRowBackground(
             isFocused ? Color.accentColor.opacity(0.12) : Color(.systemBackground)
         )
-        .animation(.easeInOut(duration: 0.15), value: isFocused)
+        .sensoryFeedback(.selection, trigger: isFocused)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.15), value: isFocused)
         .onAppear {
             guard !hasLoaded else { return }
             hasLoaded = true
@@ -847,10 +947,12 @@ struct CategoryDetailSheet: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Query(sort: \Transaction.date, order: .reverse) private var allTransactions: [Transaction]
+    @Query private var allGoals: [SavingsGoal]
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
     let category: Category
     let month: Date
+    var onNavigateToGoal: ((PersistentIdentifier) -> Void)? = nil
 
     @State private var editingTransaction: Transaction? = nil
 
@@ -861,6 +963,11 @@ struct CategoryDetailSheet: View {
             guard cat.persistentModelID == category.persistentModelID else { return false }
             return calendar.isDate(transaction.date, equalTo: month, toGranularity: .month)
         }
+    }
+
+    /// Goals linked to this category
+    private var linkedGoals: [SavingsGoal] {
+        allGoals.filter { $0.linkedCategory?.persistentModelID == category.persistentModelID }
     }
 
     var budgeted: Decimal { category.budgeted(in: month) }
@@ -891,6 +998,7 @@ struct CategoryDetailSheet: View {
                                 .foregroundStyle(.secondary)
                         }
                         .frame(maxWidth: .infinity)
+                        .accessibilityElement(children: .combine)
 
                         VStack(spacing: 4) {
                             GBPText(amount: activity, font: .headline)
@@ -899,6 +1007,7 @@ struct CategoryDetailSheet: View {
                                 .foregroundStyle(.secondary)
                         }
                         .frame(maxWidth: .infinity)
+                        .accessibilityElement(children: .combine)
 
                         VStack(spacing: 4) {
                             GBPText(amount: available, font: .headline, accentPositive: true)
@@ -907,12 +1016,31 @@ struct CategoryDetailSheet: View {
                                 .foregroundStyle(.secondary)
                         }
                         .frame(maxWidth: .infinity)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Available: \(formatGBP(available, currencyCode: currencyCode))\(available < 0 ? ", overspent" : "")")
                     }
                     .padding(.horizontal, 20)
                     .padding(.bottom, 12)
                 }
                 .padding(.top, 16)
                 .background(Color(.systemBackground))
+
+                // Linked goals section
+                if !linkedGoals.isEmpty {
+                    Divider()
+
+                    VStack(spacing: 8) {
+                        ForEach(linkedGoals) { goal in
+                            CategoryGoalRow(goal: goal, month: month) {
+                                dismiss()
+                                onNavigateToGoal?(goal.persistentModelID)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+                    .background(Color(.systemBackground))
+                }
 
                 Divider()
 
@@ -923,6 +1051,7 @@ struct CategoryDetailSheet: View {
                         Image(systemName: "tray")
                             .font(.title)
                             .foregroundStyle(.secondary)
+                            .accessibilityHidden(true)
                         Text("No transactions this month")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
@@ -966,6 +1095,67 @@ struct CategoryDetailSheet: View {
     }
 }
 
+/// A compact goal summary row shown inside the CategoryDetailSheet
+struct CategoryGoalRow: View {
+    let goal: SavingsGoal
+    let month: Date
+    var onViewGoal: (() -> Void)? = nil
+    @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
+
+    private var goalProgress: Double {
+        goal.progress(through: month)
+    }
+
+    private var progressColor: Color {
+        if goal.isComplete(through: month) { return .green }
+        if goalProgress >= 0.75 { return .blue }
+        if goalProgress >= 0.5 { return .orange }
+        return .accentColor
+    }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            ZStack {
+                ProgressRingView(progress: goalProgress, color: progressColor, lineWidth: 3)
+                    .frame(width: 28, height: 28)
+                Text(goal.emoji)
+                    .font(.caption)
+            }
+            .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(goal.name)
+                    .font(.subheadline.bold())
+                HStack(spacing: 4) {
+                    Text(formatGBP(goal.currentAmount(through: month), currencyCode: currencyCode))
+                    Text("of")
+                        .foregroundStyle(.tertiary)
+                    Text(formatGBP(goal.targetAmount, currencyCode: currencyCode))
+                }
+                .font(.caption)
+                .monospacedDigit()
+                .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            Button("View Goal", systemImage: "chevron.right") {
+                onViewGoal?()
+            }
+            .font(.caption)
+            .labelStyle(.titleAndIcon)
+            .buttonStyle(.plain)
+            .foregroundStyle(.tint)
+        }
+        .padding(12)
+        .background(progressColor.opacity(0.06))
+        .clipShape(.rect(cornerRadius: 6))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(goal.name) goal, \(Int(goalProgress * 100)) percent complete")
+        .accessibilityHint("Double tap to view goal details")
+    }
+}
+
 // MARK: - Preview
 
 #Preview {
@@ -978,5 +1168,8 @@ struct CategoryDetailSheet: View {
             BudgetAllocation.self,
             SavingsGoal.self,
             Payee.self,
+            ActivityEntry.self,
         ], inMemory: true)
+        .environment(SharingManager())
+        .environment(ReviewPromptManager())
 }

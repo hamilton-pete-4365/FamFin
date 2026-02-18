@@ -3,11 +3,11 @@ import SwiftData
 
 @Model
 final class Category {
-    var name: String
-    var emoji: String
-    var isHeader: Bool          // true = grouping header, false = budgetable subcategory
-    var isSystem: Bool          // true = system category (e.g. "To Budget"), not user-editable
-    var sortOrder: Int          // ordering within its level (among siblings)
+    var name: String = ""
+    var emoji: String = "📁"
+    var isHeader: Bool = false          // true = grouping header, false = budgetable subcategory
+    var isSystem: Bool = false          // true = system category (e.g. "To Budget"), not user-editable
+    var sortOrder: Int = 0          // ordering within its level (among siblings)
 
     // Parent: only subcategories have a parent (headers have nil)
     var parent: Category?
@@ -21,6 +21,12 @@ final class Category {
 
     @Relationship(deleteRule: .cascade, inverse: \BudgetAllocation.category)
     var allocations: [BudgetAllocation] = []
+
+    @Relationship(deleteRule: .nullify, inverse: \SavingsGoal.linkedCategory)
+    var goals: [SavingsGoal] = []
+
+    @Relationship(deleteRule: .nullify, inverse: \RecurringTransaction.category)
+    var recurringTransactions: [RecurringTransaction] = []
 
     // Keep old field for migration — SwiftData won't crash if it exists in DB
     private var group: String?

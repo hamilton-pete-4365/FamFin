@@ -78,4 +78,14 @@ struct CurrencySettings {
         let code = UserDefaults.standard.string(forKey: key) ?? "GBP"
         return SupportedCurrency(rawValue: code) ?? .gbp
     }
+
+    /// Sync the currency code to the shared App Group UserDefaults
+    /// so that the widget extension can read it.
+    /// No-ops gracefully when App Group entitlements are unavailable.
+    static func syncToSharedDefaults() {
+        guard SharedModelContainer.isCloudKitAvailable else { return }
+        let code = UserDefaults.standard.string(forKey: key) ?? "GBP"
+        UserDefaults(suiteName: SharedModelContainer.appGroupIdentifier)?
+            .set(code, forKey: key)
+    }
 }

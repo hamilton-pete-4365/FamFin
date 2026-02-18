@@ -47,6 +47,8 @@ struct ReportsView: View {
                 if hasData {
                     ScrollView {
                         VStack(spacing: 16) {
+                            AnalyticsNavigationSection()
+
                             ForEach(settings.charts) { chart in
                                 BalanceChartCard(
                                     title: chart.name,
@@ -206,6 +208,86 @@ struct ReportsView: View {
     }
 }
 
+// MARK: - Analytics Navigation Section
+
+struct AnalyticsNavigationSection: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Analytics")
+                .font(.headline)
+                .foregroundStyle(.secondary)
+                .accessibilityAddTraits(.isHeader)
+
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                AnalyticsNavCard(
+                    title: "Spending Breakdown",
+                    systemImage: "chart.pie.fill",
+                    color: .blue
+                ) {
+                    SpendingBreakdownView()
+                }
+
+                AnalyticsNavCard(
+                    title: "Spending Trends",
+                    systemImage: "chart.xyaxis.line",
+                    color: .green
+                ) {
+                    SpendingTrendsView()
+                }
+
+                AnalyticsNavCard(
+                    title: "Income vs Expenses",
+                    systemImage: "chart.bar.fill",
+                    color: .orange
+                ) {
+                    IncomeVsExpenseView()
+                }
+
+                AnalyticsNavCard(
+                    title: "Top Spenders",
+                    systemImage: "list.number",
+                    color: .purple
+                ) {
+                    TopSpendersView()
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Analytics Navigation Card
+
+struct AnalyticsNavCard<Destination: View>: View {
+    let title: String
+    let systemImage: String
+    let color: Color
+    @ViewBuilder var destination: () -> Destination
+
+    var body: some View {
+        NavigationLink {
+            destination()
+        } label: {
+            VStack(spacing: 8) {
+                Image(systemName: systemImage)
+                    .font(.title2)
+                    .foregroundStyle(color)
+
+                Text(title)
+                    .font(.caption)
+                    .foregroundStyle(.primary)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .background(color.opacity(0.1))
+            .clipShape(.rect(cornerRadius: 12))
+        }
+        .accessibilityLabel(title)
+        .accessibilityHint("Double tap to view \(title) analytics")
+    }
+}
+
 // MARK: - Chart Card
 
 struct BalanceChartCard: View {
@@ -236,6 +318,7 @@ struct BalanceChartCard: View {
                 Text(title)
                     .font(.headline)
                     .foregroundStyle(.secondary)
+                    .accessibilityAddTraits(.isHeader)
 
                 Spacer()
 
@@ -246,6 +329,8 @@ struct BalanceChartCard: View {
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("\(title): \(formatGBP(point.amount, currencyCode: currencyCode)) in \(Self.monthFormatter.string(from: point.date))\(point.amount < 0 ? ", negative" : "")")
                 }
             }
 
@@ -256,11 +341,13 @@ struct BalanceChartCard: View {
                 selectedIndex: $selectedIndex
             )
             .frame(height: 180)
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel("\(title) chart with \(data.count) months")
         }
         .padding(16)
         .background(Color(.systemBackground))
         .clipShape(.rect(cornerRadius: 12))
-        .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 2)
+        .shadow(color: .black.opacity(0.06), radius: 4, x: 0, y: 2)
     }
 }
 
@@ -297,7 +384,7 @@ struct BalanceBarChart: View {
 
             ScrollViewReader { proxy in
                 ScrollView(.horizontal) {
-                    HStack(alignment: .bottom, spacing: 6) {
+                    HStack(alignment: .bottom, spacing: 8) {
                         ForEach(Array(data.enumerated()), id: \.element.id) { index, point in
                             barColumn(index: index, point: point, chartHeight: chartHeight)
                                 .id(index)
@@ -334,7 +421,7 @@ struct BalanceBarChart: View {
         let barHeight = max(point.hasData ? CGFloat(normalized) * barAreaHeight : 2, 2)
         let isNegative = point.hasData && point.amount < 0
 
-        VStack(spacing: 2) {
+        VStack(spacing: 4) {
             Spacer(minLength: 0)
 
             // Bar
@@ -346,12 +433,16 @@ struct BalanceBarChart: View {
                     .frame(width: barSlotWidth - 10, height: barHeight)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("\(Self.monthLabel.string(from: point.date)): \(point.hasData ? formatGBP(point.amount, currencyCode: currencyCode) : "No data")\(isNegative ? ", negative" : "")")
+            .accessibilityHint(isSelected ? "Currently selected" : "Double tap to select this month")
+            .accessibilityAddTraits(isSelected ? .isSelected : [])
 
             // Month label
             Text(Self.monthLabel.string(from: point.date))
                 .font(.caption2)
                 .foregroundStyle(isSelected ? .primary : .secondary)
                 .frame(height: labelHeight)
+                .accessibilityHidden(true)
         }
         .frame(width: barSlotWidth)
     }

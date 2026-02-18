@@ -1,25 +1,32 @@
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 @main
 struct FamFinApp: App {
     let modelContainer: ModelContainer
+    @State private var premiumManager = PremiumManager()
+    @State private var syncManager = SyncManager()
+    @State private var notificationManager = NotificationManager()
+    @State private var sharingManager = SharingManager()
+    @State private var reviewPromptManager = ReviewPromptManager()
+    @Environment(\.scenePhase) private var scenePhase
 
     init() {
         do {
-            modelContainer = try ModelContainer(for:
-                Account.self,
-                Transaction.self,
-                Category.self,
-                BudgetMonth.self,
-                BudgetAllocation.self,
-                SavingsGoal.self,
-                Payee.self
-            )
-            // Seed default categories on first launch
-            DefaultCategories.seedIfNeeded(context: modelContainer.mainContext)
+            modelContainer = try SharedModelContainer.makeAppContainer()
+
+            // Only seed default categories if onboarding has been completed.
+            // During first launch, the onboarding flow handles category seeding
+            // so the user can choose which category groups to include.
+            let hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+            if hasCompletedOnboarding {
+                DefaultCategories.seedIfNeeded(context: modelContainer.mainContext)
+            }
             // Clean up duplicate BudgetAllocations from previous bugs
             FamFinApp.cleanupDuplicateAllocations(context: modelContainer.mainContext)
+            // Generate any due recurring transactions
+            RecurrenceEngine.processRecurringTransactions(context: modelContainer.mainContext)
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
         }
@@ -65,6 +72,26 @@ struct FamFinApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(premiumManager)
+                .environment(syncManager)
+                .environment(notificationManager)
+                .environment(sharingManager)
+                .environment(reviewPromptManager)
+                .onAppear {
+                    reviewPromptManager.incrementSessionCount()
+                }
+                .onChange(of: scenePhase) { _, newPhase in
+                    if newPhase == .active {
+                        Task {
+                            await notificationManager.updateNotifications(
+                                context: modelContainer.mainContext
+                            )
+                        }
+                        // Sync currency preference and refresh widgets
+                        CurrencySettings.syncToSharedDefaults()
+                        WidgetCenter.shared.reloadAllTimelines()
+                    }
+                }
         }
         .modelContainer(modelContainer)
     }

@@ -3,8 +3,8 @@ import SwiftData
 
 @Model
 final class BudgetMonth {
-    var month: Date  // first day of the month
-    var note: String
+    var month: Date = Date()  // first day of the month
+    var note: String = ""
 
     @Relationship(deleteRule: .cascade, inverse: \BudgetAllocation.budgetMonth)
     var allocations: [BudgetAllocation] = []

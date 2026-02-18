@@ -131,7 +131,10 @@ struct ChartRow: View {
                 Image(systemName: "lock.fill")
                     .font(.caption)
                     .foregroundStyle(.tertiary)
+                    .accessibilityHidden(true)
             }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("\(chart.name), default chart, locked")
         } else {
             Button {
                 onSelectAccounts()
@@ -267,5 +270,8 @@ struct AccountToggleRow: View {
                     .foregroundStyle(isIncluded ? Color.accentColor : .secondary)
             }
         }
+        .accessibilityLabel("\(accountName), \(isIncluded ? "included" : "excluded")")
+        .accessibilityHint("Double tap to \(isIncluded ? "exclude from" : "include in") chart")
+        .accessibilityAddTraits(isIncluded ? .isSelected : [])
     }
 }

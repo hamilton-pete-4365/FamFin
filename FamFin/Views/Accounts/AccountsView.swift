@@ -8,16 +8,17 @@ struct AccountsView: View {
     @State private var editingAccount: Account?
     @State private var isEditing = false
     @State private var expandedSections: Set<String> = ["Budget", "Tracking"]
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// Called when user taps an account to view its transactions
     var onSelectAccount: ((PersistentIdentifier) -> Void)?
 
     var budgetAccounts: [Account] {
-        accounts.filter { $0.isBudget }.sorted { $0.sortOrder < $1.sortOrder }
+        accounts.filter { $0.isBudget }
     }
 
     var trackingAccounts: [Account] {
-        accounts.filter { !$0.isBudget }.sorted { $0.sortOrder < $1.sortOrder }
+        accounts.filter { !$0.isBudget }
     }
 
     var budgetBalance: Decimal {
@@ -44,7 +45,7 @@ struct AccountsView: View {
                             Section {
                                 // Collapsible section header
                                 Button {
-                                    withAnimation {
+                                    withAnimation(reduceMotion ? nil : .default) {
                                         if expandedSections.contains("Budget") {
                                             expandedSections.remove("Budget")
                                         } else {
@@ -52,11 +53,11 @@ struct AccountsView: View {
                                         }
                                     }
                                 } label: {
-                                    HStack(spacing: 6) {
+                                    HStack(spacing: 8) {
                                         Image(systemName: expandedSections.contains("Budget") ? "chevron.down" : "chevron.right")
                                             .font(.caption2.bold())
                                             .foregroundStyle(.secondary)
-                                            .frame(width: 14)
+                                            .frame(width: 16)
                                         Text("BUDGET ACCOUNTS")
                                             .font(.subheadline.bold())
                                             .foregroundStyle(.secondary)
@@ -65,6 +66,9 @@ struct AccountsView: View {
                                     }
                                 }
                                 .tint(.primary)
+                                .accessibilityElement(children: .combine)
+                                .accessibilityAddTraits(.isHeader)
+                                .accessibilityHint(expandedSections.contains("Budget") ? "Double tap to collapse" : "Double tap to expand")
                                 .listRowBackground(Color(.secondarySystemGroupedBackground))
                                 .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
 
@@ -96,7 +100,7 @@ struct AccountsView: View {
                             Section {
                                 // Collapsible section header
                                 Button {
-                                    withAnimation {
+                                    withAnimation(reduceMotion ? nil : .default) {
                                         if expandedSections.contains("Tracking") {
                                             expandedSections.remove("Tracking")
                                         } else {
@@ -104,11 +108,11 @@ struct AccountsView: View {
                                         }
                                     }
                                 } label: {
-                                    HStack(spacing: 6) {
+                                    HStack(spacing: 8) {
                                         Image(systemName: expandedSections.contains("Tracking") ? "chevron.down" : "chevron.right")
                                             .font(.caption2.bold())
                                             .foregroundStyle(.secondary)
-                                            .frame(width: 14)
+                                            .frame(width: 16)
                                         Text("TRACKING ACCOUNTS")
                                             .font(.subheadline.bold())
                                             .foregroundStyle(.secondary)
@@ -117,6 +121,9 @@ struct AccountsView: View {
                                     }
                                 }
                                 .tint(.primary)
+                                .accessibilityElement(children: .combine)
+                                .accessibilityAddTraits(.isHeader)
+                                .accessibilityHint(expandedSections.contains("Tracking") ? "Double tap to collapse" : "Double tap to expand")
                                 .listRowBackground(Color(.secondarySystemGroupedBackground))
                                 .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
 
@@ -152,7 +159,7 @@ struct AccountsView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     if !accounts.isEmpty {
                         Button(isEditing ? "Done" : "Edit") {
-                            withAnimation {
+                            withAnimation(reduceMotion ? nil : .default) {
                                 isEditing.toggle()
                             }
                         }
@@ -174,6 +181,7 @@ struct AccountsView: View {
             .sheet(item: $editingAccount) { account in
                 EditAccountView(account: account)
             }
+            .sensoryFeedback(.selection, trigger: showingAddAccount)
         }
     }
 
@@ -194,6 +202,7 @@ struct AccountsView: View {
 
 struct AccountRow: View {
     let account: Account
+    @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
     var body: some View {
         HStack {
@@ -207,7 +216,9 @@ struct AccountRow: View {
             Spacer()
             GBPText(amount: account.balance, font: .body)
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, 4)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(account.name), \(account.type.rawValue) account, balance \(formatGBP(account.balance, currencyCode: currencyCode))\(account.balance < 0 ? ", negative" : "")")
     }
 }
 

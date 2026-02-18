@@ -10,13 +10,17 @@ struct TransactionGroup: Identifiable {
 
 struct TransactionsView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(SharingManager.self) private var sharingManager
     @Query(sort: \Transaction.date, order: .reverse) private var allTransactions: [Transaction]
     @Query(sort: \Account.sortOrder) private var accounts: [Account]
+    @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
     @State private var showingAddTransaction = false
     @State private var filterAccountID: PersistentIdentifier?  // nil = All Accounts
     @State private var editingTransaction: Transaction?
     @State private var searchText = ""
+    @State private var showingRecurring = false
+    @State private var showingBankImport = false
 
     @Binding var navigateToAccountID: PersistentIdentifier?
 
@@ -87,6 +91,8 @@ struct TransactionsView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("\(filterAccount == nil ? "Total balance" : "Account balance"): \(formatGBP(displayBalance, currencyCode: currencyCode))\(displayBalance < 0 ? ", negative" : "")")
 
                 // Account filter dropdown
                 if accounts.count > 1 {
@@ -144,11 +150,13 @@ struct TransactionsView: View {
                     .background(Color(.secondarySystemGroupedBackground))
                     .clipShape(.capsule)
                 }
+                .accessibilityLabel("Filter: \(filterAccount?.name ?? "All Accounts")")
+                .accessibilityHint("Double tap to change account filter")
                 .padding(.vertical, 8)
                 }
             }
             .background(Color(.systemBackground))
-            .shadow(color: .black.opacity(0.06), radius: 2, x: 0, y: 2)
+            .shadow(color: .black.opacity(0.06), radius: 4, x: 0, y: 2)
             .zIndex(1)
 
             // Transaction list
@@ -189,6 +197,7 @@ struct TransactionsView: View {
                                 .padding(.horizontal, 16)
                                 .background(Color(.systemBackground))
                                 .listRowInsets(EdgeInsets())
+                                .accessibilityAddTraits(.isHeader)
                         }
                     }
                 }
@@ -200,11 +209,27 @@ struct TransactionsView: View {
         .navigationTitle(navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Menu {
+                    Button("Recurring Transactions", systemImage: "arrow.triangle.2.circlepath") {
+                        showingRecurring = true
+                    }
+                    Button("Bank Import", systemImage: "doc.text.fill") {
+                        showingBankImport = true
+                    }
+                } label: {
+                    Label("More", systemImage: "ellipsis.circle")
+                }
+                .accessibilityLabel("More options")
+            }
             ToolbarItem(placement: .primaryAction) {
                 Button("Add", systemImage: "plus") {
                     showingAddTransaction = true
                 }
             }
+        }
+        .navigationDestination(isPresented: $showingRecurring) {
+            RecurringTransactionsView()
         }
         .sheet(isPresented: $showingAddTransaction) {
             AddTransactionView(preselectedAccount: filterAccount)
@@ -212,6 +237,10 @@ struct TransactionsView: View {
         .sheet(item: $editingTransaction) { transaction in
             EditTransactionView(transaction: transaction)
         }
+        .sheet(isPresented: $showingBankImport) {
+            ImportView()
+        }
+        .sensoryFeedback(.selection, trigger: showingAddTransaction)
         .onAppear {
             if let accountID = navigateToAccountID {
                 filterAccountID = accountID
@@ -228,7 +257,19 @@ struct TransactionsView: View {
 
     private func deleteTransactions(at offsets: IndexSet, in group: TransactionGroup) {
         for index in offsets {
-            modelContext.delete(group.transactions[index])
+            let transaction = group.transactions[index]
+
+            // Log activity for shared budgets before deletion
+            if sharingManager.isShared {
+                let message = "\(sharingManager.currentUserName) deleted \(transaction.payee) (\(transaction.amount))"
+                sharingManager.logActivity(
+                    message: message,
+                    type: .deletedTransaction,
+                    context: modelContext
+                )
+            }
+
+            modelContext.delete(transaction)
         }
     }
 }
@@ -249,6 +290,7 @@ struct TransactionRow: View {
     let transaction: Transaction
     var showAccount: Bool = true
     var viewingAccount: Account? = nil
+    @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
     var displayPayee: String {
         if transaction.type == .transfer && transaction.payee.isEmpty {
@@ -257,23 +299,61 @@ struct TransactionRow: View {
         return transaction.payee
     }
 
+    /// Builds a descriptive accessibility label for the transaction
+    private var accessibilityDescription: String {
+        var parts: [String] = []
+        parts.append(displayPayee)
+
+        let formattedAmount = formatGBP(transaction.amount, currencyCode: currencyCode)
+        switch transaction.type {
+        case .expense:
+            parts.append("expense of \(formattedAmount)")
+        case .income:
+            parts.append("income of \(formattedAmount)")
+        case .transfer:
+            parts.append("transfer of \(formattedAmount)")
+            if let from = transaction.account, let to = transaction.transferToAccount {
+                parts.append("from \(from.name) to \(to.name)")
+            }
+        }
+
+        if transaction.type != .transfer, let category = transaction.category {
+            parts.append("in \(category.name)")
+        }
+        if showAccount, let account = transaction.account, transaction.type != .transfer {
+            parts.append("from \(account.name)")
+        }
+        return parts.joined(separator: ", ")
+    }
+
     var body: some View {
         HStack {
             if transaction.type == .transfer {
                 Text("↔️")
                     .font(.title2)
+                    .accessibilityHidden(true)
             } else if let category = transaction.category {
                 Text(category.emoji)
                     .font(.title2)
+                    .accessibilityHidden(true)
             } else {
                 Image(systemName: "banknote")
                     .font(.title2)
                     .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
             }
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(displayPayee)
-                    .font(.headline)
+                HStack(spacing: 8) {
+                    Text(displayPayee)
+                        .font(.headline)
+                    if transaction.isAutoGenerated {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .accessibilityLabel("Recurring")
+                    }
+                }
                 HStack(spacing: 4) {
                     if transaction.type == .transfer {
                         if let from = transaction.account, let to = transaction.transferToAccount {
@@ -315,6 +395,9 @@ struct TransactionRow: View {
             }
         }
         .padding(.vertical, 4)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(accessibilityDescription)
+        .accessibilityHint("Double tap to edit transaction")
     }
 }
 
@@ -393,6 +476,8 @@ struct TransactionFormFields: View {
     let accounts: [Account]
     let categories: [Category]
     var autoFocusAmount: Bool = false
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var budgetAccounts: [Account] {
         accounts.filter { $0.isBudget }
@@ -523,6 +608,7 @@ struct TransactionFormFields: View {
                     .focused($amountFocused)
                     .opacity(0.01)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .accessibilityHidden(true)
                     .onChange(of: amountFocused) { _, focused in
                         // When re-focusing, select all so next keypress replaces.
                         // Don't clear immediately — keep the display until user types.
@@ -547,26 +633,28 @@ struct TransactionFormFields: View {
                     HStack {
                         Text(amountDisplayString)
                             .font(.largeTitle.weight(.medium))
+                            .monospacedDigit()
                             .foregroundStyle(amountColor)
-                            .contentTransition(.numericText())
+                            .contentTransition(reduceMotion ? .identity : .numericText())
                         Spacer()
                     }
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Amount: \(amountDisplayString)")
+                .accessibilityHint("Double tap to edit amount")
 
                 if amountInPence > 0 {
                     // Backspace overlay (top-right of ZStack area)
                     HStack {
                         Spacer()
-                        Button {
+                        Button("Delete last digit", systemImage: "delete.backward") {
                             rawDigits = String(rawDigits.dropLast())
                             syncAmountText()
-                        } label: {
-                            Image(systemName: "delete.backward")
-                                .foregroundStyle(.secondary)
-                                .font(.title3)
                         }
+                        .labelStyle(.iconOnly)
+                        .foregroundStyle(.secondary)
+                        .font(.title3)
                         .buttonStyle(.plain)
                     }
                 }
@@ -613,7 +701,7 @@ struct TransactionFormFields: View {
             // Date row: tap to toggle inline picker
             Button {
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                withAnimation { showDatePicker.toggle() }
+                withAnimation(reduceMotion ? nil : .default) { showDatePicker.toggle() }
             } label: {
                 HStack {
                     Text("Date")
@@ -628,7 +716,7 @@ struct TransactionFormFields: View {
                 DatePicker("", selection: $date, displayedComponents: .date)
                     .datePickerStyle(.graphical)
                     .onChange(of: date) { _, _ in
-                        withAnimation { showDatePicker = false }
+                        withAnimation(reduceMotion ? nil : .default) { showDatePicker = false }
                     }
             }
         }
@@ -769,6 +857,7 @@ struct TransactionFormFields: View {
 struct AddTransactionView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(SharingManager.self) private var sharingManager
 
     @Query(sort: \Account.sortOrder) private var accounts: [Account]
     @Query(sort: \Category.sortOrder) private var allCategories: [Category]
@@ -898,6 +987,24 @@ struct AddTransactionView: View {
 
         modelContext.insert(transaction)
         updatePayeeRecord(name: finalPayee, category: transaction.category)
+
+        // Log activity for shared budgets
+        if sharingManager.isShared {
+            let categoryName = transaction.category?.name ?? ""
+            let message: String
+            if type == .transfer {
+                message = "\(sharingManager.currentUserName) added a transfer of \(amountText)"
+            } else {
+                let categoryPart = categoryName.isEmpty ? "" : " to \(categoryName)"
+                message = "\(sharingManager.currentUserName) added a \(amount) \(type.rawValue.lowercased())\(categoryPart)"
+            }
+            sharingManager.logActivity(
+                message: message,
+                type: .addedTransaction,
+                context: modelContext
+            )
+        }
+
         dismiss()
     }
 
@@ -920,6 +1027,7 @@ struct AddTransactionView: View {
 struct EditTransactionView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(SharingManager.self) private var sharingManager
 
     @Query(sort: \Account.sortOrder) private var accounts: [Account]
     @Query(sort: \Category.sortOrder) private var allCategories: [Category]
@@ -1063,6 +1171,16 @@ struct EditTransactionView: View {
             }
         }
 
+        // Log activity for shared budgets
+        if sharingManager.isShared {
+            let message = "\(sharingManager.currentUserName) edited \(finalPayee) (\(amountText))"
+            sharingManager.logActivity(
+                message: message,
+                type: .editedTransaction,
+                context: modelContext
+            )
+        }
+
         dismiss()
     }
 }
@@ -1071,5 +1189,6 @@ struct EditTransactionView: View {
     NavigationStack {
         TransactionsView(navigateToAccountID: .constant(nil))
     }
-    .modelContainer(for: [Transaction.self, Account.self, Category.self, Payee.self], inMemory: true)
+    .modelContainer(for: [Transaction.self, Account.self, Category.self, Payee.self, RecurringTransaction.self, ActivityEntry.self], inMemory: true)
+    .environment(SharingManager())
 }

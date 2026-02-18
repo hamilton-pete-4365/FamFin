@@ -5,6 +5,7 @@ import UniformTypeIdentifiers
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
+    @Environment(SyncManager.self) private var syncManager
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
     @State private var exportDocument: BackupDocument?
@@ -19,6 +20,22 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section("FamFin Pro") {
+                    TrialBannerView()
+                }
+
+                iCloudSyncSection()
+
+                Section("Notifications") {
+                    NavigationLink {
+                        NotificationSettingsView()
+                    } label: {
+                        Label("Notifications", systemImage: "bell.badge")
+                    }
+                }
+
+                FamilySharingSettingsSection()
+
                 Section {
                     Picker("Currency", selection: $currencyCode) {
                         ForEach(SupportedCurrency.allCases) { currency in
@@ -33,22 +50,12 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    Button {
+                    Button("Export Data Backup", systemImage: "square.and.arrow.up") {
                         exportData()
-                    } label: {
-                        HStack {
-                            Image(systemName: "square.and.arrow.up")
-                            Text("Export Data Backup")
-                        }
                     }
 
-                    Button {
+                    Button("Restore from Backup", systemImage: "square.and.arrow.down") {
                         showingImportPicker = true
-                    } label: {
-                        HStack {
-                            Image(systemName: "square.and.arrow.down")
-                            Text("Restore from Backup")
-                        }
                     }
                 } header: {
                     Text("Data")

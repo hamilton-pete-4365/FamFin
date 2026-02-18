@@ -3,11 +3,11 @@ import SwiftData
 
 @Model
 final class Account {
-    var name: String
-    var type: AccountType
-    var isBudget: Bool  // true = Budget account, false = Tracking account
-    var sortOrder: Int  // for manual reordering
-    var createdAt: Date
+    var name: String = ""
+    var type: AccountType = AccountType.current
+    var isBudget: Bool = true  // true = Budget account, false = Tracking account
+    var sortOrder: Int = 0  // for manual reordering
+    var createdAt: Date = Date()
 
     @Relationship(deleteRule: .cascade, inverse: \Transaction.account)
     var transactions: [Transaction] = []
@@ -15,6 +15,14 @@ final class Account {
     /// Transactions where money was transferred INTO this account
     @Relationship(deleteRule: .nullify, inverse: \Transaction.transferToAccount)
     var incomingTransfers: [Transaction] = []
+
+    // MARK: - Recurring transaction inverses
+
+    @Relationship(deleteRule: .nullify, inverse: \RecurringTransaction.account)
+    var recurringTransactions: [RecurringTransaction] = []
+
+    @Relationship(deleteRule: .nullify, inverse: \RecurringTransaction.transferToAccount)
+    var recurringTransferTransactions: [RecurringTransaction] = []
 
     var balance: Decimal {
         var total = Decimal.zero

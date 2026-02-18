@@ -5,11 +5,11 @@ import SwiftData
 /// When you type a payee name, we suggest the category that was most recently used for that payee.
 @Model
 final class Payee {
-    var name: String
+    var name: String = ""
     @Relationship(deleteRule: .nullify)
     var lastUsedCategory: Category?
-    var lastUsedDate: Date
-    var useCount: Int
+    var lastUsedDate: Date = Date()
+    var useCount: Int = 1
 
     init(name: String, lastUsedCategory: Category? = nil) {
         self.name = name

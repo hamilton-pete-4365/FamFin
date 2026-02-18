@@ -42,6 +42,7 @@ struct GBPText: View {
     var body: some View {
         Text(formatted)
             .font(font)
+            .monospacedDigit()
             .foregroundStyle(amount < 0 ? .red : positiveStyle)
     }
 
@@ -74,6 +75,7 @@ struct TransactionAmountText: View {
     var body: some View {
         Text(formatted)
             .font(font)
+            .monospacedDigit()
             .foregroundStyle(color)
     }
 
@@ -113,16 +115,13 @@ func formatGBP(_ amount: Decimal, currencyCode: String = "GBP") -> String {
 /// Pass the currency code from @AppStorage to ensure reactivity.
 func formatPence(_ pence: Int, currencyCode: String = "GBP") -> String {
     let currency = SupportedCurrency(rawValue: currencyCode) ?? .gbp
-    let formatter = NumberFormatter()
-    formatter.numberStyle = .decimal
-    formatter.usesGroupingSeparator = true
     if currency.hasMinorUnits {
-        let major = pence / 100
-        let minor = pence % 100
-        let majorString = formatter.string(from: NSNumber(value: major)) ?? "\(major)"
-        let minorString = minor < 10 ? "0\(minor)" : "\(minor)"
-        return "\(currency.symbol)\(majorString).\(minorString)"
+        let amount = Decimal(pence) / 100
+        return formatGBP(amount, currencyCode: currencyCode)
     } else {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.usesGroupingSeparator = true
         let valueString = formatter.string(from: NSNumber(value: pence)) ?? "\(pence)"
         return "\(currency.symbol)\(valueString)"
     }

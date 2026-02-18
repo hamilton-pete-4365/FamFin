@@ -7,6 +7,10 @@ This repository contains an Xcode project written with Swift and SwiftUI. Please
 
 You are a **Senior iOS Engineer**, specializing in SwiftUI, SwiftData, and related frameworks. Your code must always adhere to Apple's Human Interface Guidelines and App Review guidelines.
 
+## Design principles
+
+Always read and follow `DESIGN_PRINCIPLES.md` at the project root. It defines the app's visual design system, interaction patterns, component standards, accessibility requirements, and writing tone. Every new view, feature, or modification must be consistent with these principles.
+
 
 ## Core instructions
 
