@@ -26,6 +26,9 @@ struct GoalsView: View {
             }
             .navigationTitle("Goals")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    ProfileButton()
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button("Add Goal", systemImage: "plus") {
                         showingAddGoal = true

@@ -8,6 +8,8 @@ final class Account {
     var isBudget: Bool = true  // true = Budget account, false = Tracking account
     var sortOrder: Int = 0  // for manual reordering
     var createdAt: Date = Date()
+    /// Date the account was last reconciled, or nil if never reconciled.
+    var lastReconciledDate: Date?
 
     @Relationship(deleteRule: .cascade, inverse: \Transaction.account)
     var transactions: [Transaction] = []

@@ -42,14 +42,15 @@ struct BudgetView: View {
     /// Local cache of available balances keyed by category persistentModelID string.
     /// Updated immediately on save so the "Available" column reflects changes without waiting for @Query.
     @State private var localAvailable: [String: Decimal] = [:]
-    @State private var showingSettings = false
+    @State private var isEditingCategories = false
     @State private var overspentExpanded = false
-    @State private var detailCategory: Category? = nil
+    @State private var showMonthPicker = false
     @State private var navigationPath = NavigationPath()
     /// The category currently being edited (keyboard is up)
     @State private var focusedCategory: Category? = nil
     /// Set by keyboard toolbar hint buttons; consumed by the focused row
     @State private var pendingHintAmount: Decimal? = nil
+    @State private var showQuickFill = false
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
     // MARK: - Computed
@@ -116,50 +117,93 @@ struct BudgetView: View {
                 monthSelector
                 toBudgetBanner(historic: historicToBudget, future: futureBudgeted)
                 overspentWarnings
-                keyboardHintBar
 
                 if headerCategories.isEmpty {
                     emptyState
                 } else {
-                    columnHeaders
                     categoryList
                 }
             }
+            .gesture(
+                DragGesture(minimumDistance: 50, coordinateSpace: .local)
+                    .onEnded { value in
+                        // Only respond to primarily horizontal swipes
+                        guard abs(value.translation.width) > abs(value.translation.height) else { return }
+                        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
+                            if value.translation.width < 0 {
+                                changeMonth(by: 1)
+                            } else {
+                                changeMonth(by: -1)
+                            }
+                        }
+                    }
+            )
             .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: focusedCategory?.persistentModelID)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Settings", systemImage: "slider.horizontal.3") {
-                        showingSettings = true
-                    }
+                    ProfileButton()
                 }
                 ToolbarItem(placement: .principal) {
                     Text("Budget")
                         .font(.headline)
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    NavigationLink {
-                        ManageCategoriesView()
-                    } label: {
-                        Label("Categories", systemImage: "gear")
+                    Button("Edit Categories", systemImage: "pencil") {
+                        isEditingCategories = true
                     }
                 }
                 ToolbarItemGroup(placement: .keyboard) {
+                    if let cat = focusedCategory {
+                        Button("Details", systemImage: "chevron.right") {
+                            let category = cat
+                            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                            Task { @MainActor in
+                                try? await Task.sleep(for: .milliseconds(200))
+                                navigationPath.append(category)
+                            }
+                        }
+                    }
+
                     Spacer()
+
+                    if focusedCategory != nil {
+                        Button("Quick Fill", systemImage: "sparkles") {
+                            showQuickFill = true
+                        }
+
+                        Divider()
+                    }
+
                     Button("Done") {
                         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                     }
+                    .bold()
                 }
             }
-            .sheet(isPresented: $showingSettings) {
-                SettingsView()
+            .sheet(isPresented: $isEditingCategories) {
+                NavigationStack {
+                    ManageCategoriesView()
+                }
             }
-            .sheet(item: $detailCategory) { category in
-                CategoryDetailSheet(category: category, month: selectedMonth, onNavigateToGoal: { goalID in
-                    navigationPath.append(goalID)
-                })
-                .presentationDetents([.medium, .large])
-                .presentationDragIndicator(.visible)
+            .sheet(isPresented: $showQuickFill) {
+                if let cat = focusedCategory {
+                    QuickFillSheet(
+                        category: cat,
+                        month: selectedMonth,
+                        goals: goalsForCategory(cat),
+                        currencyCode: currencyCode,
+                        onSelectAmount: { amount in
+                            saveBudget(for: cat, amount: amount)
+                            showQuickFill = false
+                        }
+                    )
+                    .presentationDetents([.medium])
+                    .presentationDragIndicator(.visible)
+                }
+            }
+            .navigationDestination(for: Category.self) { category in
+                CategoryDetailView(category: category, month: selectedMonth)
             }
             .navigationDestination(for: PersistentIdentifier.self) { goalID in
                 GoalDetailView(goalID: goalID)
@@ -189,18 +233,42 @@ struct BudgetView: View {
     var monthSelector: some View {
         HStack {
             Button("Previous month", systemImage: "chevron.left") {
-                changeMonth(by: -1)
+                withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
+                    changeMonth(by: -1)
+                }
             }
             .labelStyle(.iconOnly)
             .font(.title3.bold())
             .accessibilityHint("Double tap to go to the previous month")
+
             Spacer()
-            Text(selectedMonth, format: .dateTime.month(.wide).year())
-                .font(.headline)
-                .accessibilityAddTraits(.isHeader)
+
+            Button {
+                showMonthPicker = true
+            } label: {
+                HStack(spacing: 4) {
+                    Text(selectedMonth, format: .dateTime.month(.wide).year())
+                        .font(.headline)
+                    Image(systemName: "chevron.down")
+                        .font(.caption2.bold())
+                        .foregroundStyle(.secondary)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityAddTraits(.isHeader)
+            .accessibilityHint("Double tap to choose a different month")
+            .popover(isPresented: $showMonthPicker) {
+                MonthYearPicker(selectedMonth: $selectedMonth)
+                    .presentationCompactAdaptation(.popover)
+            }
+
             Spacer()
+
             Button("Next month", systemImage: "chevron.right") {
-                changeMonth(by: 1)
+                withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
+                    changeMonth(by: 1)
+                }
             }
             .labelStyle(.iconOnly)
             .font(.title3.bold())
@@ -304,41 +372,13 @@ struct BudgetView: View {
         }
     }
 
-    // MARK: - Column Headers (pinned outside List)
-
-    var columnHeaders: some View {
-        HStack(spacing: 4) {
-            Text("Category")
-                .font(.caption.bold())
-                .foregroundStyle(.secondary)
-                .textCase(.uppercase)
-            Spacer()
-            Text("Budgeted")
-                .font(.caption.bold())
-                .foregroundStyle(.secondary)
-                .textCase(.uppercase)
-                .frame(width: 88, alignment: .trailing)
-            Text("Available")
-                .font(.caption.bold())
-                .foregroundStyle(.secondary)
-                .textCase(.uppercase)
-                .frame(width: 76, alignment: .trailing)
-        }
-        .padding(.leading, 32)
-        .padding(.trailing, 24)
-        .padding(.top, 12)
-        .padding(.bottom, 8)
-        .background(Color(.systemGroupedBackground))
-        .accessibilityHidden(true)
-    }
-
     // MARK: - Category List
 
     var categoryList: some View {
         List {
             ForEach(headerCategories) { header in
                 Section {
-                    // Collapsible header row
+                    // Collapsible header row with inline column labels
                     Button {
                         withAnimation(reduceMotion ? nil : .default) {
                             let headerKey = "\(header.persistentModelID)"
@@ -362,27 +402,41 @@ struct BudgetView: View {
 
                             Spacer()
 
-                            // Header budgeted total for this month
-                            Text(formatGBP(headerBudgeted(header), currencyCode: currencyCode))
-                                .font(.subheadline)
-                                .monospacedDigit()
-                                .foregroundStyle(.secondary)
-                                .frame(width: 88, alignment: .trailing)
+                            // Budgeted column with label
+                            VStack(alignment: .trailing, spacing: 2) {
+                                Text("Budgeted")
+                                    .font(.caption2)
+                                    .foregroundStyle(.tertiary)
+                                Text(formatGBP(headerBudgeted(header), currencyCode: currencyCode))
+                                    .font(.subheadline)
+                                    .monospacedDigit()
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.6)
+                            }
+                            .frame(width: 88, alignment: .trailing)
 
-                            // Header available total
-                            let avail = headerAvailable(header)
-                            Text(formatGBP(avail, currencyCode: currencyCode))
-                                .font(.subheadline)
-                                .monospacedDigit()
-                                .foregroundStyle(avail < 0 ? .red : Color.accentColor)
-                                .frame(width: 76, alignment: .trailing)
+                            // Available column with label
+                            VStack(alignment: .trailing, spacing: 2) {
+                                Text("Available")
+                                    .font(.caption2)
+                                    .foregroundStyle(.tertiary)
+                                let avail = headerAvailable(header)
+                                Text(formatGBP(avail, currencyCode: currencyCode))
+                                    .font(.subheadline)
+                                    .monospacedDigit()
+                                    .foregroundStyle(avail < 0 ? .red : Color.accentColor)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.6)
+                            }
+                            .frame(width: 76, alignment: .trailing)
                         }
                     }
                     .accessibilityElement(children: .combine)
                     .accessibilityAddTraits(.isHeader)
                     .accessibilityLabel("\(header.name), budgeted \(formatGBP(headerBudgeted(header), currencyCode: currencyCode)), available \(formatGBP(headerAvailable(header), currencyCode: currencyCode))\(headerAvailable(header) < 0 ? ", overspent" : "")")
                     .accessibilityHint(expandedHeaders.contains("\(header.persistentModelID)") ? "Double tap to collapse" : "Double tap to expand")
-                    .listRowBackground(Color(.secondarySystemGroupedBackground))
+                    .listRowBackground(Color(.secondarySystemBackground))
                     .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
 
                     // Subcategories (only shown when expanded)
@@ -400,9 +454,6 @@ struct BudgetView: View {
                                 hasGoal: categoryHasGoal,
                                 onBudgetChanged: { newAmount in
                                     saveBudget(for: subcategory, amount: newAmount)
-                                },
-                                onTapDetail: {
-                                    detailCategory = subcategory
                                 },
                                 onFocusChanged: { focused in
                                     if focused {
@@ -426,19 +477,23 @@ struct BudgetView: View {
                 }
             }
         }
-        .listStyle(.insetGrouped)
-        .listSectionSpacing(4)
+        .listStyle(.plain)
         .scrollDismissesKeyboard(.interactively)
     }
 
     // MARK: - Empty State
 
     var emptyState: some View {
-        ContentUnavailableView(
-            "No Categories Yet",
-            systemImage: "tray",
-            description: Text("Tap the gear icon to set up your budget categories.")
-        )
+        ContentUnavailableView {
+            Label("No Categories Yet", systemImage: "tray")
+        } description: {
+            Text("Set up your budget categories to start tracking spending.")
+        } actions: {
+            Button("Set Up Categories") {
+                isEditingCategories = true
+            }
+            .buttonStyle(.borderedProminent)
+        }
     }
 
     // MARK: - Quick Fill Card
@@ -446,149 +501,6 @@ struct BudgetView: View {
     /// Goals linked to the currently focused category
     private func goalsForCategory(_ category: Category) -> [SavingsGoal] {
         allGoals.filter { $0.linkedCategory?.persistentModelID == category.persistentModelID }
-    }
-
-    /// Floating card shown above the category list when editing a budget amount.
-    /// Shows historical hints (last month, average) and goal target if a goal is linked.
-    @ViewBuilder
-    var keyboardHintBar: some View {
-        if let cat = focusedCategory {
-            let lastMonth = Calendar.current.date(byAdding: .month, value: -1, to: selectedMonth)
-            let lastBudgeted = lastMonth.map { cat.budgeted(in: $0) } ?? .zero
-            let lastSpent = lastMonth.map { -cat.activity(in: $0) } ?? .zero
-            let avgBudgeted = cat.averageMonthlyBudgeted(before: selectedMonth, months: 12)
-            let avgSpent = cat.averageMonthlySpending(before: selectedMonth, months: 12)
-            let linkedGoals = goalsForCategory(cat)
-
-            VStack(spacing: 0) {
-                VStack(spacing: 0) {
-                    // Card header
-                    HStack {
-                        Text(cat.emoji)
-                        Text(cat.name)
-                            .bold()
-                            .lineLimit(1)
-                        Spacer()
-                        Text("Quick Fill")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .textCase(.uppercase)
-                    }
-                    .font(.subheadline)
-                    .padding(.horizontal)
-                    .padding(.top, 12)
-                    .padding(.bottom, 8)
-
-                    // Hint rows
-                    VStack(spacing: 0) {
-                        hintRow(label: "Last month", items: [
-                            ("Budgeted", lastBudgeted),
-                            ("Spent", lastSpent),
-                        ])
-
-                        Divider()
-                            .padding(.leading)
-
-                        hintRow(label: "12mo average", items: [
-                            ("Budgeted", avgBudgeted),
-                            ("Spent", avgSpent),
-                        ])
-
-                        // Goal hint rows
-                        ForEach(linkedGoals) { goal in
-                            if let monthlyTarget = goal.monthlyTarget(through: selectedMonth), monthlyTarget > 0 {
-                                Divider()
-                                    .padding(.leading)
-
-                                goalHintRow(goal: goal, monthlyTarget: monthlyTarget)
-                            }
-                        }
-                    }
-                    .background(Color(.systemBackground))
-                    .clipShape(.rect(cornerRadius: 8))
-                    .padding(.horizontal, 12)
-                    .padding(.bottom, 12)
-                }
-                .background(Color(.secondarySystemBackground))
-                .clipShape(.rect(cornerRadius: 12))
-                .shadow(color: .black.opacity(0.06), radius: 4, y: 2)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-            }
-            .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
-        }
-    }
-
-    /// A single hint row with a label on the left and tappable amount chips on the right
-    private func hintRow(label: String, items: [(String, Decimal)]) -> some View {
-        HStack(spacing: 0) {
-            Text(label)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-
-            Spacer()
-
-            ForEach(items.enumerated(), id: \.offset) { index, item in
-                if index > 0 {
-                    Rectangle()
-                        .fill(Color(.separator))
-                        .frame(width: 1, height: 24)
-                        .padding(.horizontal, 12)
-                }
-                hintChip(label: item.0, amount: item.1)
-            }
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 12)
-    }
-
-    /// A tappable hint chip showing label and amount
-    private func hintChip(label: String, amount: Decimal) -> some View {
-        Button {
-            pendingHintAmount = amount
-        } label: {
-            VStack(spacing: 4) {
-                Text(formatGBP(amount, currencyCode: currencyCode))
-                    .font(.subheadline.bold())
-                    .monospacedDigit()
-                    .foregroundStyle(Color.accentColor)
-                Text(label)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel("\(label): \(formatGBP(amount, currencyCode: currencyCode))")
-        .accessibilityHint("Double tap to fill budget with this amount")
-    }
-
-    /// Goal hint row showing the monthly target needed to stay on track
-    private func goalHintRow(goal: SavingsGoal, monthlyTarget: Decimal) -> some View {
-        HStack(spacing: 0) {
-            HStack(spacing: 4) {
-                Image(systemName: "target")
-                    .font(.caption)
-                    .foregroundStyle(.purple)
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(goal.name)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                    if let days = goal.daysRemaining, days > 0 {
-                        Text("\(days)d left")
-                            .font(.caption2)
-                            .foregroundStyle(.tertiary)
-                    }
-                }
-            }
-
-            Spacer()
-
-            hintChip(label: "Goal", amount: monthlyTarget)
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 12)
     }
 
     // MARK: - Helpers
@@ -737,7 +649,6 @@ struct BudgetCategoryRow: View {
     let available: Decimal
     let hasGoal: Bool
     let onBudgetChanged: (Decimal) -> Void
-    var onTapDetail: (() -> Void)? = nil
     /// Signals the parent when this row gains/loses focus
     var onFocusChanged: ((Bool) -> Void)? = nil
     /// Parent sets this to apply a hint amount; row clears it after applying
@@ -783,130 +694,117 @@ struct BudgetCategoryRow: View {
     }
 
     var body: some View {
-        HStack(spacing: 4) {
-            // Category name (left) — tap to open detail sheet
-            Button {
-                onTapDetail?()
-            } label: {
-                HStack(spacing: 4) {
-                    Text(category.name)
-                        .font(.subheadline)
-                        .lineLimit(1)
-                    if hasGoal {
-                        Image(systemName: "target")
-                            .font(.caption2)
-                            .foregroundStyle(.purple)
-                            .accessibilityLabel("Has savings goal")
-                    }
-                    Spacer()
+        // The entire row is a single tap target for budget editing
+        Button {
+            isFocused = true
+        } label: {
+            HStack(spacing: 4) {
+                Text(category.name)
+                    .font(.subheadline)
+                    .lineLimit(1)
+
+                if hasGoal {
+                    Image(systemName: "target")
+                        .font(.caption2)
+                        .foregroundStyle(.purple)
+                        .accessibilityHidden(true)
                 }
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("\(category.name) details\(hasGoal ? ", has savings goal" : "")")
-            .accessibilityHint("Double tap to view category details")
 
-            // Budgeted this month (middle, editable — pence-based ATM entry)
-            ZStack {
-                // Hidden text field bound to rawDigits
-                TextField("", text: $rawDigits)
-                    .keyboardType(.numberPad)
-                    .focused($isFocused)
-                    .opacity(0.01)
-                    .frame(width: 80, height: 32)
-                    .accessibilityHidden(true)
-                    .onChange(of: isFocused) { _, focused in
-                        if focused {
-                            previousDigits = rawDigits
-                            hasTyped = false
-                            hintDigits = ""
-                            rawDigits = ""
-                        } else {
-                            if !hasTyped {
-                                rawDigits = previousDigits
-                            } else {
-                                onBudgetChanged(decimalAmount)
-                            }
-                        }
-                        onFocusChanged?(focused)
-                    }
-                    .onChange(of: pendingHintAmount) { _, newHint in
-                        // Only the focused row consumes the hint
-                        if isFocused, let amount = newHint {
-                            applyHint(amount)
-                            pendingHintAmount = nil
-                        }
-                    }
-                    .onChange(of: rawDigits) { _, newValue in
-                        // After a hint sets rawDigits to e.g. "2500", the user's next keystroke
-                        // appends to get "25003". Detect this: if newValue starts with the hint
-                        // digits and has extra chars, keep only the extra (replacing the hint).
-                        if !hintDigits.isEmpty && isFocused {
-                            let digits = newValue.filter { $0.isNumber }
-                            if digits == hintDigits {
-                                // This is the hint itself landing — let it through
-                            } else if digits.hasPrefix(hintDigits) && digits.count > hintDigits.count {
-                                // User typed after hint — replace with just the new digit(s)
-                                let fresh = String(digits.dropFirst(hintDigits.count))
-                                hintDigits = ""
-                                rawDigits = fresh
-                                return
-                            } else {
-                                // Something else changed — clear hint tracking
-                                hintDigits = ""
-                            }
-                        }
+                Spacer()
 
-                        if isFocused {
-                            let digits = newValue.filter { $0.isNumber }
-                            if !digits.isEmpty {
-                                hasTyped = true
-                            }
-                        }
-                        let digits = newValue.filter { $0.isNumber }
-                        let trimmed = String(digits.drop(while: { $0 == "0" }))
-                        let capped = String(trimmed.prefix(8))
-                        if rawDigits != capped {
-                            rawDigits = capped
-                        }
-                    }
+                // Budgeted amount (updates live when typing)
+                Text(displayString)
+                    .font(.subheadline)
+                    .monospacedDigit()
+                    .foregroundStyle(isFocused ? .primary : .secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+                    .multilineTextAlignment(.trailing)
+                    .frame(width: 88, alignment: .trailing)
+                    .contentTransition(reduceMotion ? .identity : .numericText())
 
-                // Visible display — tap to focus the hidden field
-                Button {
-                    isFocused = true
-                } label: {
-                    Text(displayString)
-                        .font(.subheadline)
-                        .monospacedDigit()
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.trailing)
-                        .frame(width: 80, alignment: .trailing)
-                        .contentTransition(reduceMotion ? .identity : .numericText())
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Budgeted: \(displayString)")
-                .accessibilityHint("Double tap to edit budget amount")
-            }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color(.tertiarySystemGroupedBackground))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(isFocused ? Color.accentColor : Color(.separator).opacity(0.3), lineWidth: isFocused ? 2 : 1)
-                    )
-            )
-            // Available balance (right, accent) — tap for detail
-            Button {
-                onTapDetail?()
-            } label: {
+                // Available balance
                 GBPText(amount: available, font: .subheadline.bold(), accentPositive: true)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
                     .frame(width: 76, alignment: .trailing)
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Available: \(formatGBP(available, currencyCode: currencyCode))\(available < 0 ? ", overspent" : "")")
-            .accessibilityHint("Double tap to view category details")
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(category.name)\(hasGoal ? ", has savings goal" : ""), budgeted \(displayString), available \(formatGBP(available, currencyCode: currencyCode))\(available < 0 ? ", overspent" : "")")
+        .accessibilityHint("Double tap to edit budget amount")
+        // Hidden text field overlaid for keyboard input
+        .overlay {
+            TextField("", text: $rawDigits)
+                .keyboardType(.numberPad)
+                .focused($isFocused)
+                .opacity(0.01)
+                .frame(width: 1, height: 1)
+                .accessibilityHidden(true)
+                .onChange(of: isFocused) { _, focused in
+                    if focused {
+                        previousDigits = rawDigits
+                        hasTyped = false
+                        hintDigits = ""
+                        // Keep current value displayed until user starts typing
+                    } else {
+                        if !hasTyped {
+                            rawDigits = previousDigits
+                        } else {
+                            onBudgetChanged(decimalAmount)
+                        }
+                    }
+                    onFocusChanged?(focused)
+                }
+                .onChange(of: pendingHintAmount) { _, newHint in
+                    // Only the focused row consumes the hint
+                    if isFocused, let amount = newHint {
+                        applyHint(amount)
+                        pendingHintAmount = nil
+                    }
+                }
+                .onChange(of: rawDigits) { _, newValue in
+                    let digits = newValue.filter { $0.isNumber }
+
+                    // First keystroke while focused replaces the previous value.
+                    // Detect: the text field still contains previousDigits with new
+                    // chars appended. Strip the old prefix so only fresh input remains.
+                    if isFocused && !hasTyped && !previousDigits.isEmpty && digits.count > previousDigits.count && digits.hasPrefix(previousDigits) {
+                        let fresh = String(digits.dropFirst(previousDigits.count))
+                        hasTyped = true
+                        hintDigits = ""
+                        rawDigits = fresh
+                        return
+                    }
+
+                    // After a hint sets rawDigits to e.g. "2500", the user's next keystroke
+                    // appends to get "25003". Detect this: if newValue starts with the hint
+                    // digits and has extra chars, keep only the extra (replacing the hint).
+                    if !hintDigits.isEmpty && isFocused {
+                        if digits == hintDigits {
+                            // This is the hint itself landing — let it through
+                        } else if digits.hasPrefix(hintDigits) && digits.count > hintDigits.count {
+                            // User typed after hint — replace with just the new digit(s)
+                            let fresh = String(digits.dropFirst(hintDigits.count))
+                            hintDigits = ""
+                            rawDigits = fresh
+                            return
+                        } else {
+                            // Something else changed — clear hint tracking
+                            hintDigits = ""
+                        }
+                    }
+
+                    if isFocused && !digits.isEmpty {
+                        hasTyped = true
+                    }
+                    let trimmed = String(digits.drop(while: { $0 == "0" }))
+                    let capped = String(trimmed.prefix(8))
+                    if rawDigits != capped {
+                        rawDigits = capped
+                    }
+                }
         }
         .padding(.vertical, 4)
         .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
@@ -936,7 +834,121 @@ struct BudgetCategoryRow: View {
             }
         }
     }
+}
 
+// MARK: - Quick Fill Sheet
+
+/// Half-sheet showing historical budget data and goal targets as tappable quick-fill options.
+struct QuickFillSheet: View {
+    let category: Category
+    let month: Date
+    let goals: [SavingsGoal]
+    let currencyCode: String
+    let onSelectAmount: (Decimal) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+
+    private var lastMonth: Date? {
+        Calendar.current.date(byAdding: .month, value: -1, to: month)
+    }
+
+    private var lastBudgeted: Decimal {
+        lastMonth.map { category.budgeted(in: $0) } ?? .zero
+    }
+
+    private var lastSpent: Decimal {
+        lastMonth.map { -category.activity(in: $0) } ?? .zero
+    }
+
+    private var avgBudgeted: Decimal {
+        category.averageMonthlyBudgeted(before: month, months: 12)
+    }
+
+    private var avgSpent: Decimal {
+        category.averageMonthlySpending(before: month, months: 12)
+    }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Last Month") {
+                    quickFillRow(label: "Budgeted", amount: lastBudgeted)
+                    quickFillRow(label: "Spent", amount: lastSpent)
+                }
+
+                Section("12-Month Average") {
+                    quickFillRow(label: "Budgeted", amount: avgBudgeted)
+                    quickFillRow(label: "Spent", amount: avgSpent)
+                }
+
+                if !goals.isEmpty {
+                    Section("Goals") {
+                        ForEach(goals) { goal in
+                            if let monthlyTarget = goal.monthlyTarget(through: month),
+                               monthlyTarget > 0 {
+                                Button {
+                                    onSelectAmount(monthlyTarget)
+                                } label: {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "target")
+                                            .font(.caption)
+                                            .foregroundStyle(.purple)
+                                            .accessibilityHidden(true)
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(goal.name)
+                                                .font(.subheadline)
+                                                .foregroundStyle(.primary)
+                                            if let days = goal.daysRemaining, days > 0 {
+                                                Text("\(days) days left")
+                                                    .font(.caption2)
+                                                    .foregroundStyle(.tertiary)
+                                            }
+                                        }
+                                        Spacer()
+                                        Text(formatGBP(monthlyTarget, currencyCode: currencyCode))
+                                            .font(.subheadline.bold())
+                                            .monospacedDigit()
+                                            .foregroundStyle(Color.accentColor)
+                                    }
+                                }
+                                .buttonStyle(.plain)
+                                .accessibilityElement(children: .combine)
+                                .accessibilityLabel("\(goal.name) target: \(formatGBP(monthlyTarget, currencyCode: currencyCode))")
+                                .accessibilityHint("Double tap to fill budget with this amount")
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Quick Fill")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
+    }
+
+    private func quickFillRow(label: String, amount: Decimal) -> some View {
+        Button {
+            onSelectAmount(amount)
+        } label: {
+            HStack {
+                Text(label)
+                    .font(.subheadline)
+                    .foregroundStyle(.primary)
+                Spacer()
+                Text(formatGBP(amount, currencyCode: currencyCode))
+                    .font(.subheadline.bold())
+                    .monospacedDigit()
+                    .foregroundStyle(Color.accentColor)
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(label): \(formatGBP(amount, currencyCode: currencyCode))")
+        .accessibilityHint("Double tap to fill budget with this amount")
+    }
 }
 
 // MARK: - Category Detail Sheet

@@ -19,7 +19,6 @@ struct ReportsView: View {
     @Query private var allTransactions: [Transaction]
 
     @State private var settings = ReportSettings()
-    @State private var showingSettings = false
 
     /// Computed chart data keyed by chart config ID
     @State private var chartDataMap: [UUID: [MonthlyBalance]] = [:]
@@ -76,18 +75,13 @@ struct ReportsView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    ProfileButton()
+                }
                 ToolbarItem(placement: .principal) {
                     Text("Reports")
                         .font(.headline)
                 }
-                ToolbarItem(placement: .primaryAction) {
-                    Button("Settings", systemImage: "gearshape") {
-                        showingSettings = true
-                    }
-                }
-            }
-            .sheet(isPresented: $showingSettings) {
-                ReportSettingsView(settings: settings)
             }
             .onAppear { computeData() }
             .onChange(of: transactionFingerprint) { _, _ in

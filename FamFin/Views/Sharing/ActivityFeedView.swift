@@ -11,6 +11,7 @@ struct ActivityFeedView: View {
     private var allEntries: [ActivityEntry]
 
     @Environment(\.modelContext) private var modelContext
+    @Environment(SharingManager.self) private var sharingManager
 
     private var groupedEntries: [ActivityGroup] {
         let calendar = Calendar.current
@@ -50,6 +51,9 @@ struct ActivityFeedView: View {
         }
         .navigationTitle("Activity Feed")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            sharingManager.markActivityAsRead(context: modelContext)
+        }
     }
 }
 
@@ -114,4 +118,5 @@ struct ActivityEntryRow: View {
         ActivityFeedView()
     }
     .modelContainer(for: ActivityEntry.self, inMemory: true)
+    .environment(SharingManager())
 }

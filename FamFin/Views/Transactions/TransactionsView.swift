@@ -20,9 +20,7 @@ struct TransactionsView: View {
     @State private var editingTransaction: Transaction?
     @State private var searchText = ""
     @State private var showingRecurring = false
-    @State private var showingBankImport = false
-
-    @Binding var navigateToAccountID: PersistentIdentifier?
+    @State private var transactionToDelete: Transaction?
 
     var filterAccount: Account? {
         guard let id = filterAccountID else { return nil }
@@ -183,9 +181,13 @@ struct TransactionsView: View {
                                     TransactionRow(transaction: transaction, showAccount: filterAccount == nil, viewingAccount: filterAccount)
                                 }
                                 .buttonStyle(.plain)
-                            }
-                            .onDelete { offsets in
-                                deleteTransactions(at: offsets, in: group)
+                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                    Button(role: .destructive) {
+                                        transactionToDelete = transaction
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
                             }
                         } header: {
                             Text(group.date, format: .dateTime.weekday(.wide).day().month(.wide).year())
@@ -210,21 +212,17 @@ struct TransactionsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
-                Menu {
-                    Button("Recurring Transactions", systemImage: "arrow.triangle.2.circlepath") {
-                        showingRecurring = true
-                    }
-                    Button("Bank Import", systemImage: "doc.text.fill") {
-                        showingBankImport = true
-                    }
-                } label: {
-                    Label("More", systemImage: "ellipsis.circle")
-                }
-                .accessibilityLabel("More options")
+                ProfileButton()
             }
             ToolbarItem(placement: .primaryAction) {
-                Button("Add", systemImage: "plus") {
-                    showingAddTransaction = true
+                HStack(spacing: 12) {
+                    Button("Recurring", systemImage: "arrow.triangle.2.circlepath") {
+                        showingRecurring = true
+                    }
+                    .accessibilityLabel("Recurring Transactions")
+                    Button("Add", systemImage: "plus") {
+                        showingAddTransaction = true
+                    }
                 }
             }
         }
@@ -237,49 +235,43 @@ struct TransactionsView: View {
         .sheet(item: $editingTransaction) { transaction in
             EditTransactionView(transaction: transaction)
         }
-        .sheet(isPresented: $showingBankImport) {
-            ImportView()
+        .confirmationDialog(
+            "Delete Transaction?",
+            isPresented: Binding(
+                get: { transactionToDelete != nil },
+                set: { if !$0 { transactionToDelete = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) {
+                if let transaction = transactionToDelete {
+                    deleteSingleTransaction(transaction)
+                    transactionToDelete = nil
+                }
+            }
+        } message: {
+            Text("This will update your account balance and budget. This cannot be undone.")
         }
         .sensoryFeedback(.selection, trigger: showingAddTransaction)
-        .onAppear {
-            if let accountID = navigateToAccountID {
-                filterAccountID = accountID
-                navigateToAccountID = nil
-            }
-        }
-        .onChange(of: navigateToAccountID) { _, newID in
-            if let accountID = newID {
-                filterAccountID = accountID
-                navigateToAccountID = nil
-            }
-        }
     }
 
-    private func deleteTransactions(at offsets: IndexSet, in group: TransactionGroup) {
-        for index in offsets {
-            let transaction = group.transactions[index]
-
-            // Log activity for shared budgets before deletion
-            if sharingManager.isShared {
-                let message = "\(sharingManager.currentUserName) deleted \(transaction.payee) (\(transaction.amount))"
-                sharingManager.logActivity(
-                    message: message,
-                    type: .deletedTransaction,
-                    context: modelContext
-                )
-            }
-
-            modelContext.delete(transaction)
+    private func deleteSingleTransaction(_ transaction: Transaction) {
+        if sharingManager.isShared {
+            let message = "\(sharingManager.currentUserName) deleted \(transaction.payee) (\(transaction.amount))"
+            sharingManager.logActivity(
+                message: message,
+                type: .deletedTransaction,
+                context: modelContext
+            )
         }
+        modelContext.delete(transaction)
     }
 }
 
 struct TransactionsTab: View {
-    @Binding var navigateToAccountID: PersistentIdentifier?
-
     var body: some View {
         NavigationStack {
-            TransactionsView(navigateToAccountID: $navigateToAccountID)
+            TransactionsView()
         }
     }
 }
@@ -868,6 +860,7 @@ struct AddTransactionView: View {
     }
 
     var preselectedAccount: Account?
+    var preselectedCategory: Category?
 
     @State private var amountText = ""
     @State private var payee = ""
@@ -955,6 +948,9 @@ struct AddTransactionView: View {
                     selectedAccount = preselected
                 } else if accounts.count == 1 {
                     selectedAccount = accounts.first
+                }
+                if let preselected = preselectedCategory {
+                    selectedCategory = preselected
                 }
             }
             .onChange(of: selectedAccount) { _, newAccount in
@@ -1048,6 +1044,7 @@ struct EditTransactionView: View {
     @State private var selectedTransferTo: Account?
     @State private var selectedCategory: Category?
     @State private var hasLoaded = false
+    @State private var showingDeleteConfirmation = false
 
     /// Whether this transaction should have a category
     var shouldHaveCategory: Bool {
@@ -1093,8 +1090,7 @@ struct EditTransactionView: View {
 
                 Section {
                     Button(role: .destructive) {
-                        modelContext.delete(transaction)
-                        dismiss()
+                        showingDeleteConfirmation = true
                     } label: {
                         HStack {
                             Spacer()
@@ -1140,6 +1136,25 @@ struct EditTransactionView: View {
                 if let account = newAccount, !account.isBudget, type != .transfer {
                     selectedCategory = nil
                 }
+            }
+            .confirmationDialog(
+                "Delete Transaction?",
+                isPresented: $showingDeleteConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Delete", role: .destructive) {
+                    if sharingManager.isShared {
+                        sharingManager.logActivity(
+                            message: "\(sharingManager.currentUserName) deleted \(transaction.payee)",
+                            type: .deletedTransaction,
+                            context: modelContext
+                        )
+                    }
+                    modelContext.delete(transaction)
+                    dismiss()
+                }
+            } message: {
+                Text("This will update your account balance and budget. This cannot be undone.")
             }
         }
     }
@@ -1187,7 +1202,7 @@ struct EditTransactionView: View {
 
 #Preview {
     NavigationStack {
-        TransactionsView(navigateToAccountID: .constant(nil))
+        TransactionsView()
     }
     .modelContainer(for: [Transaction.self, Account.self, Category.self, Payee.self, RecurringTransaction.self, ActivityEntry.self], inMemory: true)
     .environment(SharingManager())

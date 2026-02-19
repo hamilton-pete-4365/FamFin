@@ -16,6 +16,7 @@
 		A1B2C3D4E5F60001000A0007 /* BudgetAllocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0007 /* BudgetAllocation.swift */; };
 		A1B2C3D4E5F60001000A0008 /* SavingsGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0008 /* SavingsGoal.swift */; };
 		A1B2C3D4E5F60001000A0009 /* BudgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0009 /* BudgetView.swift */; };
+		M1Y2P3K4R5S60001000A0001 /* MonthYearPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = M1Y2P3K4R5S60002000A0001 /* MonthYearPicker.swift */; };
 		A1B2C3D4E5F60001000A000A /* AccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A000A /* AccountsView.swift */; };
 		A1B2C3D4E5F60001000A000B /* TransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A000B /* TransactionsView.swift */; };
 		A1B2C3D4E5F60001000A000C /* GoalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A000C /* GoalsView.swift */; };
@@ -115,6 +116,10 @@
 		W1D2E3F4A5B60001000A001B /* FamFinWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = W1D2E3F4A5B60003000A0001 /* FamFinWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		W1D2E3F4A5B60001000A001C /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = W1D2E3F4A5B60002000A000C /* WidgetKit.framework */; };
 		W1D2E3F4A5B60001000A001D /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = W1D2E3F4A5B60002000A000D /* SwiftUI.framework */; };
+		X1A2B3C4D5E60001000A0001 /* ProfileButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = X1A2B3C4D5E60002000A0001 /* ProfileButton.swift */; };
+		X1A2B3C4D5E60001000A0002 /* AccountDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = X1A2B3C4D5E60002000A0002 /* AccountDetailView.swift */; };
+		X1A2B3C4D5E60001000A0003 /* ReconcileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = X1A2B3C4D5E60002000A0003 /* ReconcileView.swift */; };
+		X1A2B3C4D5E60001000A0004 /* CategoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = X1A2B3C4D5E60002000A0004 /* CategoryDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -158,6 +163,7 @@
 		A1B2C3D4E5F60002000A0007 /* BudgetAllocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetAllocation.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0008 /* SavingsGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavingsGoal.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0009 /* BudgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetView.swift; sourceTree = "<group>"; };
+		M1Y2P3K4R5S60002000A0001 /* MonthYearPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthYearPicker.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A000A /* AccountsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A000B /* TransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A000C /* GoalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsView.swift; sourceTree = "<group>"; };
@@ -250,6 +256,10 @@
 		W1D2E3F4A5B60002000A000D /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		W1D2E3F4A5B60002000A000E /* FamFinWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FamFinWidget.entitlements; sourceTree = "<group>"; };
 		W1D2E3F4A5B60003000A0001 /* FamFinWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FamFinWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		X1A2B3C4D5E60002000A0001 /* ProfileButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileButton.swift; sourceTree = "<group>"; };
+		X1A2B3C4D5E60002000A0002 /* AccountDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDetailView.swift; sourceTree = "<group>"; };
+		X1A2B3C4D5E60002000A0003 /* ReconcileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconcileView.swift; sourceTree = "<group>"; };
+		X1A2B3C4D5E60002000A0004 /* CategoryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -345,6 +355,8 @@
 			children = (
 				A1B2C3D4E5F60002000A0009 /* BudgetView.swift */,
 				A1B2C3D4E5F60002000A0015 /* ManageCategoriesView.swift */,
+				X1A2B3C4D5E60002000A0004 /* CategoryDetailView.swift */,
+				M1Y2P3K4R5S60002000A0001 /* MonthYearPicker.swift */,
 			);
 			path = Budget;
 			sourceTree = "<group>";
@@ -353,6 +365,8 @@
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60002000A000A /* AccountsView.swift */,
+				X1A2B3C4D5E60002000A0002 /* AccountDetailView.swift */,
+				X1A2B3C4D5E60002000A0003 /* ReconcileView.swift */,
 			);
 			path = Accounts;
 			sourceTree = "<group>";
@@ -443,6 +457,7 @@
 				A1B2C3D4E5F60002000A001C /* PaywallView.swift */,
 				A1B2C3D4E5F60002000A0017 /* SettingsView.swift */,
 				A1B2C3D4E5F60002000A001D /* TrialBannerView.swift */,
+				X1A2B3C4D5E60002000A0001 /* ProfileButton.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -677,6 +692,7 @@
 				A1B2C3D4E5F60001000A0007 /* BudgetAllocation.swift in Sources */,
 				A1B2C3D4E5F60001000A0008 /* SavingsGoal.swift in Sources */,
 				A1B2C3D4E5F60001000A0009 /* BudgetView.swift in Sources */,
+				M1Y2P3K4R5S60001000A0001 /* MonthYearPicker.swift in Sources */,
 				A1B2C3D4E5F60001000A000A /* AccountsView.swift in Sources */,
 				A1B2C3D4E5F60001000A000B /* TransactionsView.swift in Sources */,
 				A1B2C3D4E5F60001000A000C /* GoalsView.swift in Sources */,
@@ -731,6 +747,10 @@
 				S1A2B3C4D5E60001000A0004 /* ActivityFeedView.swift in Sources */,
 				S1A2B3C4D5E60001000A0005 /* FamilySharingSettingsSection.swift in Sources */,
 				R1A2B3C4D5E60001000A0001 /* ReviewPromptManager.swift in Sources */,
+				X1A2B3C4D5E60001000A0001 /* ProfileButton.swift in Sources */,
+				X1A2B3C4D5E60001000A0002 /* AccountDetailView.swift in Sources */,
+				X1A2B3C4D5E60001000A0003 /* ReconcileView.swift in Sources */,
+				X1A2B3C4D5E60001000A0004 /* CategoryDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

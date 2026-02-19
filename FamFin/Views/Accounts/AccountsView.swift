@@ -8,10 +8,8 @@ struct AccountsView: View {
     @State private var editingAccount: Account?
     @State private var isEditing = false
     @State private var expandedSections: Set<String> = ["Budget", "Tracking"]
+    @State private var showingBankImport = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
-    /// Called when user taps an account to view its transactions
-    var onSelectAccount: ((PersistentIdentifier) -> Void)?
 
     var budgetAccounts: [Account] {
         accounts.filter { $0.isBudget }
@@ -74,16 +72,18 @@ struct AccountsView: View {
 
                                 if expandedSections.contains("Budget") {
                                     ForEach(budgetAccounts) { account in
-                                        Button {
-                                            if isEditing {
+                                        if isEditing {
+                                            Button {
                                                 editingAccount = account
-                                            } else {
-                                                onSelectAccount?(account.persistentModelID)
+                                            } label: {
+                                                AccountRow(account: account)
                                             }
-                                        } label: {
-                                            AccountRow(account: account)
+                                            .tint(.primary)
+                                        } else {
+                                            NavigationLink(value: account.persistentModelID) {
+                                                AccountRow(account: account)
+                                            }
                                         }
-                                        .tint(.primary)
                                     }
                                     .onDelete { offsets in
                                         deleteAccounts(offsets, from: budgetAccounts)
@@ -129,16 +129,18 @@ struct AccountsView: View {
 
                                 if expandedSections.contains("Tracking") {
                                     ForEach(trackingAccounts) { account in
-                                        Button {
-                                            if isEditing {
+                                        if isEditing {
+                                            Button {
                                                 editingAccount = account
-                                            } else {
-                                                onSelectAccount?(account.persistentModelID)
+                                            } label: {
+                                                AccountRow(account: account)
                                             }
-                                        } label: {
-                                            AccountRow(account: account)
+                                            .tint(.primary)
+                                        } else {
+                                            NavigationLink(value: account.persistentModelID) {
+                                                AccountRow(account: account)
+                                            }
                                         }
-                                        .tint(.primary)
                                     }
                                     .onDelete { offsets in
                                         deleteAccounts(offsets, from: trackingAccounts)
@@ -157,29 +159,44 @@ struct AccountsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    if !accounts.isEmpty {
-                        Button(isEditing ? "Done" : "Edit") {
-                            withAnimation(reduceMotion ? nil : .default) {
-                                isEditing.toggle()
-                            }
-                        }
-                    }
+                    ProfileButton()
                 }
                 ToolbarItem(placement: .principal) {
                     Text("Accounts")
                         .font(.headline)
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Add", systemImage: "plus") {
-                        showingAddAccount = true
+                    Menu {
+                        Button("Add Account", systemImage: "plus") {
+                            showingAddAccount = true
+                        }
+                        Button("Bank Import", systemImage: "doc.text.fill") {
+                            showingBankImport = true
+                        }
+                        if !accounts.isEmpty {
+                            Divider()
+                            Button(isEditing ? "Done Editing" : "Edit Accounts", systemImage: isEditing ? "checkmark" : "pencil") {
+                                withAnimation(reduceMotion ? nil : .default) {
+                                    isEditing.toggle()
+                                }
+                            }
+                        }
+                    } label: {
+                        Label("More", systemImage: "ellipsis.circle")
                     }
                 }
+            }
+            .navigationDestination(for: PersistentIdentifier.self) { accountID in
+                AccountDetailView(accountID: accountID)
             }
             .sheet(isPresented: $showingAddAccount) {
                 AddAccountView(nextSortOrder: accounts.count)
             }
             .sheet(item: $editingAccount) { account in
                 EditAccountView(account: account)
+            }
+            .sheet(isPresented: $showingBankImport) {
+                ImportView()
             }
             .sensoryFeedback(.selection, trigger: showingAddAccount)
         }

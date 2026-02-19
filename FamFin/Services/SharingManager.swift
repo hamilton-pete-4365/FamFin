@@ -307,6 +307,46 @@ final class SharingManager {
         }
     }
 
+    // MARK: - Activity tracking
+
+    /// Key for the "last seen activity" timestamp in UserDefaults.
+    private static let lastSeenActivityKey = "lastSeenActivityTimestamp"
+
+    /// The timestamp when the user last viewed the Activity Feed.
+    var lastSeenActivityDate: Date {
+        get {
+            let interval = UserDefaults.standard.double(forKey: Self.lastSeenActivityKey)
+            return interval > 0 ? Date(timeIntervalSince1970: interval) : .distantPast
+        }
+        set {
+            UserDefaults.standard.set(newValue.timeIntervalSince1970, forKey: Self.lastSeenActivityKey)
+        }
+    }
+
+    /// Number of activity entries newer than the last-seen timestamp.
+    /// Returns 0 when sharing is not active.
+    var unreadActivityCount: Int {
+        guard isShared else { return 0 }
+        return _unreadCount
+    }
+
+    /// Cached unread count, updated when activity is logged or marked as read.
+    private(set) var _unreadCount: Int = 0
+
+    /// Recalculates the unread activity count from the given model context.
+    func refreshUnreadCount(context: ModelContext) {
+        let cutoff = lastSeenActivityDate
+        let descriptor = FetchDescriptor<ActivityEntry>()
+        let all = (try? context.fetch(descriptor)) ?? []
+        _unreadCount = all.filter { $0.timestamp > cutoff }.count
+    }
+
+    /// Marks all activity as read (sets last-seen to now).
+    func markActivityAsRead(context: ModelContext) {
+        lastSeenActivityDate = Date()
+        _unreadCount = 0
+    }
+
     // MARK: - Activity logging
 
     /// Logs an activity entry to the SwiftData store.
@@ -321,6 +361,7 @@ final class SharingManager {
             activityType: type
         )
         context.insert(entry)
+        _unreadCount += 1
     }
 
     // MARK: - Error types

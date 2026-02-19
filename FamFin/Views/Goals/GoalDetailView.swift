@@ -65,6 +65,9 @@ struct GoalDetailView: View {
         } message: {
             Text("This will permanently delete this savings goal. This cannot be undone.")
         }
+        .navigationDestination(for: Category.self) { category in
+            CategoryDetailView(category: category, month: currentMonth)
+        }
         .onAppear { loadGoal() }
     }
 
@@ -299,63 +302,96 @@ struct GoalDetailLinkedCategoryView: View {
     let currentMonth: Date
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
+    private var available: Decimal { category.available(through: currentMonth) }
+
+    /// Monthly target needed to keep goal on track
+    private var monthlyTarget: Decimal? {
+        // If linked goals exist, use the first goal's monthly target
+        let goals = category.goals
+        return goals.first?.monthlyTarget(through: currentMonth)
+    }
+
+    /// Whether the category is underfunded relative to the monthly target
+    private var isUnderfunded: Bool {
+        guard let target = monthlyTarget else { return false }
+        return category.budgeted(in: currentMonth) < target
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Linked Category")
                 .font(.headline)
                 .accessibilityAddTraits(.isHeader)
 
-            VStack(spacing: 8) {
-                HStack {
-                    Text(category.emoji)
-                        .font(.title3)
-                    Text(category.name)
-                        .font(.subheadline)
-                    Spacer()
-                    Image(systemName: "link")
-                        .foregroundStyle(.secondary)
-                        .accessibilityHidden(true)
+            NavigationLink(value: category) {
+                VStack(spacing: 8) {
+                    HStack {
+                        Text(category.emoji)
+                            .font(.title3)
+                        Text(category.name)
+                            .font(.subheadline)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
+                            .accessibilityHidden(true)
+                    }
+
+                    Divider()
+
+                    HStack(spacing: 0) {
+                        VStack(spacing: 2) {
+                            Text(formatGBP(category.budgeted(in: currentMonth), currencyCode: currencyCode))
+                                .font(.subheadline.bold())
+                                .monospacedDigit()
+                            Text("Budgeted")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity)
+
+                        VStack(spacing: 2) {
+                            Text(formatGBP(category.activity(in: currentMonth), currencyCode: currencyCode))
+                                .font(.subheadline.bold())
+                                .monospacedDigit()
+                            Text("Activity")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity)
+
+                        VStack(spacing: 2) {
+                            Text(formatGBP(available, currencyCode: currencyCode))
+                                .font(.subheadline.bold())
+                                .monospacedDigit()
+                                .foregroundStyle(available < 0 ? .red : .primary)
+                            Text("Available")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+
+                    // Underfunded warning
+                    if isUnderfunded, let target = monthlyTarget {
+                        let needed = target - category.budgeted(in: currentMonth)
+                        HStack(spacing: 6) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundStyle(.orange)
+                            Text("Needs \(formatGBP(needed, currencyCode: currencyCode)) more to stay on track")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.top, 4)
+                    }
                 }
-
-                Divider()
-
-                HStack(spacing: 0) {
-                    VStack(spacing: 2) {
-                        Text(formatGBP(category.budgeted(in: currentMonth), currencyCode: currencyCode))
-                            .font(.subheadline.bold())
-                            .monospacedDigit()
-                        Text("Budgeted")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
-                    .frame(maxWidth: .infinity)
-
-                    VStack(spacing: 2) {
-                        Text(formatGBP(category.activity(in: currentMonth), currencyCode: currencyCode))
-                            .font(.subheadline.bold())
-                            .monospacedDigit()
-                        Text("Activity")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
-                    .frame(maxWidth: .infinity)
-
-                    VStack(spacing: 2) {
-                        Text(formatGBP(category.available(through: currentMonth), currencyCode: currencyCode))
-                            .font(.subheadline.bold())
-                            .monospacedDigit()
-                        Text("Available")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
-                    .frame(maxWidth: .infinity)
-                }
+                .padding()
+                .background(Color(.secondarySystemGroupedBackground))
+                .clipShape(.rect(cornerRadius: 12))
             }
-            .padding()
-            .background(Color(.secondarySystemGroupedBackground))
-            .clipShape(.rect(cornerRadius: 12))
+            .buttonStyle(.plain)
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("Linked to category: \(category.name)")
+            .accessibilityLabel("Linked to category: \(category.name), tap to view details")
         }
     }
 }

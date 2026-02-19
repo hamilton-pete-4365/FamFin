@@ -4,8 +4,8 @@ import SwiftData
 struct ContentView: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @State private var selectedTab = 0
-    @State private var navigateToAccountID: PersistentIdentifier?
     @State private var showingNewTransaction = false
+    @State private var previousTab = 0
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -14,14 +14,11 @@ struct ContentView: View {
             }
 
             Tab("Accounts", systemImage: "banknote.fill", value: 1) {
-                AccountsView(onSelectAccount: { accountID in
-                    navigateToAccountID = accountID
-                    selectedTab = 2
-                })
+                AccountsView()
             }
 
             Tab("Transactions", systemImage: "list.bullet.rectangle.fill", value: 2) {
-                TransactionsTab(navigateToAccountID: $navigateToAccountID)
+                TransactionsTab()
             }
 
             Tab("Goals", systemImage: "target", value: 3) {
@@ -33,6 +30,13 @@ struct ContentView: View {
             }
         }
         .tabViewStyle(.sidebarAdaptable)
+        .onChange(of: selectedTab) { oldValue, newValue in
+            // Double-tap Transactions tab to open Add Transaction
+            if oldValue == 2, newValue == 2 {
+                showingNewTransaction = true
+            }
+            previousTab = oldValue
+        }
         .onOpenURL { url in
             handleDeepLink(url)
         }
