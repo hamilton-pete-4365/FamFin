@@ -50,6 +50,8 @@ struct BudgetView: View {
     @State private var focusedCategory: Category? = nil
     /// Stays true while any row is focused; does not flicker during row-to-row transitions.
     @State private var keyboardToolbarVisible = false
+    /// Tracks whether the keyboard was already showing, to avoid scrolling on row-to-row taps.
+    @State private var keyboardWasAlreadyVisible = false
     /// Set by keyboard toolbar hint buttons; consumed by the focused row
     @State private var pendingHintAmount: Decimal? = nil
     @State private var showQuickFill = false
@@ -460,6 +462,7 @@ struct BudgetView: View {
                                     },
                                     onFocusChanged: { focused in
                                         if focused {
+                                            keyboardWasAlreadyVisible = keyboardToolbarVisible
                                             focusedCategory = subcategory
                                             keyboardToolbarVisible = true
                                         } else {
@@ -500,6 +503,10 @@ struct BudgetView: View {
             }
             .onChange(of: focusedCategory?.persistentModelID) { _, newID in
                 guard let id = newID else { return }
+                // Only scroll when the keyboard is freshly appearing.
+                // If the user is tapping between rows with the keyboard
+                // already open, the rows are already visible — no scroll needed.
+                guard !keyboardWasAlreadyVisible else { return }
                 // Delay to allow the keyboard to finish appearing
                 Task { @MainActor in
                     try? await Task.sleep(for: .milliseconds(300))
