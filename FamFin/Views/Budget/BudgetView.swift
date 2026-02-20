@@ -46,15 +46,13 @@ struct BudgetView: View {
     @State private var overspentExpanded = false
     @State private var showMonthPicker = false
     @State private var navigationPath = NavigationPath()
-    /// The category currently being edited (keyboard is up)
+    /// The category currently being edited via the custom keypad.
     @State private var focusedCategory: Category? = nil
-    /// Stays true while any row is focused; does not flicker during row-to-row transitions.
-    @State private var keyboardToolbarVisible = false
-    /// Tracks whether the keyboard was already showing, to avoid scrolling on row-to-row taps.
-    @State private var keyboardWasAlreadyVisible = false
-    /// Set by keyboard toolbar hint buttons; consumed by the focused row
-    @State private var pendingHintAmount: Decimal? = nil
+    /// Tracks whether the keypad was already showing, to avoid scrolling on row-to-row taps.
+    @State private var keypadWasAlreadyVisible = false
     @State private var showQuickFill = false
+    /// The shared keypad engine — single source of truth for amount entry state.
+    @State private var engine = AmountKeypadEngine()
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
     // MARK: - Computed
@@ -128,6 +126,39 @@ struct BudgetView: View {
                     categoryList
                 }
             }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                if engine.isActive {
+                    VStack(spacing: 0) {
+                        AmountActionBar(
+                            onQuickFill: { showQuickFill = true },
+                            onDetails: { navigateToDetail() }
+                        )
+                        .popover(isPresented: $showQuickFill) {
+                            if let cat = focusedCategory {
+                                QuickFillPopover(
+                                    category: cat,
+                                    month: selectedMonth,
+                                    goals: goalsForCategory(cat),
+                                    currencyCode: currencyCode,
+                                    onSelectAmount: { amount in
+                                        engine.applyHint(amount)
+                                        showQuickFill = false
+                                    }
+                                )
+                                .presentationCompactAdaptation(.popover)
+                            }
+                        }
+
+                        AmountKeypad(
+                            engine: engine,
+                            onCancel: { handleCancel() },
+                            onDone: { amount in handleDone(amount) }
+                        )
+                    }
+                    .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .animation(reduceMotion ? nil : .spring(response: 0.35, dampingFraction: 0.85), value: engine.isActive)
             .gesture(
                 DragGesture(minimumDistance: 50, coordinateSpace: .local)
                     .onEnded { value in
@@ -157,53 +188,10 @@ struct BudgetView: View {
                         isEditingCategories = true
                     }
                 }
-                ToolbarItemGroup(placement: .keyboard) {
-                    if let cat = focusedCategory {
-                        Button("Details", systemImage: "chevron.right") {
-                            let category = cat
-                            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                            Task { @MainActor in
-                                try? await Task.sleep(for: .milliseconds(200))
-                                navigationPath.append(category)
-                            }
-                        }
-                    }
-
-                    Spacer()
-
-                    if focusedCategory != nil {
-                        Button("Quick Fill", systemImage: "sparkles") {
-                            showQuickFill = true
-                        }
-
-                        Divider()
-                    }
-
-                    Button("Done") {
-                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                    }
-                    .bold()
-                }
             }
             .sheet(isPresented: $isEditingCategories) {
                 NavigationStack {
                     ManageCategoriesView()
-                }
-            }
-            .sheet(isPresented: $showQuickFill) {
-                if let cat = focusedCategory {
-                    QuickFillSheet(
-                        category: cat,
-                        month: selectedMonth,
-                        goals: goalsForCategory(cat),
-                        currencyCode: currencyCode,
-                        onSelectAmount: { amount in
-                            saveBudget(for: cat, amount: amount)
-                            showQuickFill = false
-                        }
-                    )
-                    .presentationDetents([.medium])
-                    .presentationDragIndicator(.visible)
                 }
             }
             .navigationDestination(for: Category.self) { category in
@@ -451,38 +439,20 @@ struct BudgetView: View {
                                 let budgeted = localBudgets[catKey] ?? Decimal.zero
                                 let avail = localAvailable[catKey] ?? subcategory.available(through: selectedMonth)
                                 let categoryHasGoal = !goalsForCategory(subcategory).isEmpty
+                                let isCategoryFocused = focusedCategory?.persistentModelID == subcategory.persistentModelID
+
                                 BudgetCategoryRow(
                                     category: subcategory,
-                                    month: selectedMonth,
-                                    budgetedAmount: budgeted,
+                                    budgetedDisplay: isCategoryFocused
+                                        ? engine.displayString
+                                        : formatGBP(budgeted, currencyCode: currencyCode),
                                     available: avail,
                                     hasGoal: categoryHasGoal,
-                                    onBudgetChanged: { newAmount in
-                                        saveBudget(for: subcategory, amount: newAmount)
-                                    },
-                                    onFocusChanged: { focused in
-                                        if focused {
-                                            keyboardWasAlreadyVisible = keyboardToolbarVisible
-                                            focusedCategory = subcategory
-                                            keyboardToolbarVisible = true
-                                        } else {
-                                            pendingHintAmount = nil
-                                            // Delay clearing so that if another row gains focus
-                                            // immediately, the hint bar stays visible without flicker
-                                            Task { @MainActor in
-                                                try? await Task.sleep(for: .milliseconds(100))
-                                                if focusedCategory?.persistentModelID == subcategory.persistentModelID {
-                                                    focusedCategory = nil
-                                                }
-                                                // Clear toolbar inset only after confirming no new row took focus
-                                                try? await Task.sleep(for: .milliseconds(200))
-                                                if focusedCategory == nil {
-                                                    keyboardToolbarVisible = false
-                                                }
-                                            }
-                                        }
-                                    },
-                                    pendingHintAmount: $pendingHintAmount
+                                    isFocused: isCategoryFocused,
+                                    expressionDisplay: isCategoryFocused
+                                        ? engine.expressionDisplayString
+                                        : nil,
+                                    onTap: { activateKeypad(for: subcategory) }
                                 )
                                 .id(subcategory.persistentModelID)
                             }
@@ -491,25 +461,15 @@ struct BudgetView: View {
                 }
             }
             .listStyle(.plain)
-            .scrollDismissesKeyboard(.interactively)
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                // Reserve space for the keyboard toolbar so the List knows
-                // its visible area ends above the toolbar, not behind it.
-                // Uses keyboardToolbarVisible rather than focusedCategory
-                // to avoid flickering during row-to-row transitions.
-                if keyboardToolbarVisible {
-                    Color.clear.frame(height: 44)
-                }
-            }
             .onChange(of: focusedCategory?.persistentModelID) { _, newID in
                 guard let id = newID else { return }
-                // Only scroll when the keyboard is freshly appearing.
-                // If the user is tapping between rows with the keyboard
+                // Only scroll when the keypad is freshly appearing.
+                // If the user is tapping between rows with the keypad
                 // already open, the rows are already visible — no scroll needed.
-                guard !keyboardWasAlreadyVisible else { return }
-                // Delay to allow the keyboard to finish appearing
+                guard !keypadWasAlreadyVisible else { return }
+                // Shorter delay than system keyboard — our keypad animation is ~350ms
                 Task { @MainActor in
-                    try? await Task.sleep(for: .milliseconds(300))
+                    try? await Task.sleep(for: .milliseconds(100))
                     withAnimation {
                         proxy.scrollTo(id)
                     }
@@ -540,9 +500,66 @@ struct BudgetView: View {
         allGoals.filter { $0.linkedCategory?.persistentModelID == category.persistentModelID }
     }
 
+    // MARK: - Keypad Interaction
+
+    /// Activate the keypad for a category. If already active for a different row, auto-save first.
+    func activateKeypad(for category: Category) {
+        // If already focused on this category, no-op
+        if focusedCategory?.persistentModelID == category.persistentModelID {
+            return
+        }
+
+        keypadWasAlreadyVisible = engine.isActive
+
+        // If editing a different row, auto-save it first
+        if engine.isActive, let previousCategory = focusedCategory {
+            let amount = engine.doneTapped()
+            saveBudget(for: previousCategory, amount: amount)
+        }
+
+        // Activate for the new category
+        let catKey = "\(category.persistentModelID)"
+        let budgeted = localBudgets[catKey] ?? Decimal.zero
+        let currency = SupportedCurrency(rawValue: currencyCode) ?? .gbp
+        let multiplier = Decimal(currency.minorUnitMultiplier)
+        let absBudgeted = budgeted < 0 ? -budgeted : budgeted
+        let pence = NSDecimalNumber(decimal: absBudgeted * multiplier).intValue
+
+        engine.activate(currentPence: pence, currencyCode: currencyCode)
+        focusedCategory = category
+    }
+
+    /// Handle the Done key — save and dismiss the keypad.
+    func handleDone(_ amount: Decimal) {
+        guard let category = focusedCategory else { return }
+        saveBudget(for: category, amount: amount)
+        focusedCategory = nil
+    }
+
+    /// Handle the Cancel key — revert to original value and dismiss the keypad.
+    func handleCancel() {
+        _ = engine.cancelTapped()
+        focusedCategory = nil
+    }
+
+    /// Handle the Details button — auto-save and navigate to category detail.
+    func navigateToDetail() {
+        guard let category = focusedCategory else { return }
+        let amount = engine.doneTapped()
+        saveBudget(for: category, amount: amount)
+        focusedCategory = nil
+        navigationPath.append(category)
+    }
+
     // MARK: - Helpers
 
     func changeMonth(by offset: Int) {
+        // Auto-save and dismiss keypad when changing months
+        if engine.isActive, let cat = focusedCategory {
+            saveBudget(for: cat, amount: engine.doneTapped())
+            focusedCategory = nil
+        }
+
         let calendar = Calendar.current
         if let newMonth = calendar.date(byAdding: .month, value: offset, to: selectedMonth) {
             let comps = calendar.dateComponents([.year, .month], from: newMonth)
@@ -677,172 +694,78 @@ struct BudgetView: View {
 
 }
 
-// MARK: - Budget Category Row with inline editing
+// MARK: - Budget Category Row (display-only, keypad-driven)
 
+/// Displays a single budget category row with name, budgeted amount, and available balance.
+///
+/// All editing is handled by the parent's `AmountKeypadEngine` — this row is purely display.
+/// Tapping the row triggers `onTap` to activate the keypad for this category.
 struct BudgetCategoryRow: View {
     let category: Category
-    let month: Date
-    let budgetedAmount: Decimal
+    /// Live display string — driven by the engine when focused, else formatted budgetedAmount.
+    let budgetedDisplay: String
     let available: Decimal
     let hasGoal: Bool
-    let onBudgetChanged: (Decimal) -> Void
-    /// Signals the parent when this row gains/loses focus
-    var onFocusChanged: ((Bool) -> Void)? = nil
-    /// Parent sets this to apply a hint amount; row clears it after applying
-    @Binding var pendingHintAmount: Decimal?
+    let isFocused: Bool
+    /// Second-line math expression (e.g. "£1.50 + £0.50"), nil when none.
+    let expressionDisplay: String?
+    let onTap: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
-    /// Raw digits string — user types "1536", we store "1536" and display £15.36
-    @State private var rawDigits: String = ""
-    @State private var previousDigits: String = ""  // backup for cancel-on-blur
-    @State private var hasLoaded: Bool = false
-    @State private var hasTyped: Bool = false  // tracks whether user typed anything while focused
-    @State private var hintDigits: String = ""  // the rawDigits value set by the last hint (for replacement detection)
-    @FocusState private var isFocused: Bool
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
-    /// Pence value from raw digits
-    private var amountInPence: Int {
-        Int(rawDigits) ?? 0
-    }
-
-    /// Formatted display using selected currency
-    private var displayString: String {
-        formatPence(amountInPence, currencyCode: currencyCode)
-    }
-
-    /// Convert minor units to Decimal major units for saving
-    private var decimalAmount: Decimal {
-        let currency = SupportedCurrency(rawValue: currencyCode) ?? .gbp
-        return Decimal(amountInPence) / Decimal(currency.minorUnitMultiplier)
-    }
-
-    /// Apply a hint amount — sets the display, marks as typed, and records hint for replacement detection
-    private func applyHint(_ amount: Decimal) {
-        let currency = SupportedCurrency(rawValue: currencyCode) ?? .gbp
-        let multiplier = Decimal(currency.minorUnitMultiplier)
-        let absAmount = amount < 0 ? -amount : amount
-        let minorUnits = NSDecimalNumber(decimal: absAmount * multiplier).intValue
-        let digits = minorUnits > 0 ? String("\(minorUnits)".prefix(8)) : ""
-        hintDigits = digits
-        rawDigits = digits
-        hasTyped = true
-    }
-
     var body: some View {
-        // The entire row is a single tap target for budget editing
         Button {
-            isFocused = true
+            onTap()
         } label: {
-            HStack(spacing: 8) {
-                Text(category.name)
-                    .font(.subheadline)
-                    .lineLimit(1)
+            VStack(alignment: .trailing, spacing: 2) {
+                HStack(spacing: 8) {
+                    Text(category.name)
+                        .font(.subheadline)
+                        .lineLimit(1)
 
-                if hasGoal {
-                    Image(systemName: "target")
-                        .font(.caption2)
-                        .foregroundStyle(.purple)
-                        .accessibilityHidden(true)
+                    if hasGoal {
+                        Image(systemName: "target")
+                            .font(.caption2)
+                            .foregroundStyle(.purple)
+                            .accessibilityHidden(true)
+                    }
+
+                    Spacer()
+
+                    // Budgeted amount (updates live from engine when focused)
+                    Text(budgetedDisplay)
+                        .font(.subheadline)
+                        .monospacedDigit()
+                        .foregroundStyle(isFocused ? .primary : .secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.6)
+                        .multilineTextAlignment(.trailing)
+                        .frame(width: 88, alignment: .trailing)
+                        .contentTransition(reduceMotion ? .identity : .numericText())
+
+                    // Available balance
+                    GBPText(amount: available, font: .subheadline.bold(), accentPositive: true)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.6)
+                        .frame(width: 76, alignment: .trailing)
                 }
 
-                Spacer()
-
-                // Budgeted amount (updates live when typing)
-                Text(displayString)
-                    .font(.subheadline)
-                    .monospacedDigit()
-                    .foregroundStyle(isFocused ? .primary : .secondary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.6)
-                    .multilineTextAlignment(.trailing)
-                    .frame(width: 88, alignment: .trailing)
-                    .contentTransition(reduceMotion ? .identity : .numericText())
-
-                // Available balance
-                GBPText(amount: available, font: .subheadline.bold(), accentPositive: true)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.6)
-                    .frame(width: 76, alignment: .trailing)
+                // Expression display (e.g. "£1.50 + £0.50") when math is active
+                if let expr = expressionDisplay {
+                    Text(expr)
+                        .font(.caption)
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                        .padding(.trailing, 76 + 8) // align under budgeted column
+                        .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
+                }
             }
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("\(category.name)\(hasGoal ? ", has savings goal" : ""), budgeted \(displayString), available \(formatGBP(available, currencyCode: currencyCode))\(available < 0 ? ", overspent" : "")")
+        .accessibilityLabel(accessibilityLabelText)
         .accessibilityHint("Double tap to edit budget amount")
-        // Hidden text field overlaid for keyboard input
-        .overlay {
-            TextField("", text: $rawDigits)
-                .keyboardType(.numberPad)
-                .focused($isFocused)
-                .opacity(0.01)
-                .frame(width: 1, height: 1)
-                .accessibilityHidden(true)
-                .onChange(of: isFocused) { _, focused in
-                    if focused {
-                        previousDigits = rawDigits
-                        hasTyped = false
-                        hintDigits = ""
-                        // Keep current value displayed until user starts typing
-                    } else {
-                        if !hasTyped {
-                            rawDigits = previousDigits
-                        } else {
-                            onBudgetChanged(decimalAmount)
-                        }
-                    }
-                    onFocusChanged?(focused)
-                }
-                .onChange(of: pendingHintAmount) { _, newHint in
-                    // Only the focused row consumes the hint
-                    if isFocused, let amount = newHint {
-                        applyHint(amount)
-                        pendingHintAmount = nil
-                    }
-                }
-                .onChange(of: rawDigits) { _, newValue in
-                    let digits = newValue.filter { $0.isNumber }
-
-                    // First keystroke while focused replaces the previous value.
-                    // Detect: the text field still contains previousDigits with new
-                    // chars appended. Strip the old prefix so only fresh input remains.
-                    if isFocused && !hasTyped && !previousDigits.isEmpty && digits.count > previousDigits.count && digits.hasPrefix(previousDigits) {
-                        let fresh = String(digits.dropFirst(previousDigits.count))
-                        hasTyped = true
-                        hintDigits = ""
-                        rawDigits = fresh
-                        return
-                    }
-
-                    // After a hint sets rawDigits to e.g. "2500", the user's next keystroke
-                    // appends to get "25003". Detect this: if newValue starts with the hint
-                    // digits and has extra chars, keep only the extra (replacing the hint).
-                    if !hintDigits.isEmpty && isFocused {
-                        if digits == hintDigits {
-                            // This is the hint itself landing — let it through
-                        } else if digits.hasPrefix(hintDigits) && digits.count > hintDigits.count {
-                            // User typed after hint — replace with just the new digit(s)
-                            let fresh = String(digits.dropFirst(hintDigits.count))
-                            hintDigits = ""
-                            rawDigits = fresh
-                            return
-                        } else {
-                            // Something else changed — clear hint tracking
-                            hintDigits = ""
-                        }
-                    }
-
-                    if isFocused && !digits.isEmpty {
-                        hasTyped = true
-                    }
-                    let trimmed = String(digits.drop(while: { $0 == "0" }))
-                    let capped = String(trimmed.prefix(8))
-                    if rawDigits != capped {
-                        rawDigits = capped
-                    }
-                }
-        }
         .padding(.vertical, 4)
         .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
         .listRowBackground(
@@ -850,141 +773,24 @@ struct BudgetCategoryRow: View {
         )
         .sensoryFeedback(.selection, trigger: isFocused)
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.15), value: isFocused)
-        .onAppear {
-            guard !hasLoaded else { return }
-            hasLoaded = true
-            if budgetedAmount != .zero {
-                let currency = SupportedCurrency(rawValue: currencyCode) ?? .gbp
-                let multiplier = Decimal(currency.minorUnitMultiplier)
-                let absAmount = budgetedAmount < 0 ? -budgetedAmount : budgetedAmount
-                let minorUnits = NSDecimalNumber(decimal: absAmount * multiplier).intValue
-                rawDigits = minorUnits > 0 ? "\(minorUnits)" : ""
+    }
+
+    private var accessibilityLabelText: String {
+        var parts = [category.name]
+        if hasGoal { parts.append("has savings goal") }
+        if isFocused {
+            parts.append("editing")
+            if let expr = expressionDisplay {
+                parts.append(expr)
+            } else {
+                parts.append("current amount \(budgetedDisplay)")
             }
+        } else {
+            parts.append("budgeted \(budgetedDisplay)")
         }
-        .onChange(of: budgetedAmount) { _, newVal in
-            if !isFocused {
-                let currency = SupportedCurrency(rawValue: currencyCode) ?? .gbp
-                let multiplier = Decimal(currency.minorUnitMultiplier)
-                let absVal = newVal < 0 ? -newVal : newVal
-                let minorUnits = NSDecimalNumber(decimal: absVal * multiplier).intValue
-                rawDigits = minorUnits > 0 ? "\(minorUnits)" : ""
-            }
-        }
-    }
-}
-
-// MARK: - Quick Fill Sheet
-
-/// Half-sheet showing historical budget data and goal targets as tappable quick-fill options.
-struct QuickFillSheet: View {
-    let category: Category
-    let month: Date
-    let goals: [SavingsGoal]
-    let currencyCode: String
-    let onSelectAmount: (Decimal) -> Void
-
-    @Environment(\.dismiss) private var dismiss
-
-    private var lastMonth: Date? {
-        Calendar.current.date(byAdding: .month, value: -1, to: month)
-    }
-
-    private var lastBudgeted: Decimal {
-        lastMonth.map { category.budgeted(in: $0) } ?? .zero
-    }
-
-    private var lastSpent: Decimal {
-        lastMonth.map { -category.activity(in: $0) } ?? .zero
-    }
-
-    private var avgBudgeted: Decimal {
-        category.averageMonthlyBudgeted(before: month, months: 12)
-    }
-
-    private var avgSpent: Decimal {
-        category.averageMonthlySpending(before: month, months: 12)
-    }
-
-    var body: some View {
-        NavigationStack {
-            List {
-                Section("Last Month") {
-                    quickFillRow(label: "Budgeted", amount: lastBudgeted)
-                    quickFillRow(label: "Spent", amount: lastSpent)
-                }
-
-                Section("12-Month Average") {
-                    quickFillRow(label: "Budgeted", amount: avgBudgeted)
-                    quickFillRow(label: "Spent", amount: avgSpent)
-                }
-
-                if !goals.isEmpty {
-                    Section("Goals") {
-                        ForEach(goals) { goal in
-                            if let monthlyTarget = goal.monthlyTarget(through: month),
-                               monthlyTarget > 0 {
-                                Button {
-                                    onSelectAmount(monthlyTarget)
-                                } label: {
-                                    HStack(spacing: 8) {
-                                        Image(systemName: "target")
-                                            .font(.caption)
-                                            .foregroundStyle(.purple)
-                                            .accessibilityHidden(true)
-                                        VStack(alignment: .leading, spacing: 2) {
-                                            Text(goal.name)
-                                                .font(.subheadline)
-                                                .foregroundStyle(.primary)
-                                            if let days = goal.daysRemaining, days > 0 {
-                                                Text("\(days) days left")
-                                                    .font(.caption2)
-                                                    .foregroundStyle(.tertiary)
-                                            }
-                                        }
-                                        Spacer()
-                                        Text(formatGBP(monthlyTarget, currencyCode: currencyCode))
-                                            .font(.subheadline.bold())
-                                            .monospacedDigit()
-                                            .foregroundStyle(Color.accentColor)
-                                    }
-                                }
-                                .buttonStyle(.plain)
-                                .accessibilityElement(children: .combine)
-                                .accessibilityLabel("\(goal.name) target: \(formatGBP(monthlyTarget, currencyCode: currencyCode))")
-                                .accessibilityHint("Double tap to fill budget with this amount")
-                            }
-                        }
-                    }
-                }
-            }
-            .navigationTitle("Quick Fill")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
-                }
-            }
-        }
-    }
-
-    private func quickFillRow(label: String, amount: Decimal) -> some View {
-        Button {
-            onSelectAmount(amount)
-        } label: {
-            HStack {
-                Text(label)
-                    .font(.subheadline)
-                    .foregroundStyle(.primary)
-                Spacer()
-                Text(formatGBP(amount, currencyCode: currencyCode))
-                    .font(.subheadline.bold())
-                    .monospacedDigit()
-                    .foregroundStyle(Color.accentColor)
-            }
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel("\(label): \(formatGBP(amount, currencyCode: currencyCode))")
-        .accessibilityHint("Double tap to fill budget with this amount")
+        parts.append("available \(formatGBP(available, currencyCode: currencyCode))")
+        if available < 0 { parts.append("overspent") }
+        return parts.joined(separator: ", ")
     }
 }
 

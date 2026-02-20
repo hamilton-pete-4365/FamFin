@@ -246,7 +246,7 @@ FamFin uses pence-based entry for amounts: digits build from the right, like an 
 - Display the formatted currency as the user types (e.g., typing "1536" shows "£15.36").
 - Clear with a single backspace-like action (delete last digit).
 - Show a visible "0.00" placeholder before any input.
-- Provide quick-fill suggestions (last month, average, goal target) as tappable chips above the keyboard.
+- Make contextual suggestions (e.g. historical data, averages, goal targets) available during amount entry so users can fill values quickly without mental arithmetic.
 
 #### Form Design
 
