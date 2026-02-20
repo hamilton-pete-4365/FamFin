@@ -16,7 +16,7 @@ struct AddGoalView: View {
     @State private var selectedCategory: Category?
 
     private var subcategories: [Category] {
-        allCategories.filter { !$0.isHeader && !$0.isSystem }
+        allCategories.filter { !$0.isHeader && !$0.isSystem && !$0.isHidden }
     }
 
     private var canSave: Bool {

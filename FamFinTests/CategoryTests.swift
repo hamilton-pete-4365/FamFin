@@ -461,3 +461,300 @@ struct CategoryEndOfMonthTests {
         #expect(comps.month == 1)
     }
 }
+
+// MARK: - Category Hidden Behaviour Tests
+
+@Suite("Category hidden behaviour")
+struct CategoryHiddenTests {
+
+    @MainActor @Test("New categories default to not hidden")
+    func defaultNotHidden() throws {
+        let container = try makeTestContainer()
+        let context = container.mainContext
+
+        let category = Category(name: "Test")
+        context.insert(category)
+        try context.save()
+
+        #expect(category.isHidden == false)
+    }
+
+    @MainActor @Test("visibleSortedChildren excludes hidden children")
+    func visibleExcludesHidden() throws {
+        let container = try makeTestContainer()
+        let context = container.mainContext
+
+        let header = Category(name: "Monthly", emoji: "📅", isHeader: true)
+        context.insert(header)
+
+        let groceries = Category(name: "Groceries", emoji: "🛒", sortOrder: 0)
+        groceries.parent = header
+        context.insert(groceries)
+
+        let utilities = Category(name: "Utilities", emoji: "💡", sortOrder: 1)
+        utilities.parent = header
+        utilities.isHidden = true
+        context.insert(utilities)
+
+        let travel = Category(name: "Travel", emoji: "🚗", sortOrder: 2)
+        travel.parent = header
+        context.insert(travel)
+        try context.save()
+
+        let visible = header.visibleSortedChildren
+        #expect(visible.count == 2)
+        #expect(visible[0].name == "Groceries")
+        #expect(visible[1].name == "Travel")
+    }
+
+    @MainActor @Test("sortedChildren still includes hidden children")
+    func sortedIncludesHidden() throws {
+        let container = try makeTestContainer()
+        let context = container.mainContext
+
+        let header = Category(name: "Monthly", emoji: "📅", isHeader: true)
+        context.insert(header)
+
+        let groceries = Category(name: "Groceries", emoji: "🛒", sortOrder: 0)
+        groceries.parent = header
+        context.insert(groceries)
+
+        let utilities = Category(name: "Utilities", emoji: "💡", sortOrder: 1)
+        utilities.parent = header
+        utilities.isHidden = true
+        context.insert(utilities)
+        try context.save()
+
+        let sorted = header.sortedChildren
+        #expect(sorted.count == 2)
+        #expect(sorted[0].name == "Groceries")
+        #expect(sorted[1].name == "Utilities")
+    }
+
+    @MainActor @Test("Hidden category retains transactions and allocations")
+    func hiddenRetainsData() throws {
+        let container = try makeTestContainer()
+        let context = container.mainContext
+
+        let account = Account(name: "Current", type: .current, isBudget: true)
+        context.insert(account)
+
+        let category = Category(name: "Groceries")
+        context.insert(category)
+
+        let month = makeDate(year: 2025, month: 3)
+
+        let tx = Transaction(amount: Decimal(50), payee: "Shop", date: month, type: .expense)
+        tx.account = account
+        tx.category = category
+        context.insert(tx)
+
+        let bm = BudgetMonth(month: month)
+        context.insert(bm)
+        let alloc = BudgetAllocation(budgeted: Decimal(100))
+        alloc.category = category
+        alloc.budgetMonth = bm
+        context.insert(alloc)
+        try context.save()
+
+        // Hide the category
+        category.isHidden = true
+        try context.save()
+
+        // Data is still there
+        #expect(category.transactions.count == 1)
+        #expect(category.allocations.count == 1)
+        #expect(category.activity(in: month) == Decimal(-50))
+        #expect(category.budgeted(in: month) == Decimal(100))
+    }
+}
+
+// MARK: - Category Transaction Count Tests
+
+@Suite("Category transaction count")
+struct CategoryTransactionCountTests {
+
+    @MainActor @Test("transactionCount returns correct count for subcategory")
+    func subcategoryTransactionCount() throws {
+        let container = try makeTestContainer()
+        let context = container.mainContext
+
+        let account = Account(name: "Current", type: .current, isBudget: true)
+        context.insert(account)
+
+        let category = Category(name: "Groceries")
+        context.insert(category)
+
+        let month = makeDate(year: 2025, month: 3)
+
+        for i in 1...5 {
+            let tx = Transaction(amount: Decimal(i * 10), payee: "Shop \(i)", date: month, type: .expense)
+            tx.account = account
+            tx.category = category
+            context.insert(tx)
+        }
+        try context.save()
+
+        #expect(category.transactionCount == 5)
+    }
+
+    @MainActor @Test("transactionCount returns sum for header")
+    func headerTransactionCount() throws {
+        let container = try makeTestContainer()
+        let context = container.mainContext
+
+        let account = Account(name: "Current", type: .current, isBudget: true)
+        context.insert(account)
+
+        let header = Category(name: "Monthly", emoji: "📅", isHeader: true)
+        context.insert(header)
+
+        let groceries = Category(name: "Groceries", emoji: "🛒", sortOrder: 0)
+        groceries.parent = header
+        context.insert(groceries)
+
+        let utilities = Category(name: "Utilities", emoji: "💡", sortOrder: 1)
+        utilities.parent = header
+        context.insert(utilities)
+
+        let month = makeDate(year: 2025, month: 3)
+
+        for i in 1...3 {
+            let tx = Transaction(amount: Decimal(i * 10), payee: "Shop \(i)", date: month, type: .expense)
+            tx.account = account
+            tx.category = groceries
+            context.insert(tx)
+        }
+        for i in 1...2 {
+            let tx = Transaction(amount: Decimal(i * 20), payee: "Utility \(i)", date: month, type: .expense)
+            tx.account = account
+            tx.category = utilities
+            context.insert(tx)
+        }
+        try context.save()
+
+        #expect(header.transactionCount == 5)
+        #expect(groceries.transactionCount == 3)
+        #expect(utilities.transactionCount == 2)
+    }
+
+    @MainActor @Test("transactionCount returns zero for empty category")
+    func emptyTransactionCount() throws {
+        let container = try makeTestContainer()
+        let context = container.mainContext
+
+        let category = Category(name: "Empty")
+        context.insert(category)
+        try context.save()
+
+        #expect(category.transactionCount == 0)
+    }
+}
+
+// MARK: - Category Move Between Groups Tests
+
+@Suite("Category move between groups")
+struct CategoryMoveTests {
+
+    @MainActor @Test("Moving subcategory changes parent")
+    func moveChangesParent() throws {
+        let container = try makeTestContainer()
+        let context = container.mainContext
+
+        let monthly = Category(name: "Monthly", emoji: "📅", isHeader: true, sortOrder: 0)
+        context.insert(monthly)
+
+        let fun = Category(name: "Fun", emoji: "🎉", isHeader: true, sortOrder: 1)
+        context.insert(fun)
+
+        let groceries = Category(name: "Groceries", emoji: "🛒", sortOrder: 0)
+        groceries.parent = monthly
+        context.insert(groceries)
+        try context.save()
+
+        #expect(groceries.parent?.name == "Monthly")
+
+        // Move groceries to Fun
+        groceries.parent = fun
+        groceries.sortOrder = fun.children.count
+        try context.save()
+
+        #expect(groceries.parent?.name == "Fun")
+    }
+
+    @MainActor @Test("Moving subcategory reindexes old parent children")
+    func moveReindexesOldParent() throws {
+        let container = try makeTestContainer()
+        let context = container.mainContext
+
+        let monthly = Category(name: "Monthly", emoji: "📅", isHeader: true, sortOrder: 0)
+        context.insert(monthly)
+
+        let fun = Category(name: "Fun", emoji: "🎉", isHeader: true, sortOrder: 1)
+        context.insert(fun)
+
+        let groceries = Category(name: "Groceries", emoji: "🛒", sortOrder: 0)
+        groceries.parent = monthly
+        context.insert(groceries)
+
+        let utilities = Category(name: "Utilities", emoji: "💡", sortOrder: 1)
+        utilities.parent = monthly
+        context.insert(utilities)
+
+        let travel = Category(name: "Travel", emoji: "🚗", sortOrder: 2)
+        travel.parent = monthly
+        context.insert(travel)
+        try context.save()
+
+        // Move utilities to Fun
+        utilities.parent = fun
+        utilities.sortOrder = fun.children.count
+
+        // Reindex remaining Monthly children
+        let remaining = monthly.sortedChildren.filter {
+            $0.persistentModelID != utilities.persistentModelID
+        }
+        for (i, child) in remaining.enumerated() {
+            child.sortOrder = i
+        }
+        try context.save()
+
+        let monthlySorted = monthly.sortedChildren
+        #expect(monthlySorted.count == 2)
+        #expect(monthlySorted[0].name == "Groceries")
+        #expect(monthlySorted[0].sortOrder == 0)
+        #expect(monthlySorted[1].name == "Travel")
+        #expect(monthlySorted[1].sortOrder == 1)
+    }
+
+    @MainActor @Test("Moved subcategory appends at end of new group")
+    func moveAppendsAtEnd() throws {
+        let container = try makeTestContainer()
+        let context = container.mainContext
+
+        let monthly = Category(name: "Monthly", emoji: "📅", isHeader: true, sortOrder: 0)
+        context.insert(monthly)
+
+        let fun = Category(name: "Fun", emoji: "🎉", isHeader: true, sortOrder: 1)
+        context.insert(fun)
+
+        let holiday = Category(name: "Holiday", emoji: "✈️", sortOrder: 0)
+        holiday.parent = fun
+        context.insert(holiday)
+
+        let groceries = Category(name: "Groceries", emoji: "🛒", sortOrder: 0)
+        groceries.parent = monthly
+        context.insert(groceries)
+        try context.save()
+
+        // Move groceries to Fun
+        groceries.parent = fun
+        groceries.sortOrder = fun.children.count
+        try context.save()
+
+        let funSorted = fun.sortedChildren
+        #expect(funSorted.count == 2)
+        #expect(funSorted[0].name == "Holiday")
+        #expect(funSorted[1].name == "Groceries")
+    }
+}

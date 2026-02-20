@@ -399,7 +399,7 @@ struct AddRecurringTransactionView: View {
     @Query(sort: \Category.sortOrder) private var allCategories: [Category]
 
     var categories: [Category] {
-        allCategories.filter { !$0.isHeader }
+        allCategories.filter { !$0.isHeader && !$0.isHidden }
     }
 
     @State private var amountText = ""

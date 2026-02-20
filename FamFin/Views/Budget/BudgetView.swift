@@ -48,6 +48,8 @@ struct BudgetView: View {
     @State private var navigationPath = NavigationPath()
     /// The category currently being edited (keyboard is up)
     @State private var focusedCategory: Category? = nil
+    /// Stays true while any row is focused; does not flicker during row-to-row transitions.
+    @State private var keyboardToolbarVisible = false
     /// Set by keyboard toolbar hint buttons; consumed by the focused row
     @State private var pendingHintAmount: Decimal? = nil
     @State private var showQuickFill = false
@@ -62,13 +64,13 @@ struct BudgetView: View {
 
     var headerCategories: [Category] {
         allCategories
-            .filter { $0.isHeader && !$0.isSystem }
+            .filter { $0.isHeader && !$0.isSystem && !$0.isHidden }
             .sorted { $0.sortOrder < $1.sortOrder }
     }
 
     /// Subcategories whose available balance is negative this month
     var overspentCategories: [(id: String, name: String, amount: Decimal)] {
-        headerCategories.flatMap { $0.sortedChildren }
+        headerCategories.flatMap { $0.visibleSortedChildren }
             .compactMap { cat in
                 let key = "\(cat.persistentModelID)"
                 let avail = localAvailable[key] ?? cat.available(through: selectedMonth)
@@ -149,7 +151,7 @@ struct BudgetView: View {
                         .font(.headline)
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Edit Categories", systemImage: "pencil") {
+                    Button("Manage Categories", systemImage: "slider.horizontal.3") {
                         isEditingCategories = true
                     }
                 }
@@ -375,110 +377,138 @@ struct BudgetView: View {
     // MARK: - Category List
 
     var categoryList: some View {
-        List {
-            ForEach(headerCategories) { header in
-                Section {
-                    // Collapsible header row with inline column labels
-                    Button {
-                        withAnimation(reduceMotion ? nil : .default) {
-                            let headerKey = "\(header.persistentModelID)"
-                            if expandedHeaders.contains(headerKey) {
-                                expandedHeaders.remove(headerKey)
-                            } else {
-                                expandedHeaders.insert(headerKey)
+        ScrollViewReader { proxy in
+            List {
+                ForEach(headerCategories) { header in
+                    Section {
+                        // Collapsible header row with inline column labels
+                        Button {
+                            withAnimation(reduceMotion ? nil : .default) {
+                                let headerKey = "\(header.persistentModelID)"
+                                if expandedHeaders.contains(headerKey) {
+                                    expandedHeaders.remove(headerKey)
+                                } else {
+                                    expandedHeaders.insert(headerKey)
+                                }
                             }
-                        }
-                    } label: {
-                        HStack(spacing: 8) {
-                            Image(systemName: expandedHeaders.contains("\(header.persistentModelID)") ? "chevron.down" : "chevron.right")
-                                .font(.caption2.bold())
-                                .foregroundStyle(.secondary)
-                                .frame(width: 16)
+                        } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: expandedHeaders.contains("\(header.persistentModelID)") ? "chevron.down" : "chevron.right")
+                                    .font(.caption2.bold())
+                                    .foregroundStyle(.secondary)
+                                    .frame(width: 16)
 
-                            Text(header.name.uppercased())
-                                .font(.subheadline.bold())
-                                .foregroundStyle(.secondary)
-                                .lineLimit(1)
-
-                            Spacer()
-
-                            // Budgeted column with label
-                            VStack(alignment: .trailing, spacing: 2) {
-                                Text("Budgeted")
-                                    .font(.caption2)
-                                    .foregroundStyle(.tertiary)
-                                Text(formatGBP(headerBudgeted(header), currencyCode: currencyCode))
-                                    .font(.subheadline)
-                                    .monospacedDigit()
+                                Text(header.name.uppercased())
+                                    .font(.subheadline.bold())
                                     .foregroundStyle(.secondary)
                                     .lineLimit(1)
-                                    .minimumScaleFactor(0.6)
-                            }
-                            .frame(width: 88, alignment: .trailing)
 
-                            // Available column with label
-                            VStack(alignment: .trailing, spacing: 2) {
-                                Text("Available")
-                                    .font(.caption2)
-                                    .foregroundStyle(.tertiary)
-                                let avail = headerAvailable(header)
-                                Text(formatGBP(avail, currencyCode: currencyCode))
-                                    .font(.subheadline)
-                                    .monospacedDigit()
-                                    .foregroundStyle(avail < 0 ? .red : Color.accentColor)
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.6)
+                                Spacer()
+
+                                // Budgeted column with label
+                                VStack(alignment: .trailing, spacing: 2) {
+                                    Text("Budgeted")
+                                        .font(.caption2)
+                                        .foregroundStyle(.tertiary)
+                                    Text(formatGBP(headerBudgeted(header), currencyCode: currencyCode))
+                                        .font(.subheadline)
+                                        .monospacedDigit()
+                                        .foregroundStyle(.secondary)
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.6)
+                                }
+                                .frame(width: 88, alignment: .trailing)
+
+                                // Available column with label
+                                VStack(alignment: .trailing, spacing: 2) {
+                                    Text("Available")
+                                        .font(.caption2)
+                                        .foregroundStyle(.tertiary)
+                                    let avail = headerAvailable(header)
+                                    Text(formatGBP(avail, currencyCode: currencyCode))
+                                        .font(.subheadline)
+                                        .monospacedDigit()
+                                        .foregroundStyle(avail < 0 ? .red : Color.accentColor)
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.6)
+                                }
+                                .frame(width: 76, alignment: .trailing)
                             }
-                            .frame(width: 76, alignment: .trailing)
                         }
-                    }
-                    .accessibilityElement(children: .combine)
-                    .accessibilityAddTraits(.isHeader)
-                    .accessibilityLabel("\(header.name), budgeted \(formatGBP(headerBudgeted(header), currencyCode: currencyCode)), available \(formatGBP(headerAvailable(header), currencyCode: currencyCode))\(headerAvailable(header) < 0 ? ", overspent" : "")")
-                    .accessibilityHint(expandedHeaders.contains("\(header.persistentModelID)") ? "Double tap to collapse" : "Double tap to expand")
-                    .listRowBackground(Color(.secondarySystemBackground))
-                    .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
+                        .accessibilityElement(children: .combine)
+                        .accessibilityAddTraits(.isHeader)
+                        .accessibilityLabel("\(header.name), budgeted \(formatGBP(headerBudgeted(header), currencyCode: currencyCode)), available \(formatGBP(headerAvailable(header), currencyCode: currencyCode))\(headerAvailable(header) < 0 ? ", overspent" : "")")
+                        .accessibilityHint(expandedHeaders.contains("\(header.persistentModelID)") ? "Double tap to collapse" : "Double tap to expand")
+                        .listRowBackground(Color(.secondarySystemBackground))
+                        .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
 
-                    // Subcategories (only shown when expanded)
-                    if expandedHeaders.contains("\(header.persistentModelID)") {
-                        ForEach(header.sortedChildren) { subcategory in
-                            let catKey = "\(subcategory.persistentModelID)"
-                            let budgeted = localBudgets[catKey] ?? Decimal.zero
-                            let avail = localAvailable[catKey] ?? subcategory.available(through: selectedMonth)
-                            let categoryHasGoal = !goalsForCategory(subcategory).isEmpty
-                            BudgetCategoryRow(
-                                category: subcategory,
-                                month: selectedMonth,
-                                budgetedAmount: budgeted,
-                                available: avail,
-                                hasGoal: categoryHasGoal,
-                                onBudgetChanged: { newAmount in
-                                    saveBudget(for: subcategory, amount: newAmount)
-                                },
-                                onFocusChanged: { focused in
-                                    if focused {
-                                        focusedCategory = subcategory
-                                    } else {
-                                        pendingHintAmount = nil
-                                        // Delay clearing so that if another row gains focus
-                                        // immediately, the hint bar stays visible without flicker
-                                        Task { @MainActor in
-                                            try? await Task.sleep(for: .milliseconds(100))
-                                            if focusedCategory?.persistentModelID == subcategory.persistentModelID {
-                                                focusedCategory = nil
+                        // Subcategories (only shown when expanded)
+                        if expandedHeaders.contains("\(header.persistentModelID)") {
+                            ForEach(header.visibleSortedChildren) { subcategory in
+                                let catKey = "\(subcategory.persistentModelID)"
+                                let budgeted = localBudgets[catKey] ?? Decimal.zero
+                                let avail = localAvailable[catKey] ?? subcategory.available(through: selectedMonth)
+                                let categoryHasGoal = !goalsForCategory(subcategory).isEmpty
+                                BudgetCategoryRow(
+                                    category: subcategory,
+                                    month: selectedMonth,
+                                    budgetedAmount: budgeted,
+                                    available: avail,
+                                    hasGoal: categoryHasGoal,
+                                    onBudgetChanged: { newAmount in
+                                        saveBudget(for: subcategory, amount: newAmount)
+                                    },
+                                    onFocusChanged: { focused in
+                                        if focused {
+                                            focusedCategory = subcategory
+                                            keyboardToolbarVisible = true
+                                        } else {
+                                            pendingHintAmount = nil
+                                            // Delay clearing so that if another row gains focus
+                                            // immediately, the hint bar stays visible without flicker
+                                            Task { @MainActor in
+                                                try? await Task.sleep(for: .milliseconds(100))
+                                                if focusedCategory?.persistentModelID == subcategory.persistentModelID {
+                                                    focusedCategory = nil
+                                                }
+                                                // Clear toolbar inset only after confirming no new row took focus
+                                                try? await Task.sleep(for: .milliseconds(200))
+                                                if focusedCategory == nil {
+                                                    keyboardToolbarVisible = false
+                                                }
                                             }
                                         }
-                                    }
-                                },
-                                pendingHintAmount: $pendingHintAmount
-                            )
+                                    },
+                                    pendingHintAmount: $pendingHintAmount
+                                )
+                                .id(subcategory.persistentModelID)
+                            }
                         }
                     }
                 }
             }
+            .listStyle(.plain)
+            .scrollDismissesKeyboard(.interactively)
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                // Reserve space for the keyboard toolbar so the List knows
+                // its visible area ends above the toolbar, not behind it.
+                // Uses keyboardToolbarVisible rather than focusedCategory
+                // to avoid flickering during row-to-row transitions.
+                if keyboardToolbarVisible {
+                    Color.clear.frame(height: 44)
+                }
+            }
+            .onChange(of: focusedCategory?.persistentModelID) { _, newID in
+                guard let id = newID else { return }
+                // Delay to allow the keyboard to finish appearing
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(300))
+                    withAnimation {
+                        proxy.scrollTo(id)
+                    }
+                }
+            }
         }
-        .listStyle(.plain)
-        .scrollDismissesKeyboard(.interactively)
     }
 
     // MARK: - Empty State
@@ -542,11 +572,11 @@ struct BudgetView: View {
     }
 
     func headerBudgeted(_ header: Category) -> Decimal {
-        header.sortedChildren.reduce(Decimal.zero) { $0 + budgetedAmount(for: $1) }
+        header.visibleSortedChildren.reduce(Decimal.zero) { $0 + budgetedAmount(for: $1) }
     }
 
     func headerAvailable(_ header: Category) -> Decimal {
-        header.sortedChildren.reduce(Decimal.zero) { sum, child in
+        header.visibleSortedChildren.reduce(Decimal.zero) { sum, child in
             let key = "\(child.persistentModelID)"
             return sum + (localAvailable[key] ?? child.available(through: selectedMonth))
         }
@@ -698,7 +728,7 @@ struct BudgetCategoryRow: View {
         Button {
             isFocused = true
         } label: {
-            HStack(spacing: 4) {
+            HStack(spacing: 8) {
                 Text(category.name)
                     .font(.subheadline)
                     .lineLimit(1)

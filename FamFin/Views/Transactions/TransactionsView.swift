@@ -854,9 +854,9 @@ struct AddTransactionView: View {
     @Query(sort: \Account.sortOrder) private var accounts: [Account]
     @Query(sort: \Category.sortOrder) private var allCategories: [Category]
 
-    /// Only subcategories (not headers) are shown in the category picker
+    /// Only visible subcategories (not headers, not hidden) are shown in the category picker
     var categories: [Category] {
-        allCategories.filter { !$0.isHeader }
+        allCategories.filter { !$0.isHeader && !$0.isHidden }
     }
 
     var preselectedAccount: Account?
@@ -1028,9 +1028,14 @@ struct EditTransactionView: View {
     @Query(sort: \Account.sortOrder) private var accounts: [Account]
     @Query(sort: \Category.sortOrder) private var allCategories: [Category]
 
-    /// Only subcategories (not headers) are shown in the category picker
+    /// Only visible subcategories shown in picker; includes hidden category if already assigned
     var categories: [Category] {
-        allCategories.filter { !$0.isHeader }
+        var visible = allCategories.filter { !$0.isHeader && !$0.isHidden }
+        if let current = transaction.category, current.isHidden,
+           !visible.contains(where: { $0.persistentModelID == current.persistentModelID }) {
+            visible.append(current)
+        }
+        return visible
     }
 
     let transaction: Transaction

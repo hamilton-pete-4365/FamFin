@@ -414,8 +414,14 @@ struct EditGoalView: View {
     @State private var selectedCategory: Category?
     @State private var hasLoaded = false
 
+    /// Visible subcategories; includes the goal's current category even if hidden
     private var subcategories: [Category] {
-        allCategories.filter { !$0.isHeader && !$0.isSystem }
+        var visible = allCategories.filter { !$0.isHeader && !$0.isSystem && !$0.isHidden }
+        if let current = goal.linkedCategory, current.isHidden,
+           !visible.contains(where: { $0.persistentModelID == current.persistentModelID }) {
+            visible.append(current)
+        }
+        return visible
     }
 
     private var canSave: Bool {

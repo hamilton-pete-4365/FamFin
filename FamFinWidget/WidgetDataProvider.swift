@@ -108,8 +108,8 @@ struct WidgetDataProvider {
             }
         }
 
-        // Build category snapshots for subcategories (non-header, non-system)
-        let subcategories = allCategories.filter { !$0.isHeader && !$0.isSystem }
+        // Build category snapshots for visible subcategories (non-header, non-system, non-hidden)
+        let subcategories = allCategories.filter { !$0.isHeader && !$0.isSystem && !$0.isHidden }
 
         var overspent: [CategorySnapshot] = []
         var topRemaining: [CategorySnapshot] = []

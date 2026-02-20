@@ -217,8 +217,14 @@ struct EditRecurringTransactionView: View {
     @Query(sort: \Account.sortOrder) private var accounts: [Account]
     @Query(sort: \Category.sortOrder) private var allCategories: [Category]
 
+    /// Only visible subcategories shown in picker; includes hidden category if already assigned
     var categories: [Category] {
-        allCategories.filter { !$0.isHeader }
+        var visible = allCategories.filter { !$0.isHeader && !$0.isHidden }
+        if let current = rule.category, current.isHidden,
+           !visible.contains(where: { $0.persistentModelID == current.persistentModelID }) {
+            visible.append(current)
+        }
+        return visible
     }
 
     let rule: RecurringTransaction

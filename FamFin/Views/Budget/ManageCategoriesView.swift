@@ -1,257 +1,579 @@
 import SwiftUI
 import SwiftData
 
-// MARK: - Subcategory Row
-
-/// A single subcategory row within a header section.
-struct SubcategoryRow: View {
-    let subcategory: Category
-    let isEditing: Bool
-    let onRename: () -> Void
-
-    var body: some View {
-        if isEditing {
-            Button {
-                onRename()
-            } label: {
-                HStack {
-                    Image(systemName: "line.3.horizontal")
-                        .foregroundStyle(.secondary)
-                    Text(subcategory.emoji)
-                    Text(subcategory.name)
-                        .font(.body)
-                }
-                .contentShape(Rectangle())
-            }
-            .tint(.primary)
-        } else {
-            HStack {
-                Text(subcategory.emoji)
-                Text(subcategory.name)
-                    .font(.body)
-            }
-        }
-    }
-}
-
-// MARK: - Category Section Header
-
-/// The header row for a category section, with optional edit/delete buttons.
-struct CategorySectionHeader: View {
-    let header: Category
-    let isEditing: Bool
-    let onRename: () -> Void
-    let onDelete: () -> Void
-
-    var body: some View {
-        HStack {
-            Text("\(header.emoji) \(header.name)")
-                .font(.subheadline.bold())
-                .textCase(nil)
-            Spacer()
-            if isEditing {
-                Button("Rename", systemImage: "pencil") {
-                    onRename()
-                }
-                .labelStyle(.iconOnly)
-                .font(.body)
-                .padding(8)
-                .contentShape(Rectangle())
-
-                Button("Delete", systemImage: "trash") {
-                    onDelete()
-                }
-                .labelStyle(.iconOnly)
-                .font(.body)
-                .foregroundStyle(.red)
-                .padding(8)
-                .contentShape(Rectangle())
-            }
-        }
-    }
-}
-
-// MARK: - Delete Alert Message
-
-/// The confirmation message shown when deleting a header category.
-struct DeleteAlertMessage: View {
-    let category: Category?
-
-    var body: some View {
-        if let category {
-            let childCount = category.children.count
-            let transactionCount = category.children.reduce(0) { $0 + $1.transactions.count }
-            if transactionCount > 0 {
-                Text("This will delete \"\(category.name)\" and its \(childCount) subcategories. \(transactionCount) transactions will become uncategorised.")
-            } else {
-                Text("This will delete \"\(category.name)\" and its \(childCount) subcategories.")
-            }
-        } else {
-            Text("Are you sure?")
-        }
-    }
-}
-
-// MARK: - Category Header Section
-
-/// A full section for one header category: its subcategory rows, add button, and header row.
-struct CategoryHeaderSection: View {
-    @Environment(\.modelContext) private var modelContext
-    let header: Category
-    let isEditing: Bool
-    @Binding var renamingCategory: Category?
-    @Binding var addingSubcategoryTo: Category?
-    @Binding var deletingCategory: Category?
-    @Binding var showDeleteAlert: Bool
-
-    var body: some View {
-        Section {
-            subcategoryList
-            addButton
-        } header: {
-            CategorySectionHeader(
-                header: header,
-                isEditing: isEditing,
-                onRename: { renamingCategory = header },
-                onDelete: {
-                    deletingCategory = header
-                    showDeleteAlert = true
-                }
-            )
-        }
-    }
-
-    private var subcategoryList: some View {
-        ForEach(header.sortedChildren) { subcategory in
-            SubcategoryRow(
-                subcategory: subcategory,
-                isEditing: isEditing,
-                onRename: { renamingCategory = subcategory }
-            )
-        }
-        .onDelete { offsets in
-            let children = header.sortedChildren
-            let deletedIDs = Set(offsets.map { children[$0].persistentModelID })
-            for index in offsets {
-                modelContext.delete(children[index])
-            }
-            // Reindex only the remaining children (deleted ones may linger in the relationship)
-            let remaining = children.filter { !deletedIDs.contains($0.persistentModelID) }
-            for (i, child) in remaining.enumerated() {
-                child.sortOrder = i
-            }
-        }
-        .onMove { from, to in
-            var children = header.sortedChildren
-            children.move(fromOffsets: from, toOffset: to)
-            for (i, child) in children.enumerated() {
-                child.sortOrder = i
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var addButton: some View {
-        if isEditing {
-            Button {
-                addingSubcategoryTo = header
-            } label: {
-                HStack {
-                    Image(systemName: "plus.circle.fill")
-                        .foregroundStyle(.green)
-                    Text("Add Subcategory")
-                        .foregroundStyle(Color.accentColor)
-                }
-            }
-        }
-    }
-}
-
 // MARK: - Manage Categories View
 
 /// Dedicated screen for managing budget category headers and subcategories.
-/// Accessible from the gear icon on the Budget tab.
+/// Supports inline add/rename, reorder, hide/unhide, move between groups, and delete.
 struct ManageCategoriesView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Query(sort: \Category.sortOrder) private var allCategories: [Category]
 
-    @State private var isEditing = true
-    @State private var showingAddHeader = false
-    @State private var addingSubcategoryTo: Category?
-    @State private var renamingCategory: Category?
+    // MARK: - State
+
+    @State private var isReordering = false
+
+    /// The category currently being renamed inline (TextField shown instead of label)
+    @State private var renamingCategoryID: PersistentIdentifier?
+    @State private var renameText = ""
+
+    /// The category whose emoji is being edited inline
+    @State private var editingEmojiID: PersistentIdentifier?
+    @State private var emojiText = ""
+
+    /// The header we're adding a new subcategory to (shows inline TextField)
+    @State private var addingToHeaderID: PersistentIdentifier?
+    @State private var newCategoryName = ""
+
+    /// Whether we're adding a new header group
+    @State private var isAddingHeader = false
+    @State private var newHeaderName = ""
+
+    /// Category pending deletion (triggers confirmation dialog)
     @State private var deletingCategory: Category?
-    @State private var showDeleteAlert = false
+
+    /// Whether the hidden section is expanded
+    @State private var hiddenExpanded = false
+
+    // MARK: - Computed
 
     var headerCategories: [Category] {
         allCategories
-            .filter { $0.isHeader && !$0.isSystem }
+            .filter { $0.isHeader && !$0.isSystem && !$0.isHidden }
             .sorted { $0.sortOrder < $1.sortOrder }
     }
 
-    var body: some View {
-        categoryList
-            .navigationTitle("Manage Categories")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar { toolbarContent }
-            .sheet(isPresented: $showingAddHeader) {
-                AddHeaderView(nextSortOrder: headerCategories.count)
-            }
-            .sheet(item: $addingSubcategoryTo) { header in
-                AddSubcategoryView(header: header, nextSortOrder: header.children.count)
-            }
-            .sheet(item: $renamingCategory) { category in
-                RenameCategoryView(category: category)
-            }
-            .alert("Delete Category", isPresented: $showDeleteAlert) {
-                Button("Cancel", role: .cancel) { deletingCategory = nil }
-                Button("Delete", role: .destructive) {
-                    if let category = deletingCategory {
-                        deleteHeader(category)
-                        deletingCategory = nil
-                    }
-                }
-            } message: {
-                DeleteAlertMessage(category: deletingCategory)
-            }
+    var hiddenCategories: [Category] {
+        allCategories.filter { $0.isHidden && !$0.isSystem }
     }
 
-    private var categoryList: some View {
+    // MARK: - Body
+
+    var body: some View {
         List {
             ForEach(headerCategories) { header in
-                CategoryHeaderSection(
-                    header: header,
-                    isEditing: isEditing,
-                    renamingCategory: $renamingCategory,
-                    addingSubcategoryTo: $addingSubcategoryTo,
-                    deletingCategory: $deletingCategory,
-                    showDeleteAlert: $showDeleteAlert
-                )
+                categorySection(for: header)
             }
             .onMove { from, to in
                 moveHeaders(from: from, to: to)
             }
+
+            if isAddingHeader {
+                addHeaderSection
+            }
+
+            if !hiddenCategories.isEmpty {
+                hiddenSection
+            }
         }
         .listStyle(.insetGrouped)
-        .environment(\.editMode, .constant(isEditing ? .active : .inactive))
+        .environment(\.editMode, .constant(isReordering ? .active : .inactive))
+        .navigationTitle("Manage Categories")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar { toolbarContent }
+        .confirmationDialog(
+            deletionTitle,
+            isPresented: .init(
+                get: { deletingCategory != nil },
+                set: { if !$0 { deletingCategory = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) {
+                if let category = deletingCategory {
+                    deleteCategory(category)
+                }
+            }
+        } message: {
+            Text(deletionMessage)
+        }
     }
+
+    // MARK: - Toolbar
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            if !headerCategories.isEmpty {
-                Button(isEditing ? "Done" : "Edit") {
-                    isEditing.toggle()
-                }
-            }
+        ToolbarItem(placement: .cancellationAction) {
+            Button("Done") { dismiss() }
         }
         ToolbarItem(placement: .primaryAction) {
-            Button("Add", systemImage: "plus") {
-                showingAddHeader = true
+            Menu {
+                Button("Add Group", systemImage: "folder.badge.plus") {
+                    beginAddingHeader()
+                }
+                Button(
+                    isReordering ? "Done Reordering" : "Edit Order",
+                    systemImage: isReordering ? "checkmark" : "arrow.up.arrow.down"
+                ) {
+                    withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
+                        isReordering.toggle()
+                    }
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle")
+                    .accessibilityLabel("Options")
             }
         }
     }
 
+    // MARK: - Category Section
+
+    @ViewBuilder
+    private func categorySection(for header: Category) -> some View {
+        Section {
+            ForEach(header.sortedChildren.filter { !$0.isHidden }) { subcategory in
+                subcategoryRow(subcategory, in: header)
+            }
+            .onDelete { offsets in
+                deleteSubcategories(at: offsets, in: header)
+            }
+            .onMove { from, to in
+                moveSubcategories(from: from, to: to, in: header)
+            }
+
+            if addingToHeaderID == header.persistentModelID {
+                inlineAddRow(for: header)
+            }
+
+            if !isReordering {
+                addCategoryButton(for: header)
+            }
+        } header: {
+            headerRow(for: header)
+        }
+    }
+
+    // MARK: - Header Row
+
+    private func headerRow(for header: Category) -> some View {
+        HStack {
+            if editingEmojiID == header.persistentModelID {
+                inlineEmojiField { newEmoji in
+                    header.emoji = newEmoji
+                    editingEmojiID = nil
+                    HapticManager.selection()
+                }
+            } else {
+                Text(header.emoji)
+                    .onTapGesture {
+                        beginEditingEmoji(for: header)
+                    }
+            }
+
+            if renamingCategoryID == header.persistentModelID {
+                inlineRenameField { newName in
+                    header.name = newName
+                    renamingCategoryID = nil
+                    try? modelContext.save()
+                    HapticManager.medium()
+                }
+            } else {
+                Text(header.name.uppercased())
+                    .font(.subheadline.bold())
+            }
+
+            Spacer()
+
+            Text("\(header.visibleSortedChildren.count)")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+        }
+        .textCase(nil)
+        .contextMenu {
+            Button("Rename", systemImage: "pencil") {
+                beginRenaming(header)
+            }
+            Button("Change Emoji", systemImage: "face.smiling") {
+                beginEditingEmoji(for: header)
+            }
+            Divider()
+            Button("Hide Group", systemImage: "eye.slash") {
+                hideCategory(header)
+            }
+            Button("Delete", systemImage: "trash", role: .destructive) {
+                deletingCategory = header
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isHeader)
+        .accessibilityLabel("\(header.name) group, \(header.visibleSortedChildren.count) categories")
+    }
+
+    // MARK: - Subcategory Row
+
+    private func subcategoryRow(_ subcategory: Category, in header: Category) -> some View {
+        HStack(spacing: 8) {
+            if editingEmojiID == subcategory.persistentModelID {
+                inlineEmojiField { newEmoji in
+                    subcategory.emoji = newEmoji
+                    editingEmojiID = nil
+                    HapticManager.selection()
+                }
+            } else {
+                Text(subcategory.emoji)
+                    .onTapGesture {
+                        beginEditingEmoji(for: subcategory)
+                    }
+            }
+
+            if renamingCategoryID == subcategory.persistentModelID {
+                inlineRenameField { newName in
+                    subcategory.name = newName
+                    renamingCategoryID = nil
+                    try? modelContext.save()
+                    HapticManager.medium()
+                }
+            } else {
+                Text(subcategory.name)
+                    .font(.body)
+            }
+
+            Spacer()
+
+            let count = subcategory.transactionCount
+            Text(count == 0 ? "No transactions" : "\(count) transaction\(count == 1 ? "" : "s")")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            if !isReordering {
+                beginRenaming(subcategory)
+            }
+        }
+        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+            Button("Delete", systemImage: "trash", role: .destructive) {
+                deletingCategory = subcategory
+            }
+        }
+        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+            Button("Hide", systemImage: "eye.slash") {
+                hideCategory(subcategory)
+            }
+            .tint(.blue)
+        }
+        .contextMenu {
+            Button("Rename", systemImage: "pencil") {
+                beginRenaming(subcategory)
+            }
+            Button("Change Emoji", systemImage: "face.smiling") {
+                beginEditingEmoji(for: subcategory)
+            }
+            moveMenu(for: subcategory, currentHeader: header)
+            Divider()
+            Button("Hide", systemImage: "eye.slash") {
+                hideCategory(subcategory)
+            }
+            Button("Delete", systemImage: "trash", role: .destructive) {
+                deletingCategory = subcategory
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(subcategory.name), \(subcategory.transactionCount) transactions")
+        .accessibilityHint("Tap to rename. Swipe for more actions.")
+    }
+
+    // MARK: - Move Menu
+
+    @ViewBuilder
+    private func moveMenu(for subcategory: Category, currentHeader: Category) -> some View {
+        let otherHeaders = headerCategories.filter {
+            $0.persistentModelID != currentHeader.persistentModelID
+        }
+        if !otherHeaders.isEmpty {
+            Menu("Move to...", systemImage: "arrow.right") {
+                ForEach(otherHeaders) { header in
+                    Button("\(header.emoji) \(header.name)") {
+                        moveCategory(subcategory, toHeader: header)
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Add Category Button
+
+    private func addCategoryButton(for header: Category) -> some View {
+        Button {
+            beginAddingCategory(to: header)
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "plus.circle.fill")
+                    .foregroundStyle(.green)
+                Text("Add Category")
+                    .foregroundStyle(Color.accentColor)
+            }
+        }
+        .accessibilityLabel("Add category to \(header.name)")
+    }
+
+    // MARK: - Inline Add Row
+
+    private func inlineAddRow(for header: Category) -> some View {
+        HStack(spacing: 8) {
+            Text(header.emoji)
+            TextField("Category name", text: $newCategoryName)
+                .onSubmit {
+                    saveNewCategory(to: header)
+                }
+                .submitLabel(.done)
+        }
+        .onAppear {
+            // Auto-focus is handled by SwiftUI's TextField focus
+        }
+    }
+
+    // MARK: - Add Header Section
+
+    private var addHeaderSection: some View {
+        Section {
+            HStack(spacing: 8) {
+                Text("📁")
+                TextField("Group name", text: $newHeaderName)
+                    .font(.subheadline.bold())
+                    .onSubmit {
+                        saveNewHeader()
+                    }
+                    .submitLabel(.done)
+            }
+        }
+    }
+
+    // MARK: - Hidden Section
+
+    private var hiddenSection: some View {
+        Section {
+            if hiddenExpanded {
+                ForEach(hiddenCategories) { category in
+                    hiddenRow(for: category)
+                }
+            }
+        } header: {
+            Button {
+                withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
+                    hiddenExpanded.toggle()
+                }
+            } label: {
+                HStack {
+                    Text("Hidden (\(hiddenCategories.count))")
+                        .font(.subheadline.bold())
+                        .textCase(nil)
+                    Spacer()
+                    Image(systemName: hiddenExpanded ? "chevron.up" : "chevron.down")
+                        .font(.caption2.bold())
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .accessibilityLabel("Hidden categories, \(hiddenCategories.count)")
+            .accessibilityHint(hiddenExpanded ? "Double tap to collapse" : "Double tap to expand")
+        }
+    }
+
+    private func hiddenRow(for category: Category) -> some View {
+        HStack(spacing: 8) {
+            Text(category.emoji)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(category.name)
+                    .font(.body)
+                if category.isHeader {
+                    Text("\(category.children.count) subcategories")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                } else {
+                    let count = category.transactionCount
+                    Text(count == 0 ? "No transactions" : "\(count) transaction\(count == 1 ? "" : "s")")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                }
+            }
+
+            Spacer()
+        }
+        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+            Button("Unhide", systemImage: "eye") {
+                unhideCategory(category)
+            }
+            .tint(.blue)
+        }
+        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+            Button("Delete", systemImage: "trash", role: .destructive) {
+                deletingCategory = category
+            }
+        }
+        .contextMenu {
+            Button("Unhide", systemImage: "eye") {
+                unhideCategory(category)
+            }
+            Button("Delete", systemImage: "trash", role: .destructive) {
+                deletingCategory = category
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(category.name), hidden")
+        .accessibilityHint("Swipe right to unhide")
+    }
+
+    // MARK: - Inline Fields
+
+    /// A TextField for inline renaming. Calls `onSave` with the trimmed name on submit.
+    private func inlineRenameField(onSave: @escaping (String) -> Void) -> some View {
+        TextField("Name", text: $renameText)
+            .onSubmit {
+                let trimmed = renameText.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !trimmed.isEmpty {
+                    onSave(trimmed)
+                } else {
+                    renamingCategoryID = nil
+                }
+            }
+            .submitLabel(.done)
+    }
+
+    /// A single-character TextField for inline emoji editing.
+    private func inlineEmojiField(onSave: @escaping (String) -> Void) -> some View {
+        TextField("", text: $emojiText)
+            .font(.title2)
+            .frame(width: 36)
+            .multilineTextAlignment(.center)
+            .onChange(of: emojiText) { _, newValue in
+                if newValue.count > 1 {
+                    emojiText = String(newValue.suffix(1))
+                }
+            }
+            .onSubmit {
+                let trimmed = emojiText.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !trimmed.isEmpty {
+                    onSave(trimmed)
+                } else {
+                    editingEmojiID = nil
+                }
+            }
+            .submitLabel(.done)
+    }
+
     // MARK: - Actions
+
+    private func beginRenaming(_ category: Category) {
+        guard !isReordering else { return }
+        editingEmojiID = nil
+        addingToHeaderID = nil
+        isAddingHeader = false
+        renamingCategoryID = category.persistentModelID
+        renameText = category.name
+    }
+
+    private func beginEditingEmoji(for category: Category) {
+        guard !isReordering else { return }
+        renamingCategoryID = nil
+        addingToHeaderID = nil
+        isAddingHeader = false
+        editingEmojiID = category.persistentModelID
+        emojiText = category.emoji
+    }
+
+    private func beginAddingCategory(to header: Category) {
+        renamingCategoryID = nil
+        editingEmojiID = nil
+        isAddingHeader = false
+        newCategoryName = ""
+        addingToHeaderID = header.persistentModelID
+    }
+
+    private func beginAddingHeader() {
+        renamingCategoryID = nil
+        editingEmojiID = nil
+        addingToHeaderID = nil
+        newHeaderName = ""
+        isAddingHeader = true
+    }
+
+    private func saveNewCategory(to header: Category) {
+        let trimmed = newCategoryName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            addingToHeaderID = nil
+            return
+        }
+        let sub = Category(
+            name: trimmed,
+            emoji: header.emoji,
+            isHeader: false,
+            sortOrder: header.children.count
+        )
+        sub.parent = header
+        modelContext.insert(sub)
+        try? modelContext.save()
+        HapticManager.medium()
+        addingToHeaderID = nil
+        newCategoryName = ""
+    }
+
+    private func saveNewHeader() {
+        let trimmed = newHeaderName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            isAddingHeader = false
+            return
+        }
+        let header = Category(
+            name: trimmed,
+            emoji: "📁",
+            isHeader: true,
+            sortOrder: headerCategories.count
+        )
+        modelContext.insert(header)
+        try? modelContext.save()
+        HapticManager.medium()
+        isAddingHeader = false
+        newHeaderName = ""
+    }
+
+    private func hideCategory(_ category: Category) {
+        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
+            category.isHidden = true
+            if category.isHeader {
+                for child in category.children {
+                    child.isHidden = true
+                }
+            }
+            try? modelContext.save()
+        }
+        HapticManager.light()
+    }
+
+    private func unhideCategory(_ category: Category) {
+        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
+            category.isHidden = false
+            if category.isHeader {
+                for child in category.children {
+                    child.isHidden = false
+                }
+            }
+            try? modelContext.save()
+        }
+        HapticManager.light()
+    }
+
+    private func moveCategory(_ subcategory: Category, toHeader newHeader: Category) {
+        let oldParent = subcategory.parent
+
+        subcategory.parent = newHeader
+        subcategory.sortOrder = newHeader.children.count
+
+        // Reindex the old parent's remaining children
+        if let oldParent {
+            let remaining = oldParent.sortedChildren.filter {
+                $0.persistentModelID != subcategory.persistentModelID
+            }
+            for (i, child) in remaining.enumerated() {
+                child.sortOrder = i
+            }
+        }
+
+        try? modelContext.save()
+        HapticManager.medium()
+    }
 
     private func moveHeaders(from source: IndexSet, to destination: Int) {
         var headers = headerCategories
@@ -259,165 +581,78 @@ struct ManageCategoriesView: View {
         for (i, header) in headers.enumerated() {
             header.sortOrder = i
         }
+        try? modelContext.save()
     }
 
-    private func deleteHeader(_ header: Category) {
-        modelContext.delete(header)
-        let remaining = headerCategories.filter { $0.persistentModelID != header.persistentModelID }
-        for (i, h) in remaining.enumerated() {
-            h.sortOrder = i
+    private func moveSubcategories(from source: IndexSet, to destination: Int, in header: Category) {
+        var children = header.sortedChildren.filter { !$0.isHidden }
+        children.move(fromOffsets: source, toOffset: destination)
+        for (i, child) in children.enumerated() {
+            child.sortOrder = i
         }
+        try? modelContext.save()
     }
-}
 
-// MARK: - Add Header View
+    private func deleteSubcategories(at offsets: IndexSet, in header: Category) {
+        let visibleChildren = header.sortedChildren.filter { !$0.isHidden }
+        let deletedIDs = Set(offsets.map { visibleChildren[$0].persistentModelID })
+        for index in offsets {
+            modelContext.delete(visibleChildren[index])
+        }
+        let remaining = header.sortedChildren.filter { !deletedIDs.contains($0.persistentModelID) }
+        for (i, child) in remaining.enumerated() {
+            child.sortOrder = i
+        }
+        try? modelContext.save()
+        HapticManager.error()
+    }
 
-struct AddHeaderView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Environment(\.dismiss) private var dismiss
-
-    let nextSortOrder: Int
-
-    @State private var name = ""
-    @State private var emoji = "📁"
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section("Header Name") {
-                    TextField("e.g. Household", text: $name)
-                }
-                Section("Emoji") {
-                    TextField("Emoji", text: $emoji)
-                        .font(.title)
-                }
+    private func deleteCategory(_ category: Category) {
+        if category.isHeader {
+            modelContext.delete(category)
+            let remaining = headerCategories.filter { $0.persistentModelID != category.persistentModelID }
+            for (i, h) in remaining.enumerated() {
+                h.sortOrder = i
             }
-            .scrollDismissesKeyboard(.interactively)
-            .navigationTitle("New Header")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+        } else {
+            let parent = category.parent
+            modelContext.delete(category)
+            if let parent {
+                let remaining = parent.sortedChildren.filter {
+                    $0.persistentModelID != category.persistentModelID
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        let header = Category(
-                            name: name.trimmingCharacters(in: .whitespaces),
-                            emoji: emoji.trimmingCharacters(in: .whitespaces),
-                            isHeader: true,
-                            sortOrder: nextSortOrder
-                        )
-                        modelContext.insert(header)
-                        dismiss()
-                    }
-                    .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+                for (i, child) in remaining.enumerated() {
+                    child.sortOrder = i
                 }
             }
         }
+        try? modelContext.save()
+        deletingCategory = nil
+        HapticManager.error()
     }
-}
 
-// MARK: - Add Subcategory View
+    // MARK: - Deletion Dialog Helpers
 
-struct AddSubcategoryView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Environment(\.dismiss) private var dismiss
-
-    let header: Category
-    let nextSortOrder: Int
-
-    @State private var name = ""
-    @State private var emoji = "📁"
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section {
-                    HStack {
-                        Text("Under:")
-                            .foregroundStyle(.secondary)
-                        Text("\(header.emoji) \(header.name)")
-                            .font(.headline)
-                    }
-                }
-                Section("Category Name") {
-                    TextField("e.g. Groceries", text: $name)
-                }
-                Section("Emoji") {
-                    TextField("Emoji", text: $emoji)
-                        .font(.title)
-                }
-            }
-            .scrollDismissesKeyboard(.interactively)
-            .navigationTitle("New Subcategory")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        let sub = Category(
-                            name: name.trimmingCharacters(in: .whitespaces),
-                            emoji: emoji.trimmingCharacters(in: .whitespaces),
-                            isHeader: false,
-                            sortOrder: nextSortOrder
-                        )
-                        sub.parent = header
-                        modelContext.insert(sub)
-                        dismiss()
-                    }
-                    .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
-                }
-            }
-        }
+    private var deletionTitle: String {
+        guard let category = deletingCategory else { return "Delete?" }
+        return "Delete \(category.name)?"
     }
-}
 
-// MARK: - Rename Category View
-
-struct RenameCategoryView: View {
-    @Environment(\.dismiss) private var dismiss
-
-    let category: Category
-
-    @State private var name = ""
-    @State private var emoji = ""
-    @State private var hasLoaded = false
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section("Name") {
-                    TextField("Category name", text: $name)
-                }
-                Section("Emoji") {
-                    TextField("Emoji", text: $emoji)
-                        .font(.title)
-                }
+    private var deletionMessage: String {
+        guard let category = deletingCategory else { return "" }
+        if category.isHeader {
+            let childCount = category.children.count
+            let txCount = category.transactionCount
+            if txCount > 0 {
+                return "This will delete \(category.name) and its \(childCount) subcategories. \(txCount) transactions will become uncategorised."
             }
-            .scrollDismissesKeyboard(.interactively)
-            .navigationTitle(category.isHeader ? "Rename Header" : "Rename Category")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        category.name = name.trimmingCharacters(in: .whitespaces)
-                        category.emoji = emoji.trimmingCharacters(in: .whitespaces)
-                        dismiss()
-                    }
-                    .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
-                }
+            return "This will delete \(category.name) and its \(childCount) subcategories."
+        } else {
+            let txCount = category.transactionCount
+            if txCount > 0 {
+                return "\(txCount) transaction\(txCount == 1 ? "" : "s") will become uncategorised."
             }
-            .onAppear {
-                guard !hasLoaded else { return }
-                hasLoaded = true
-                name = category.name
-                emoji = category.emoji
-            }
+            return "This category has no transactions."
         }
     }
 }

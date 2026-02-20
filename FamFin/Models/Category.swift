@@ -8,6 +8,7 @@ final class Category {
     var isHeader: Bool = false          // true = grouping header, false = budgetable subcategory
     var isSystem: Bool = false          // true = system category (e.g. "To Budget"), not user-editable
     var sortOrder: Int = 0          // ordering within its level (among siblings)
+    var isHidden: Bool = false       // soft-hide: excluded from budget and pickers, data retained
 
     // Parent: only subcategories have a parent (headers have nil)
     var parent: Category?
@@ -39,9 +40,22 @@ final class Category {
         self.sortOrder = sortOrder
     }
 
-    /// Sorted children for display
+    /// Sorted children for display (includes hidden — used by ManageCategoriesView)
     var sortedChildren: [Category] {
         children.sorted { $0.sortOrder < $1.sortOrder }
+    }
+
+    /// Visible (non-hidden) sorted children for budget display and pickers
+    var visibleSortedChildren: [Category] {
+        children.filter { !$0.isHidden }.sorted { $0.sortOrder < $1.sortOrder }
+    }
+
+    /// Total number of transactions linked to this category (or its children if a header)
+    var transactionCount: Int {
+        if isHeader {
+            return children.reduce(0) { $0 + $1.transactions.count }
+        }
+        return transactions.count
     }
 
     // MARK: - Activity (transaction impact on this category)

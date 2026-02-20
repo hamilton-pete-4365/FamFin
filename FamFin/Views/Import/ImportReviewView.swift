@@ -19,9 +19,9 @@ struct ImportReviewView: View {
 
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
-    /// Subcategories only (not headers).
+    /// Visible subcategories only (not headers, not hidden).
     private var categories: [Category] {
-        allCategories.filter { !$0.isHeader }
+        allCategories.filter { !$0.isHeader && !$0.isHidden }
     }
 
     private var selectedCount: Int {
@@ -253,7 +253,7 @@ private struct ImportTransactionRow: View {
 
     /// Categories grouped by header for the picker.
     private var groupedCategories: [CategoryGroup] {
-        let nonSystem = allCategories.filter { !$0.isSystem && !$0.isHeader }
+        let nonSystem = allCategories.filter { !$0.isSystem && !$0.isHeader && !$0.isHidden }
         var seen = Set<String>()
         var headerOrder: [(name: String, parent: Category)] = []
         for category in nonSystem {
