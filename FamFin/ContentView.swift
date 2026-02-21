@@ -21,13 +21,6 @@ struct ContentView: View {
                 TransactionsTab()
             }
 
-            Tab("Goals", systemImage: "target", value: 3) {
-                GoalsView()
-            }
-
-            Tab("Reports", systemImage: "chart.bar.fill", value: 4) {
-                ReportsView()
-            }
         }
         .tabViewStyle(.sidebarAdaptable)
         .onChange(of: selectedTab) { oldValue, newValue in
@@ -66,10 +59,6 @@ struct ContentView: View {
             selectedTab = 1
         case "transactions":
             selectedTab = 2
-        case "goals":
-            selectedTab = 3
-        case "reports":
-            selectedTab = 4
         default:
             break
         }
@@ -90,10 +79,6 @@ struct KeyboardShortcutButtons: View {
                 .keyboardShortcut("2", modifiers: .command)
             Button("") { selectedTab = 2 }
                 .keyboardShortcut("3", modifiers: .command)
-            Button("") { selectedTab = 3 }
-                .keyboardShortcut("4", modifiers: .command)
-            Button("") { selectedTab = 4 }
-                .keyboardShortcut("5", modifiers: .command)
             Button("") { showingNewTransaction = true }
                 .keyboardShortcut("n", modifiers: .command)
         }
@@ -112,7 +97,6 @@ struct KeyboardShortcutButtons: View {
             Category.self,
             BudgetMonth.self,
             BudgetAllocation.self,
-            SavingsGoal.self,
             RecurringTransaction.self,
             ActivityEntry.self
         ], inMemory: true)

@@ -1,13 +1,12 @@
 import SwiftUI
 import SwiftData
 
-/// Pushed detail view for a budget category, showing summary, linked goals,
+/// Pushed detail view for a budget category, showing summary
 /// and transactions for the selected month.
 struct CategoryDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(SharingManager.self) private var sharingManager
     @Query(sort: \Transaction.date, order: .reverse) private var allTransactions: [Transaction]
-    @Query private var allGoals: [SavingsGoal]
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
     let category: Category
@@ -24,10 +23,6 @@ struct CategoryDetailView: View {
             guard cat.persistentModelID == category.persistentModelID else { return false }
             return calendar.isDate(transaction.date, equalTo: month, toGranularity: .month)
         }
-    }
-
-    private var linkedGoals: [SavingsGoal] {
-        allGoals.filter { $0.linkedCategory?.persistentModelID == category.persistentModelID }
     }
 
     private var budgeted: Decimal { category.budgeted(in: month) }
@@ -58,23 +53,6 @@ struct CategoryDetailView: View {
             }
             .padding(.top, 16)
             .background(Color(.systemBackground))
-
-            // Linked goals section
-            if !linkedGoals.isEmpty {
-                Divider()
-
-                VStack(spacing: 8) {
-                    ForEach(linkedGoals) { goal in
-                        NavigationLink(value: goal.persistentModelID) {
-                            CategoryGoalRow(goal: goal, month: month)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 12)
-                .background(Color(.systemBackground))
-            }
 
             Divider()
 
@@ -131,9 +109,6 @@ struct CategoryDetailView: View {
                     showingAddTransaction = true
                 }
             }
-        }
-        .navigationDestination(for: PersistentIdentifier.self) { goalID in
-            GoalDetailView(goalID: goalID)
         }
         .sheet(isPresented: $showingAddTransaction) {
             AddTransactionView(preselectedCategory: category)

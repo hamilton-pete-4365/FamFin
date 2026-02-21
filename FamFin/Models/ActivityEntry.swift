@@ -29,8 +29,6 @@ enum ActivityType: String, Codable, CaseIterable, Identifiable {
     case editedTransaction = "Edited Transaction"
     case deletedTransaction = "Deleted Transaction"
     case editedBudget = "Edited Budget"
-    case addedGoalContribution = "Added Goal Contribution"
-    case createdGoal = "Created Goal"
     case joinedFamily = "Joined Family"
     case leftFamily = "Left Family"
 
@@ -43,8 +41,6 @@ enum ActivityType: String, Codable, CaseIterable, Identifiable {
         case .editedTransaction: return "pencil.circle.fill"
         case .deletedTransaction: return "trash.circle.fill"
         case .editedBudget: return "chart.pie.fill"
-        case .addedGoalContribution: return "target"
-        case .createdGoal: return "star.circle.fill"
         case .joinedFamily: return "person.badge.plus"
         case .leftFamily: return "person.badge.minus"
         }
@@ -57,8 +53,6 @@ enum ActivityType: String, Codable, CaseIterable, Identifiable {
         case .editedTransaction: return "blue"
         case .deletedTransaction: return "red"
         case .editedBudget: return "orange"
-        case .addedGoalContribution: return "purple"
-        case .createdGoal: return "yellow"
         case .joinedFamily: return "green"
         case .leftFamily: return "red"
         }

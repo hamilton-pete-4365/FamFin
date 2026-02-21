@@ -109,8 +109,6 @@ private struct PaywallProCardView: View {
             VStack(alignment: .leading) {
                 FeatureRow(icon: "chart.pie.fill", text: "Envelope budgeting")
                 FeatureRow(icon: "list.bullet.rectangle", text: "Unlimited accounts & transactions")
-                FeatureRow(icon: "chart.bar.fill", text: "Reports & insights")
-                FeatureRow(icon: "target", text: "Savings goals")
                 FeatureRow(icon: "infinity", text: "Yours forever — no subscription")
             }
 
@@ -220,8 +218,6 @@ private struct PaywallFeatureComparisonView: View {
 
                 ComparisonRow(feature: "Envelope budgeting", pro: true, premium: true)
                 ComparisonRow(feature: "Unlimited accounts", pro: true, premium: true)
-                ComparisonRow(feature: "Reports & insights", pro: true, premium: true)
-                ComparisonRow(feature: "Savings goals", pro: true, premium: true)
                 ComparisonRow(feature: "Data backup & restore", pro: true, premium: true)
                 ComparisonRow(feature: "CSV & OFX import", pro: false, premium: true)
                 ComparisonRow(feature: "Open Banking sync", pro: false, premium: true)

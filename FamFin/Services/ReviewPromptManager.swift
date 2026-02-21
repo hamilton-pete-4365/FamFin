@@ -5,7 +5,6 @@ import StoreKit
 /// an App Store review prompt.
 enum ReviewEvent {
     case budgetMonthCompleted
-    case goalMilestoneReached
     case recurringTransactionCreated
 }
 
@@ -28,7 +27,6 @@ final class ReviewPromptManager {
         static let installDate = "reviewPrompt_installDate"
         static let lastPromptDate = "reviewPrompt_lastPromptDate"
         static let budgetMonthCompleted = "reviewPrompt_budgetMonthCompleted"
-        static let goalMilestoneReached = "reviewPrompt_goalMilestoneReached"
     }
 
     // MARK: - Thresholds
@@ -62,11 +60,6 @@ final class ReviewPromptManager {
         didSet { UserDefaults.standard.set(hasBudgetMonthCompleted, forKey: StorageKey.budgetMonthCompleted) }
     }
 
-    /// Whether the user has reached at least one savings goal milestone (25%+).
-    private var hasGoalMilestoneReached: Bool {
-        didSet { UserDefaults.standard.set(hasGoalMilestoneReached, forKey: StorageKey.goalMilestoneReached) }
-    }
-
     // MARK: - Init
 
     init() {
@@ -74,7 +67,6 @@ final class ReviewPromptManager {
 
         sessionCount = defaults.integer(forKey: StorageKey.sessionCount)
         hasBudgetMonthCompleted = defaults.bool(forKey: StorageKey.budgetMonthCompleted)
-        hasGoalMilestoneReached = defaults.bool(forKey: StorageKey.goalMilestoneReached)
         lastPromptDate = defaults.object(forKey: StorageKey.lastPromptDate) as? Date
 
         // Resolve or record the install date for review prompts.
@@ -106,8 +98,6 @@ final class ReviewPromptManager {
         switch event {
         case .budgetMonthCompleted:
             hasBudgetMonthCompleted = true
-        case .goalMilestoneReached:
-            hasGoalMilestoneReached = true
         case .recurringTransactionCreated:
             break // No persistent flag needed; the event itself is the trigger.
         }

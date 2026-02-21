@@ -29,7 +29,7 @@ struct ActivityFeedView: View {
                 ContentUnavailableView(
                     "No Activity Yet",
                     systemImage: "list.bullet.clipboard",
-                    description: Text("Activity from family members will appear here when they add transactions, edit budgets, or contribute to goals.")
+                    description: Text("Activity from family members will appear here when they add transactions or edit budgets.")
                 )
             } else {
                 List {
@@ -78,8 +78,6 @@ struct ActivityEntryRow: View {
         case .editedTransaction: return .blue
         case .deletedTransaction: return .red
         case .editedBudget: return .orange
-        case .addedGoalContribution: return .purple
-        case .createdGoal: return .yellow
         case .joinedFamily: return .green
         case .leftFamily: return .red
         }

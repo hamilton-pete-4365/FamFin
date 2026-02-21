@@ -52,7 +52,7 @@ struct ActivityEntryTests {
         let entry = ActivityEntry(
             message: "Past event",
             participantName: "Charlie",
-            activityType: .createdGoal,
+            activityType: .editedBudget,
             timestamp: specificDate
         )
         context.insert(entry)
@@ -87,7 +87,7 @@ struct ActivityTypeTests {
 
     @Test("All cases are iterable")
     func allCases() {
-        #expect(ActivityType.allCases.count == 8)
+        #expect(ActivityType.allCases.count == 6)
     }
 
     @Test("Raw values are human-readable")

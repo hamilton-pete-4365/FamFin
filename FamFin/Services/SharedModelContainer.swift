@@ -15,7 +15,6 @@ enum SharedModelContainer {
         Category.self,
         BudgetMonth.self,
         BudgetAllocation.self,
-        SavingsGoal.self,
         Payee.self,
         RecurringTransaction.self,
         ActivityEntry.self

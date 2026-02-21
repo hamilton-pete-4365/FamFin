@@ -87,9 +87,9 @@ struct OnboardingCompletionTips: View {
                 description: "Swipe transactions to edit or delete them"
             )
             OnboardingTipRow(
-                systemImage: "chart.pie.fill",
-                title: "Check Reports",
-                description: "Visit the Reports tab to see spending trends and charts"
+                systemImage: "banknote.fill",
+                title: "Track accounts",
+                description: "Add your accounts to keep balances in sync with your budget"
             )
         }
         .padding()

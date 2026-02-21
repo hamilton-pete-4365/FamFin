@@ -23,9 +23,6 @@ final class Category {
     @Relationship(deleteRule: .cascade, inverse: \BudgetAllocation.category)
     var allocations: [BudgetAllocation] = []
 
-    @Relationship(deleteRule: .nullify, inverse: \SavingsGoal.linkedCategory)
-    var goals: [SavingsGoal] = []
-
     @Relationship(deleteRule: .nullify, inverse: \RecurringTransaction.category)
     var recurringTransactions: [RecurringTransaction] = []
 

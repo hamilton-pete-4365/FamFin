@@ -10,8 +10,6 @@ struct BudgetView: View {
     @Query private var allBudgetMonths: [BudgetMonth]
     @Query(sort: \Category.sortOrder) private var allCategories: [Category]
     @Query private var allTransactions: [Transaction]
-    @Query private var allGoals: [SavingsGoal]
-
     /// Lightweight fingerprint that changes when transactions are added, deleted, or edited.
     /// Watches count, total amount, and categorised count so budget recalculates on edits.
     private var transactionFingerprint: String {
@@ -139,7 +137,6 @@ struct BudgetView: View {
                                 QuickFillPopover(
                                     category: cat,
                                     month: selectedMonth,
-                                    goals: goalsForCategory(cat),
                                     currencyCode: currencyCode,
                                     onSelectAmount: { amount in
                                         engine.applyHint(amount)
@@ -196,9 +193,6 @@ struct BudgetView: View {
             }
             .navigationDestination(for: Category.self) { category in
                 CategoryDetailView(category: category, month: selectedMonth)
-            }
-            .navigationDestination(for: PersistentIdentifier.self) { goalID in
-                GoalDetailView(goalID: goalID)
             }
             .onAppear {
                 if !hasInitialisedExpanded {
@@ -447,7 +441,6 @@ struct BudgetView: View {
                                 let catKey = "\(subcategory.persistentModelID)"
                                 let budgeted = localBudgets[catKey] ?? Decimal.zero
                                 let avail = localAvailable[catKey] ?? subcategory.available(through: selectedMonth)
-                                let categoryHasGoal = !goalsForCategory(subcategory).isEmpty
                                 let isCategoryFocused = focusedCategory?.persistentModelID == subcategory.persistentModelID
 
                                 BudgetCategoryRow(
@@ -456,7 +449,6 @@ struct BudgetView: View {
                                         ? engine.displayString
                                         : formatGBP(budgeted, currencyCode: currencyCode),
                                     available: avail,
-                                    hasGoal: categoryHasGoal,
                                     isFocused: isCategoryFocused,
                                     expressionDisplay: isCategoryFocused
                                         ? engine.expressionDisplayString
@@ -520,13 +512,6 @@ struct BudgetView: View {
             }
             .buttonStyle(.borderedProminent)
         }
-    }
-
-    // MARK: - Quick Fill Card
-
-    /// Goals linked to the currently focused category
-    private func goalsForCategory(_ category: Category) -> [SavingsGoal] {
-        allGoals.filter { $0.linkedCategory?.persistentModelID == category.persistentModelID }
     }
 
     // MARK: - Keypad Interaction
@@ -734,7 +719,6 @@ struct BudgetCategoryRow: View {
     /// Live display string — driven by the engine when focused, else formatted budgetedAmount.
     let budgetedDisplay: String
     let available: Decimal
-    let hasGoal: Bool
     let isFocused: Bool
     /// Second-line math expression (e.g. "£1.50 + £0.50"), nil when none.
     let expressionDisplay: String?
@@ -751,13 +735,6 @@ struct BudgetCategoryRow: View {
                 Text(category.name)
                     .font(.subheadline)
                     .lineLimit(1)
-
-                if hasGoal {
-                    Image(systemName: "target")
-                        .font(.caption2)
-                        .foregroundStyle(.purple)
-                        .accessibilityHidden(true)
-                }
 
                 Spacer()
 
@@ -803,7 +780,6 @@ struct BudgetCategoryRow: View {
 
     private var accessibilityLabelText: String {
         var parts = [category.name]
-        if hasGoal { parts.append("has savings goal") }
         if isFocused {
             parts.append("editing")
             if let expr = expressionDisplay {
@@ -828,12 +804,10 @@ struct CategoryDetailSheet: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Query(sort: \Transaction.date, order: .reverse) private var allTransactions: [Transaction]
-    @Query private var allGoals: [SavingsGoal]
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
     let category: Category
     let month: Date
-    var onNavigateToGoal: ((PersistentIdentifier) -> Void)? = nil
 
     @State private var editingTransaction: Transaction? = nil
 
@@ -844,11 +818,6 @@ struct CategoryDetailSheet: View {
             guard cat.persistentModelID == category.persistentModelID else { return false }
             return calendar.isDate(transaction.date, equalTo: month, toGranularity: .month)
         }
-    }
-
-    /// Goals linked to this category
-    private var linkedGoals: [SavingsGoal] {
-        allGoals.filter { $0.linkedCategory?.persistentModelID == category.persistentModelID }
     }
 
     var budgeted: Decimal { category.budgeted(in: month) }
@@ -906,23 +875,6 @@ struct CategoryDetailSheet: View {
                 .padding(.top, 16)
                 .background(Color(.systemBackground))
 
-                // Linked goals section
-                if !linkedGoals.isEmpty {
-                    Divider()
-
-                    VStack(spacing: 8) {
-                        ForEach(linkedGoals) { goal in
-                            CategoryGoalRow(goal: goal, month: month) {
-                                dismiss()
-                                onNavigateToGoal?(goal.persistentModelID)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 12)
-                    .background(Color(.systemBackground))
-                }
-
                 Divider()
 
                 // Transaction list for this category/month
@@ -976,67 +928,6 @@ struct CategoryDetailSheet: View {
     }
 }
 
-/// A compact goal summary row shown inside the CategoryDetailSheet
-struct CategoryGoalRow: View {
-    let goal: SavingsGoal
-    let month: Date
-    var onViewGoal: (() -> Void)? = nil
-    @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
-
-    private var goalProgress: Double {
-        goal.progress(through: month)
-    }
-
-    private var progressColor: Color {
-        if goal.isComplete(through: month) { return .green }
-        if goalProgress >= 0.75 { return .blue }
-        if goalProgress >= 0.5 { return .orange }
-        return .accentColor
-    }
-
-    var body: some View {
-        HStack(spacing: 12) {
-            ZStack {
-                ProgressRingView(progress: goalProgress, color: progressColor, lineWidth: 3)
-                    .frame(width: 28, height: 28)
-                Text(goal.emoji)
-                    .font(.caption)
-            }
-            .accessibilityHidden(true)
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(goal.name)
-                    .font(.subheadline.bold())
-                HStack(spacing: 4) {
-                    Text(formatGBP(goal.currentAmount(through: month), currencyCode: currencyCode))
-                    Text("of")
-                        .foregroundStyle(.tertiary)
-                    Text(formatGBP(goal.targetAmount, currencyCode: currencyCode))
-                }
-                .font(.caption)
-                .monospacedDigit()
-                .foregroundStyle(.secondary)
-            }
-
-            Spacer()
-
-            Button("View Goal", systemImage: "chevron.right") {
-                onViewGoal?()
-            }
-            .font(.caption)
-            .labelStyle(.titleAndIcon)
-            .buttonStyle(.plain)
-            .foregroundStyle(.tint)
-        }
-        .padding(12)
-        .background(progressColor.opacity(0.06))
-        .clipShape(.rect(cornerRadius: 6))
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(goal.name) goal, \(Int(goalProgress * 100)) percent complete")
-        .accessibilityHint("Double tap to view goal details")
-    }
-}
-
 // MARK: - Preview
 
 #Preview {
@@ -1047,7 +938,6 @@ struct CategoryGoalRow: View {
             Category.self,
             BudgetMonth.self,
             BudgetAllocation.self,
-            SavingsGoal.self,
             Payee.self,
             ActivityEntry.self,
         ], inMemory: true)
