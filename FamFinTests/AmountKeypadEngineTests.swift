@@ -58,17 +58,17 @@ struct DigitEntryTests {
         #expect(engine.displayPence == 5)
     }
 
-    @Test("Max 8 digits enforced")
+    @Test("Max 12 digits enforced")
     @MainActor func maxDigits() {
         let engine = AmountKeypadEngine()
         engine.activate(currentPence: 0, currencyCode: "GBP")
 
-        for _ in 0..<10 {
+        for _ in 0..<15 {
             engine.digitTapped(9)
         }
 
-        #expect(engine.rawDigits.count == 8)
-        #expect(engine.rawDigits == "99999999")
+        #expect(engine.rawDigits.count == 12)
+        #expect(engine.rawDigits == "999999999999")
     }
 
     @Test("Zero into empty engine is no-op for rawDigits")
@@ -336,7 +336,7 @@ struct MathExpressionTests {
 @Suite("Expression display string")
 struct ExpressionDisplayTests {
 
-    @Test("Shows formatted expression during math")
+    @Test("Shows operation line during math, display shows first operand")
     @MainActor func formattedExpression() {
         let engine = AmountKeypadEngine()
         engine.activate(currentPence: 0, currencyCode: "GBP")
@@ -348,11 +348,16 @@ struct ExpressionDisplayTests {
         engine.digitTapped(5)
         engine.digitTapped(0)
 
+        // expressionDisplayString shows just the operation line
         let display = engine.expressionDisplayString
         #expect(display != nil)
-        #expect(display!.contains("1.50"))
         #expect(display!.contains("+"))
         #expect(display!.contains("0.50"))
+        // Should NOT contain the first operand — that's in displayString
+        #expect(!display!.contains("1.50"))
+
+        // displayString shows the first operand (running total)
+        #expect(engine.displayString.contains("1.50"))
     }
 
     @Test("Returns nil when no expression")
@@ -381,6 +386,52 @@ struct ExpressionDisplayTests {
         let display = engine.expressionDisplayString
         #expect(display != nil)
         #expect(display!.contains("−"))
+        #expect(display!.contains("1.00"))
+
+        // displayString shows the first operand
+        #expect(engine.displayString.contains("5.00"))
+    }
+
+    @Test("After equals, display shows result and expression clears")
+    @MainActor func afterEquals() {
+        let engine = AmountKeypadEngine()
+        engine.activate(currentPence: 0, currencyCode: "GBP")
+
+        engine.digitTapped(1)
+        engine.digitTapped(0)
+        engine.digitTapped(0)
+        engine.digitTapped(0)
+        engine.plusTapped()
+        engine.digitTapped(5)
+        engine.digitTapped(0)
+        engine.digitTapped(0)
+        engine.equalsTapped()
+
+        // After =, result in displayString, no expression
+        #expect(engine.displayString.contains("15.00"))
+        #expect(engine.expressionDisplayString == nil)
+    }
+
+    @Test("Chaining: plus after expression shows updated total")
+    @MainActor func chaining() {
+        let engine = AmountKeypadEngine()
+        engine.activate(currentPence: 0, currencyCode: "GBP")
+
+        engine.digitTapped(1)
+        engine.digitTapped(0)
+        engine.digitTapped(0)
+        engine.digitTapped(0)
+        engine.plusTapped()
+        engine.digitTapped(5)
+        engine.digitTapped(0)
+        engine.digitTapped(0)
+        engine.plusTapped() // resolves 10.00 + 5.00 = 15.00, starts new +
+
+        // displayString shows the resolved total (£15.00)
+        #expect(engine.displayString.contains("15.00"))
+        // expressionDisplayString shows the new empty operand
+        #expect(engine.expressionDisplayString != nil)
+        #expect(engine.expressionDisplayString!.contains("+"))
     }
 }
 

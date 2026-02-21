@@ -132,10 +132,9 @@ struct BudgetView: View {
                 if engine.isActive {
                     VStack(spacing: 0) {
                         AmountActionBar(
-                            onQuickFill: { showQuickFill = true },
+                            showQuickFill: $showQuickFill,
                             onDetails: { navigateToDetail() }
-                        )
-                        .popover(isPresented: $showQuickFill, arrowEdge: .bottom) {
+                        ) {
                             if let cat = focusedCategory {
                                 QuickFillPopover(
                                     category: cat,
@@ -147,7 +146,6 @@ struct BudgetView: View {
                                         showQuickFill = false
                                     }
                                 )
-                                .presentationCompactAdaptation(.popover)
                             }
                         }
 
@@ -378,6 +376,13 @@ struct BudgetView: View {
                             withAnimation(reduceMotion ? nil : .default) {
                                 let headerKey = "\(header.persistentModelID)"
                                 if expandedHeaders.contains(headerKey) {
+                                    // Collapsing — dismiss keypad if the focused category belongs to this header
+                                    if let focused = focusedCategory,
+                                       header.visibleSortedChildren.contains(where: { $0.persistentModelID == focused.persistentModelID }) {
+                                        let amount = engine.doneTapped()
+                                        saveBudget(for: focused, amount: amount)
+                                        focusedCategory = nil
+                                    }
                                     expandedHeaders.remove(headerKey)
                                 } else {
                                     expandedHeaders.insert(headerKey)
@@ -391,7 +396,7 @@ struct BudgetView: View {
                                     .frame(width: 16)
 
                                 Text(header.name.uppercased())
-                                    .font(.subheadline.bold())
+                                    .font(.headline)
                                     .foregroundStyle(.secondary)
                                     .lineLimit(1)
 
@@ -404,12 +409,13 @@ struct BudgetView: View {
                                         .foregroundStyle(.tertiary)
                                     Text(formatGBP(headerBudgeted(header), currencyCode: currencyCode))
                                         .font(.subheadline)
+                                        .bold()
                                         .monospacedDigit()
                                         .foregroundStyle(.secondary)
                                         .lineLimit(1)
-                                        .minimumScaleFactor(0.6)
+                                        .minimumScaleFactor(0.5)
                                 }
-                                .frame(width: 88, alignment: .trailing)
+                                .frame(width: 100, alignment: .trailing)
 
                                 // Available column with label
                                 VStack(alignment: .trailing, spacing: 2) {
@@ -419,12 +425,13 @@ struct BudgetView: View {
                                     let avail = headerAvailable(header)
                                     Text(formatGBP(avail, currencyCode: currencyCode))
                                         .font(.subheadline)
+                                        .bold()
                                         .monospacedDigit()
                                         .foregroundStyle(avail < 0 ? .red : Color.accentColor)
                                         .lineLimit(1)
-                                        .minimumScaleFactor(0.6)
+                                        .minimumScaleFactor(0.5)
                                 }
-                                .frame(width: 76, alignment: .trailing)
+                                .frame(width: 88, alignment: .trailing)
                             }
                         }
                         .accessibilityElement(children: .combine)
@@ -740,48 +747,48 @@ struct BudgetCategoryRow: View {
         Button {
             onTap()
         } label: {
-            VStack(alignment: .trailing, spacing: 2) {
-                HStack(spacing: 8) {
-                    Text(category.name)
-                        .font(.subheadline)
-                        .lineLimit(1)
+            HStack(spacing: 8) {
+                Text(category.name)
+                    .font(.subheadline)
+                    .lineLimit(1)
 
-                    if hasGoal {
-                        Image(systemName: "target")
-                            .font(.caption2)
-                            .foregroundStyle(.purple)
-                            .accessibilityHidden(true)
+                if hasGoal {
+                    Image(systemName: "target")
+                        .font(.caption2)
+                        .foregroundStyle(.purple)
+                        .accessibilityHidden(true)
+                }
+
+                Spacer()
+
+                // Budgeted amount (updates live from engine when focused).
+                // The expression overlay sits below without affecting row height.
+                Text(budgetedDisplay)
+                    .font(.subheadline.bold())
+                    .monospacedDigit()
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
+                    .frame(width: 100, alignment: .trailing)
+                    .contentTransition(reduceMotion ? .identity : .numericText())
+                    .overlay(alignment: .bottomTrailing) {
+                        if let expr = expressionDisplay {
+                            Text(expr)
+                                .font(.subheadline.bold())
+                                .monospacedDigit()
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
+                                .offset(y: 18)
+                                .transition(.opacity)
+                        }
                     }
 
-                    Spacer()
-
-                    // Budgeted amount (updates live from engine when focused)
-                    Text(budgetedDisplay)
-                        .font(.subheadline)
-                        .monospacedDigit()
-                        .foregroundStyle(isFocused ? .primary : .secondary)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.6)
-                        .multilineTextAlignment(.trailing)
-                        .frame(width: 88, alignment: .trailing)
-                        .contentTransition(reduceMotion ? .identity : .numericText())
-
-                    // Available balance
-                    GBPText(amount: available, font: .subheadline.bold(), accentPositive: true)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.6)
-                        .frame(width: 76, alignment: .trailing)
-                }
-
-                // Expression display (e.g. "£1.50 + £0.50") when math is active
-                if let expr = expressionDisplay {
-                    Text(expr)
-                        .font(.caption)
-                        .monospacedDigit()
-                        .foregroundStyle(.secondary)
-                        .padding(.trailing, 76 + 8) // align under budgeted column
-                        .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
-                }
+                // Available balance
+                GBPText(amount: available, font: .subheadline.bold(), accentPositive: true)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
+                    .frame(width: 88, alignment: .trailing)
             }
             .contentShape(Rectangle())
         }

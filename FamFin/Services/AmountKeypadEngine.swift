@@ -73,9 +73,20 @@ final class AmountKeypadEngine {
         Int(rawDigits) ?? 0
     }
 
-    /// Formatted currency string for the current operand.
+    /// The pence value shown in the main budgeted column.
+    ///
+    /// During math: the first operand (running total so far).
+    /// Otherwise: the current operand being typed.
+    var primaryDisplayPence: Int {
+        expression?.firstOperand ?? displayPence
+    }
+
+    /// Formatted currency string for the main budgeted column.
+    ///
+    /// During math: shows the running total (first operand).
+    /// Otherwise: shows the current operand being typed.
     var displayString: String {
-        formatPence(displayPence, currencyCode: currencyCode)
+        formatPence(primaryDisplayPence, currencyCode: currencyCode)
     }
 
     /// Current operand converted to major-unit Decimal for saving.
@@ -89,17 +100,15 @@ final class AmountKeypadEngine {
         expression != nil
     }
 
-    /// Formatted expression string for display in the budget row.
+    /// The current math operation line for display below the main amount.
     ///
-    /// Returns something like "£1.50 + £0.50" when a math expression is active,
+    /// Returns something like `"+ £5.00"` when a math expression is active,
     /// or `nil` when there is no expression.
     var expressionDisplayString: String? {
         guard let expression else { return nil }
 
-        let firstFormatted = formatPence(expression.firstOperand, currencyCode: currencyCode)
-        let secondFormatted = formatPence(displayPence, currencyCode: currencyCode)
-
-        return "\(firstFormatted) \(expression.op.symbol) \(secondFormatted)"
+        let operandFormatted = formatPence(displayPence, currencyCode: currencyCode)
+        return "\(expression.op.symbol)  \(operandFormatted)"
     }
 
     // MARK: - Lifecycle
@@ -270,10 +279,10 @@ final class AmountKeypadEngine {
         expression = nil
     }
 
-    /// Strip leading zeros and cap at 8 digits.
+    /// Strip leading zeros and cap at 12 digits (covers up to £99,999,999.99).
     private func sanitise(_ digits: String) -> String {
         let cleaned = digits.filter { $0.isNumber }
         let trimmed = String(cleaned.drop(while: { $0 == "0" }))
-        return String(trimmed.prefix(8))
+        return String(trimmed.prefix(12))
     }
 }
