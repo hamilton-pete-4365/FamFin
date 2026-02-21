@@ -50,6 +50,8 @@ struct BudgetView: View {
     @State private var keypadWasAlreadyVisible = false
     /// Set to true when the focused row is not fully visible and needs scrolling.
     @State private var focusedRowNeedsScroll = false
+    /// The visible height of the budget list, used for scroll visibility checks.
+    @State private var budgetListHeight: CGFloat = 0
     @State private var showQuickFill = false
     /// The shared keypad engine — single source of truth for amount entry state.
     @State private var engine = AmountKeypadEngine()
@@ -456,11 +458,12 @@ struct BudgetView: View {
                                     onTap: { activateKeypad(for: subcategory) }
                                 )
                                 .id(subcategory.persistentModelID)
-                                .onGeometryChange(for: Bool.self) { proxy in
-                                    let frame = proxy.frame(in: .named("budgetList"))
-                                    return frame.maxY > 0 && frame.minY >= 0
-                                } action: { fullyVisible in
+                                .onGeometryChange(for: CGRect.self) { proxy in
+                                    proxy.frame(in: .named("budgetList"))
+                                } action: { frame in
                                     if isCategoryFocused {
+                                        let fullyVisible = frame.minY >= 0
+                                            && frame.maxY <= budgetListHeight
                                         focusedRowNeedsScroll = !fullyVisible
                                     }
                                 }
@@ -476,8 +479,28 @@ struct BudgetView: View {
             }
             .listStyle(.plain)
             .coordinateSpace(.named("budgetList"))
+            .onGeometryChange(for: CGFloat.self) { proxy in
+                proxy.size.height
+            } action: { height in
+                budgetListHeight = height
+            }
+            // When the focused row's geometry changes (e.g. math expression
+            // makes it taller) and it's no longer fully visible, nudge it
+            // back into view with minimal movement.
+            .onChange(of: focusedRowNeedsScroll) {
+                guard focusedRowNeedsScroll,
+                      let id = focusedCategory?.persistentModelID else { return }
+                withAnimation {
+                    proxy.scrollTo(id, anchor: nil)
+                }
+            }
             .onChange(of: focusedCategory?.persistentModelID) { _, newID in
-                guard let id = newID else { return }
+                guard let id = newID else {
+                    // Keypad dismissed — reset stale state so the
+                    // next fresh open doesn't carry over old values.
+                    focusedRowNeedsScroll = false
+                    return
+                }
                 // Wait for the keypad to appear and the safeAreaInset to resize
                 // the List's visible area before scrolling.
                 let delay: Duration = keypadWasAlreadyVisible
@@ -486,13 +509,14 @@ struct BudgetView: View {
                 let wasAlreadyVisible = keypadWasAlreadyVisible
                 Task { @MainActor in
                     try? await Task.sleep(for: delay)
-                    // Fresh open: always scroll — the keypad is about to consume
-                    // the bottom of the list, so the row may be obscured soon.
                     // Row-to-row: only scroll if the row isn't fully visible,
                     // to avoid unnecessary jumps between nearby rows.
                     if wasAlreadyVisible && !focusedRowNeedsScroll { return }
                     withAnimation {
-                        proxy.scrollTo(id, anchor: .bottom)
+                        // anchor: nil scrolls the minimum amount needed —
+                        // no movement if the row is already fully visible,
+                        // just enough to reveal it if partially obscured.
+                        proxy.scrollTo(id, anchor: nil)
                     }
                 }
             }
@@ -739,27 +763,28 @@ struct BudgetCategoryRow: View {
                 Spacer()
 
                 // Budgeted amount (updates live from engine when focused).
-                // The expression overlay sits below without affecting row height.
-                Text(budgetedDisplay)
-                    .font(.subheadline.bold())
-                    .monospacedDigit()
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.5)
-                    .frame(width: 100, alignment: .trailing)
-                    .contentTransition(reduceMotion ? .identity : .numericText())
-                    .overlay(alignment: .bottomTrailing) {
-                        if let expr = expressionDisplay {
-                            Text(expr)
-                                .font(.subheadline.bold())
-                                .monospacedDigit()
-                                .foregroundStyle(.secondary)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.5)
-                                .offset(y: 18)
-                                .transition(.opacity)
-                        }
+                // When a math expression is active, both lines are shown in a
+                // VStack so they centre vertically within the row.
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text(budgetedDisplay)
+                        .font(.subheadline.bold())
+                        .monospacedDigit()
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                        .contentTransition(reduceMotion ? .identity : .numericText())
+
+                    if let expr = expressionDisplay {
+                        Text(expr)
+                            .font(.subheadline.bold())
+                            .monospacedDigit()
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
+                            .transition(.opacity)
                     }
+                }
+                .frame(width: 100, alignment: .trailing)
 
                 // Available balance
                 GBPText(amount: available, font: .subheadline.bold(), accentPositive: true)
