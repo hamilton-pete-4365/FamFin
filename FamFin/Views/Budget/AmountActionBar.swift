@@ -8,12 +8,18 @@ struct AmountActionBar: View {
     let onQuickFill: () -> Void
     let onDetails: () -> Void
 
+    @State private var quickFillWidth: CGFloat = 0
+
     var body: some View {
         HStack {
             Button("Quick Fill", systemImage: "sparkles") {
                 onQuickFill()
             }
-            .frame(width: 120)
+            .onGeometryChange(for: CGFloat.self) { proxy in
+                proxy.size.width
+            } action: { width in
+                quickFillWidth = width
+            }
 
             Spacer()
 
@@ -21,7 +27,7 @@ struct AmountActionBar: View {
                 onDetails()
             }
             .labelStyle(.titleAndIcon)
-            .frame(width: 120)
+            .frame(minWidth: quickFillWidth)
         }
         .font(.subheadline)
         .bold()
