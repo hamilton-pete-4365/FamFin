@@ -458,8 +458,6 @@ struct BudgetView: View {
                                 )
                                 .id(subcategory.persistentModelID)
                                 .onGeometryChange(for: Bool.self) { proxy in
-                                    // Row is obscured if its bottom edge is below the
-                                    // visible List area or its top is above it.
                                     let frame = proxy.frame(in: .named("budgetList"))
                                     return frame.maxY > 0 && frame.minY >= 0
                                 } action: { fullyVisible in
@@ -467,6 +465,11 @@ struct BudgetView: View {
                                         focusedRowNeedsScroll = !fullyVisible
                                     }
                                 }
+                                .listRowBackground(
+                                    isCategoryFocused
+                                        ? Color.accentColor.opacity(0.12)
+                                        : Color(.systemBackground)
+                                )
                             }
                         }
                     }
@@ -787,9 +790,6 @@ struct BudgetCategoryRow: View {
         .accessibilityHint("Double tap to edit budget amount")
         .padding(.vertical, 4)
         .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
-        .listRowBackground(
-            isFocused ? Color.accentColor.opacity(0.12) : Color(.systemBackground)
-        )
         .sensoryFeedback(.selection, trigger: isFocused)
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.15), value: isFocused)
     }
