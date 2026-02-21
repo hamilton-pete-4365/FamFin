@@ -9,17 +9,17 @@ struct AmountActionBar: View {
     let onDetails: () -> Void
 
     var body: some View {
-        HStack {
+        HStack(spacing: 8) {
             Button("Quick Fill", systemImage: "sparkles") {
                 onQuickFill()
             }
-
-            Spacer()
+            .frame(maxWidth: .infinity)
 
             Button("Details", systemImage: "chevron.right") {
                 onDetails()
             }
             .labelStyle(.titleAndIcon)
+            .frame(maxWidth: .infinity)
         }
         .font(.subheadline)
         .bold()
