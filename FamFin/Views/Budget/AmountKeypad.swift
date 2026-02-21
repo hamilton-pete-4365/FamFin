@@ -169,6 +169,12 @@ struct KeypadButtonStyle: ButtonStyle {
             .foregroundStyle(foregroundColor)
             .background(backgroundColor(isPressed: configuration.isPressed))
             .clipShape(.rect(cornerRadius: 10))
+            .overlay {
+                if role == .dismiss {
+                    RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(.separator, lineWidth: 1)
+                }
+            }
     }
 
     private var foregroundColor: some ShapeStyle {

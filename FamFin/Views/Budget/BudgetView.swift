@@ -48,8 +48,10 @@ struct BudgetView: View {
     @State private var navigationPath = NavigationPath()
     /// The category currently being edited via the custom keypad.
     @State private var focusedCategory: Category? = nil
-    /// Tracks whether the keypad was already showing, to avoid scrolling on row-to-row taps.
+    /// Tracks whether the keypad was already showing, to control scroll delay.
     @State private var keypadWasAlreadyVisible = false
+    /// Set to true when the focused row is not fully visible and needs scrolling.
+    @State private var focusedRowNeedsScroll = false
     @State private var showQuickFill = false
     /// The shared keypad engine — single source of truth for amount entry state.
     @State private var engine = AmountKeypadEngine()
@@ -455,12 +457,23 @@ struct BudgetView: View {
                                     onTap: { activateKeypad(for: subcategory) }
                                 )
                                 .id(subcategory.persistentModelID)
+                                .onGeometryChange(for: Bool.self) { proxy in
+                                    // Row is obscured if its bottom edge is below the
+                                    // visible List area or its top is above it.
+                                    let frame = proxy.frame(in: .named("budgetList"))
+                                    return frame.maxY > 0 && frame.minY >= 0
+                                } action: { fullyVisible in
+                                    if isCategoryFocused {
+                                        focusedRowNeedsScroll = !fullyVisible
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
             .listStyle(.plain)
+            .coordinateSpace(.named("budgetList"))
             .onChange(of: focusedCategory?.persistentModelID) { _, newID in
                 guard let id = newID else { return }
                 // Wait for the keypad to appear and the safeAreaInset to resize
@@ -468,8 +481,14 @@ struct BudgetView: View {
                 let delay: Duration = keypadWasAlreadyVisible
                     ? .milliseconds(50) // Row-to-row: keypad already sized, just settle
                     : .milliseconds(400) // Fresh open: wait for spring animation to finish
+                let wasAlreadyVisible = keypadWasAlreadyVisible
                 Task { @MainActor in
                     try? await Task.sleep(for: delay)
+                    // Fresh open: always scroll — the keypad is about to consume
+                    // the bottom of the list, so the row may be obscured soon.
+                    // Row-to-row: only scroll if the row isn't fully visible,
+                    // to avoid unnecessary jumps between nearby rows.
+                    if wasAlreadyVisible && !focusedRowNeedsScroll { return }
                     withAnimation {
                         proxy.scrollTo(id, anchor: .bottom)
                     }
