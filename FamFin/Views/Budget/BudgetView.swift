@@ -484,14 +484,20 @@ struct BudgetView: View {
             } action: { height in
                 budgetListHeight = height
             }
-            // When the focused row's geometry changes (e.g. math expression
-            // makes it taller) and it's no longer fully visible, nudge it
-            // back into view with minimal movement.
-            .onChange(of: focusedRowNeedsScroll) {
-                guard focusedRowNeedsScroll,
+            // When a math expression appears (user presses + or −) the row
+            // grows taller. Wait for the layout to settle, then scroll if
+            // the row now extends beyond the visible area.
+            .onChange(of: engine.expressionDisplayString) { oldValue, newValue in
+                // Only react when an expression appears (nil → non-nil).
+                guard oldValue == nil, newValue != nil,
                       let id = focusedCategory?.persistentModelID else { return }
-                withAnimation {
-                    proxy.scrollTo(id, anchor: nil)
+                Task { @MainActor in
+                    // Let the VStack resize and onGeometryChange update the flag.
+                    try? await Task.sleep(for: .milliseconds(100))
+                    guard focusedRowNeedsScroll else { return }
+                    withAnimation {
+                        proxy.scrollTo(id, anchor: nil)
+                    }
                 }
             }
             .onChange(of: focusedCategory?.persistentModelID) { _, newID in
