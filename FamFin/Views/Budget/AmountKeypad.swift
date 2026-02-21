@@ -29,7 +29,7 @@ struct AmountKeypad: View {
             digitKey(1)
             digitKey(2)
             digitKey(3)
-            iconKey("delete.backward", style: .secondary) {
+            iconKey("delete.backward", style: .dismiss) {
                 engine.backspaceTapped()
             }
             .accessibilityLabel("Delete")
@@ -56,7 +56,7 @@ struct AmountKeypad: View {
             .accessibilityHint("Subtracts from current amount")
 
             // Row 4: ✕ 0 = Done
-            iconKey("xmark", style: .secondary) {
+            iconKey("xmark", style: .dismiss) {
                 onCancel()
             }
             .accessibilityLabel("Cancel")
@@ -148,11 +148,17 @@ struct AmountKeypad: View {
 // MARK: - Keypad Button Style
 
 /// Custom button style for keypad keys with role-based appearance.
+///
+/// Four distinct visual roles to make the keypad scannable at a glance:
+/// - **digit**: Neutral fill — the primary surface for number input.
+/// - **operator**: Tinted accent background — stands out as math actions (+, −, =).
+/// - **dismiss**: Muted secondary text on minimal background — clearly "escape" actions (✕, ⌫).
+/// - **done**: Solid accent background with white text — the primary action.
 struct KeypadButtonStyle: ButtonStyle {
     enum Role {
         case digit
         case `operator`
-        case secondary
+        case dismiss
         case done
     }
 
@@ -170,8 +176,8 @@ struct KeypadButtonStyle: ButtonStyle {
         case .digit:
             return AnyShapeStyle(.primary)
         case .operator:
-            return AnyShapeStyle(.primary)
-        case .secondary:
+            return AnyShapeStyle(Color.accentColor)
+        case .dismiss:
             return AnyShapeStyle(.secondary)
         case .done:
             return AnyShapeStyle(.white)
@@ -185,10 +191,9 @@ struct KeypadButtonStyle: ButtonStyle {
             Color(.systemFill)
                 .opacity(isPressed ? 0.6 : 1)
         case .operator:
-            Color(.tertiarySystemFill)
-                .opacity(isPressed ? 0.6 : 1)
-        case .secondary:
-            Color(.tertiarySystemFill)
+            Color.accentColor.opacity(isPressed ? 0.12 : 0.15)
+        case .dismiss:
+            Color(.quaternarySystemFill)
                 .opacity(isPressed ? 0.6 : 1)
         case .done:
             Color.accentColor

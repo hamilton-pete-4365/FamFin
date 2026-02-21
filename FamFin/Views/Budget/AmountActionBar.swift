@@ -13,20 +13,21 @@ struct AmountActionBar: View {
             Button("Quick Fill", systemImage: "sparkles") {
                 onQuickFill()
             }
-            .font(.subheadline)
 
             Spacer()
 
             Button("Details", systemImage: "chevron.right") {
                 onDetails()
             }
-            .font(.subheadline)
             .labelStyle(.titleAndIcon)
         }
-        .buttonStyle(.plain)
-        .foregroundStyle(.tint)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
+        .font(.subheadline)
+        .bold()
+        .buttonStyle(.bordered)
+        .controlSize(.small)
+        .tint(.accentColor)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
         .background(.bar)
     }
 }

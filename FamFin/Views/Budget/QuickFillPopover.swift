@@ -43,28 +43,26 @@ struct QuickFillPopover: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 12) {
             sectionHeader("Last Month")
-            quickFillRow(label: "Budgeted", amount: lastBudgeted)
-            quickFillRow(label: "Spent", amount: lastSpent)
-
-            Divider()
-                .padding(.vertical, 4)
+            HStack(spacing: 8) {
+                quickFillButton(label: "Budgeted", amount: lastBudgeted)
+                quickFillButton(label: "Spent", amount: lastSpent)
+            }
 
             sectionHeader("12-Month Average")
-            quickFillRow(label: "Budgeted", amount: avgBudgeted)
-            quickFillRow(label: "Spent", amount: avgSpent)
+            HStack(spacing: 8) {
+                quickFillButton(label: "Budgeted", amount: avgBudgeted)
+                quickFillButton(label: "Spent", amount: avgSpent)
+            }
 
             if let goal = firstGoalTarget {
-                Divider()
-                    .padding(.vertical, 4)
-
                 sectionHeader("Goal")
-                goalRow(name: goal.name, amount: goal.amount)
+                goalButton(name: goal.name, amount: goal.amount)
             }
         }
-        .padding(12)
-        .frame(width: 260)
+        .padding(16)
+        .frame(width: 280)
     }
 
     // MARK: - Row Builders
@@ -74,30 +72,29 @@ struct QuickFillPopover: View {
             .font(.caption2)
             .textCase(.uppercase)
             .foregroundStyle(.tertiary)
-            .padding(.bottom, 4)
-            .padding(.top, 4)
             .accessibilityAddTraits(.isHeader)
     }
 
-    private func quickFillRow(label: String, amount: Decimal) -> some View {
+    private func quickFillButton(label: String, amount: Decimal) -> some View {
         let isZero = amount == .zero
 
         return Button {
             onSelectAmount(amount)
         } label: {
-            HStack {
-                Text(label)
-                    .font(.subheadline)
-                    .foregroundStyle(isZero ? .tertiary : .primary)
-                Spacer()
+            VStack(spacing: 4) {
                 Text(formatGBP(amount, currencyCode: currencyCode))
                     .font(.subheadline)
                     .bold()
                     .monospacedDigit()
                     .foregroundStyle(isZero ? AnyShapeStyle(.tertiary) : AnyShapeStyle(Color.accentColor))
+                Text(label)
+                    .font(.caption)
+                    .foregroundStyle(isZero ? .tertiary : .secondary)
             }
-            .padding(.vertical, 4)
-            .contentShape(Rectangle())
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 10)
+            .background(isZero ? Color(.quaternarySystemFill) : Color.accentColor.opacity(0.1))
+            .clipShape(.rect(cornerRadius: 10))
         }
         .buttonStyle(.plain)
         .disabled(isZero)
@@ -105,7 +102,7 @@ struct QuickFillPopover: View {
         .accessibilityHint(isZero ? "" : "Double tap to fill budget with this amount")
     }
 
-    private func goalRow(name: String, amount: Decimal) -> some View {
+    private func goalButton(name: String, amount: Decimal) -> some View {
         Button {
             onSelectAmount(amount)
         } label: {
@@ -125,8 +122,10 @@ struct QuickFillPopover: View {
                     .monospacedDigit()
                     .foregroundStyle(Color.accentColor)
             }
-            .padding(.vertical, 4)
-            .contentShape(Rectangle())
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(Color.accentColor.opacity(0.1))
+            .clipShape(.rect(cornerRadius: 10))
         }
         .buttonStyle(.plain)
         .accessibilityLabel("\(name) target: \(formatGBP(amount, currencyCode: currencyCode))")

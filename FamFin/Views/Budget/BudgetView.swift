@@ -133,7 +133,7 @@ struct BudgetView: View {
                             onQuickFill: { showQuickFill = true },
                             onDetails: { navigateToDetail() }
                         )
-                        .popover(isPresented: $showQuickFill) {
+                        .popover(isPresented: $showQuickFill, arrowEdge: .bottom) {
                             if let cat = focusedCategory {
                                 QuickFillPopover(
                                     category: cat,
@@ -463,15 +463,15 @@ struct BudgetView: View {
             .listStyle(.plain)
             .onChange(of: focusedCategory?.persistentModelID) { _, newID in
                 guard let id = newID else { return }
-                // Only scroll when the keypad is freshly appearing.
-                // If the user is tapping between rows with the keypad
-                // already open, the rows are already visible — no scroll needed.
-                guard !keypadWasAlreadyVisible else { return }
-                // Shorter delay than system keyboard — our keypad animation is ~350ms
+                // Wait for the keypad to appear and the safeAreaInset to resize
+                // the List's visible area before scrolling.
+                let delay: Duration = keypadWasAlreadyVisible
+                    ? .milliseconds(50) // Row-to-row: keypad already sized, just settle
+                    : .milliseconds(400) // Fresh open: wait for spring animation to finish
                 Task { @MainActor in
-                    try? await Task.sleep(for: .milliseconds(100))
+                    try? await Task.sleep(for: delay)
                     withAnimation {
-                        proxy.scrollTo(id)
+                        proxy.scrollTo(id, anchor: .bottom)
                     }
                 }
             }
