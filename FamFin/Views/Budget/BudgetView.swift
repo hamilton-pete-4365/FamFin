@@ -53,6 +53,8 @@ struct BudgetView: View {
     /// The visible height of the budget list, used for scroll visibility checks.
     @State private var budgetListHeight: CGFloat = 0
     @State private var showQuickFill = false
+    @State private var showAddTransaction = false
+    @State private var showAutoFill = false
     /// The shared keypad engine — single source of truth for amount entry state.
     @State private var engine = AmountKeypadEngine()
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
@@ -175,7 +177,7 @@ struct BudgetView: View {
             .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: focusedCategory?.persistentModelID)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
+                ToolbarItem(placement: .topBarLeading) {
                     ProfileButton()
                 }
                 ToolbarItem(placement: .principal) {
@@ -183,14 +185,35 @@ struct BudgetView: View {
                         .font(.headline)
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Manage Categories", systemImage: "slider.horizontal.3") {
-                        isEditingCategories = true
+                    Button("Add Transaction", systemImage: "plus") {
+                        showAddTransaction = true
+                    }
+                }
+                ToolbarSpacer(.fixed, placement: .primaryAction)
+                ToolbarItem(placement: .primaryAction) {
+                    Menu {
+                        Button("Auto-Fill Budget", systemImage: "sparkles") {
+                            showAutoFill = true
+                        }
+                        Button("Manage Categories", systemImage: "slider.horizontal.3") {
+                            isEditingCategories = true
+                        }
+                    } label: {
+                        Label("More", systemImage: "ellipsis.circle")
                     }
                 }
             }
             .sheet(isPresented: $isEditingCategories) {
                 NavigationStack {
                     ManageCategoriesView()
+                }
+            }
+            .sheet(isPresented: $showAddTransaction) {
+                AddTransactionView()
+            }
+            .sheet(isPresented: $showAutoFill) {
+                AutoFillBudgetView(month: selectedMonth) {
+                    syncLocalBudgets()
                 }
             }
             .navigationDestination(for: Category.self) { category in
@@ -217,6 +240,26 @@ struct BudgetView: View {
     }
 
     // MARK: - Month Selector
+
+    /// Whether the selected month is the current calendar month.
+    private var isCurrentMonth: Bool {
+        Calendar.current.isDate(selectedMonth, equalTo: Date(), toGranularity: .month)
+    }
+
+    /// Navigate back to the current calendar month.
+    private func goToToday() {
+        // Auto-save and dismiss keypad
+        if engine.isActive, let cat = focusedCategory {
+            saveBudget(for: cat, amount: engine.doneTapped())
+            focusedCategory = nil
+        }
+
+        let calendar = Calendar.current
+        let comps = calendar.dateComponents([.year, .month], from: Date())
+        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
+            selectedMonth = calendar.date(from: comps) ?? Date()
+        }
+    }
 
     var monthSelector: some View {
         HStack {
@@ -262,8 +305,42 @@ struct BudgetView: View {
             .font(.title3.bold())
             .accessibilityHint("Double tap to go to the next month")
         }
+        .overlay {
+            if !isCurrentMonth {
+                // Position in the left or right gap without affecting layout.
+                // Horizontal padding clears the chevron buttons so the pill
+                // sits between the chevron and the month label.
+                HStack {
+                    if selectedMonth < Date() {
+                        Spacer()
+                    }
+
+                    todayButton
+
+                    if selectedMonth > Date() {
+                        Spacer()
+                    }
+                }
+                .padding(.horizontal, 28)
+            }
+        }
         .padding(.horizontal)
         .padding(.vertical, 12)
+    }
+
+    private var todayButton: some View {
+        Button("Today") {
+            goToToday()
+        }
+        .font(.caption)
+        .bold()
+        .foregroundStyle(Color.accentColor)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(Color.accentColor.opacity(0.15))
+        .clipShape(.rect(cornerRadius: 6))
+        .buttonStyle(.plain)
+        .accessibilityHint("Double tap to return to the current month")
     }
 
     // MARK: - "To Budget" Banner

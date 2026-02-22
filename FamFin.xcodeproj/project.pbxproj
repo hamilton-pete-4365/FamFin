@@ -19,6 +19,7 @@
 		F7A8B9C0D1E2F3A4B5C60001 /* AmountKeypad.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A8B9C0D1E2F3A4B5C60002 /* AmountKeypad.swift */; };
 		F7A8B9C0D1E2F3A4B5C60003 /* AmountActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A8B9C0D1E2F3A4B5C60004 /* AmountActionBar.swift */; };
 		F7A8B9C0D1E2F3A4B5C60005 /* QuickFillPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A8B9C0D1E2F3A4B5C60006 /* QuickFillPopover.swift */; };
+		AFB1000000000001 /* AutoFillBudgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFB1000000000002 /* AutoFillBudgetView.swift */; };
 		A1B2C3D4E5F60001000A000A /* AccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A000A /* AccountsView.swift */; };
 		A1B2C3D4E5F60001000A000B /* TransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A000B /* TransactionsView.swift */; };
 		A1B2C3D4E5F60001000A000E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A000E /* Assets.xcassets */; };
@@ -156,6 +157,7 @@
 		F7A8B9C0D1E2F3A4B5C60002 /* AmountKeypad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmountKeypad.swift; sourceTree = "<group>"; };
 		F7A8B9C0D1E2F3A4B5C60004 /* AmountActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmountActionBar.swift; sourceTree = "<group>"; };
 		F7A8B9C0D1E2F3A4B5C60006 /* QuickFillPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickFillPopover.swift; sourceTree = "<group>"; };
+		AFB1000000000002 /* AutoFillBudgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoFillBudgetView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A000A /* AccountsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A000B /* TransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A000E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -338,6 +340,7 @@
 				F7A8B9C0D1E2F3A4B5C60002 /* AmountKeypad.swift */,
 				F7A8B9C0D1E2F3A4B5C60004 /* AmountActionBar.swift */,
 				F7A8B9C0D1E2F3A4B5C60006 /* QuickFillPopover.swift */,
+				AFB1000000000002 /* AutoFillBudgetView.swift */,
 			);
 			path = Budget;
 			sourceTree = "<group>";
@@ -651,6 +654,7 @@
 				F7A8B9C0D1E2F3A4B5C60001 /* AmountKeypad.swift in Sources */,
 				F7A8B9C0D1E2F3A4B5C60003 /* AmountActionBar.swift in Sources */,
 				F7A8B9C0D1E2F3A4B5C60005 /* QuickFillPopover.swift in Sources */,
+				AFB1000000000001 /* AutoFillBudgetView.swift in Sources */,
 				A1B2C3D4E5F60001000A000A /* AccountsView.swift in Sources */,
 				A1B2C3D4E5F60001000A000B /* TransactionsView.swift in Sources */,
 				A1B2C3D4E5F60001000A0010 /* DefaultCategories.swift in Sources */,

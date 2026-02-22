@@ -54,9 +54,10 @@ struct QuickFillPopover: View {
 
     private func sectionHeader(_ title: String) -> some View {
         Text(title)
-            .font(.caption2)
+            .font(.caption)
+            .bold()
             .textCase(.uppercase)
-            .foregroundStyle(.tertiary)
+            .foregroundStyle(.secondary)
             .accessibilityAddTraits(.isHeader)
     }
 
