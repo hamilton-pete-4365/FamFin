@@ -378,45 +378,7 @@ struct BudgetView: View {
             List {
                 ForEach(headerCategories) { header in
                     Section {
-                        // Subcategories (only shown when expanded)
-                        if expandedHeaders.contains("\(header.persistentModelID)") {
-                            ForEach(header.visibleSortedChildren) { subcategory in
-                                let catKey = "\(subcategory.persistentModelID)"
-                                let budgeted = localBudgets[catKey] ?? Decimal.zero
-                                let avail = localAvailable[catKey] ?? subcategory.available(through: selectedMonth)
-                                let isCategoryFocused = focusedCategory?.persistentModelID == subcategory.persistentModelID
-
-                                BudgetCategoryRow(
-                                    category: subcategory,
-                                    budgetedDisplay: isCategoryFocused
-                                        ? engine.displayString
-                                        : formatGBP(budgeted, currencyCode: currencyCode),
-                                    available: avail,
-                                    isFocused: isCategoryFocused,
-                                    expressionDisplay: isCategoryFocused
-                                        ? engine.expressionDisplayString
-                                        : nil,
-                                    onTap: { activateKeypad(for: subcategory) }
-                                )
-                                .id(subcategory.persistentModelID)
-                                .onGeometryChange(for: CGRect.self) { proxy in
-                                    proxy.frame(in: .named("budgetList"))
-                                } action: { frame in
-                                    if isCategoryFocused {
-                                        let fullyVisible = frame.minY >= 0
-                                            && frame.maxY <= budgetListHeight
-                                        focusedRowNeedsScroll = !fullyVisible
-                                    }
-                                }
-                                .listRowBackground(
-                                    isCategoryFocused
-                                        ? Color.accentColor.opacity(0.12)
-                                        : Color(.systemBackground)
-                                )
-                            }
-                        }
-                    } header: {
-                        // Sticky collapsible header row with inline column labels
+                        // Collapsible header row with inline column labels
                         Button {
                             withAnimation(reduceMotion ? nil : .default) {
                                 let headerKey = "\(header.persistentModelID)"
@@ -479,22 +441,54 @@ struct BudgetView: View {
                                 .frame(width: 88, alignment: .trailing)
                             }
                         }
-                        .buttonStyle(.plain)
-                        .textCase(nil)
                         .accessibilityElement(children: .combine)
                         .accessibilityAddTraits(.isHeader)
                         .accessibilityLabel("\(header.name), budgeted \(formatGBP(headerBudgeted(header), currencyCode: currencyCode)), available \(formatGBP(headerAvailable(header), currencyCode: currencyCode))\(headerAvailable(header) < 0 ? ", overspent" : "")")
                         .accessibilityHint(expandedHeaders.contains("\(header.persistentModelID)") ? "Double tap to collapse" : "Double tap to expand")
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 16)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color(.secondarySystemBackground))
-                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color(.secondarySystemBackground))
+                        .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
+
+                        // Subcategories (only shown when expanded)
+                        if expandedHeaders.contains("\(header.persistentModelID)") {
+                            ForEach(header.visibleSortedChildren) { subcategory in
+                                let catKey = "\(subcategory.persistentModelID)"
+                                let budgeted = localBudgets[catKey] ?? Decimal.zero
+                                let avail = localAvailable[catKey] ?? subcategory.available(through: selectedMonth)
+                                let isCategoryFocused = focusedCategory?.persistentModelID == subcategory.persistentModelID
+
+                                BudgetCategoryRow(
+                                    category: subcategory,
+                                    budgetedDisplay: isCategoryFocused
+                                        ? engine.displayString
+                                        : formatGBP(budgeted, currencyCode: currencyCode),
+                                    available: avail,
+                                    isFocused: isCategoryFocused,
+                                    expressionDisplay: isCategoryFocused
+                                        ? engine.expressionDisplayString
+                                        : nil,
+                                    onTap: { activateKeypad(for: subcategory) }
+                                )
+                                .id(subcategory.persistentModelID)
+                                .onGeometryChange(for: CGRect.self) { proxy in
+                                    proxy.frame(in: .named("budgetList"))
+                                } action: { frame in
+                                    if isCategoryFocused {
+                                        let fullyVisible = frame.minY >= 0
+                                            && frame.maxY <= budgetListHeight
+                                        focusedRowNeedsScroll = !fullyVisible
+                                    }
+                                }
+                                .listRowBackground(
+                                    isCategoryFocused
+                                        ? Color.accentColor.opacity(0.12)
+                                        : Color(.systemBackground)
+                                )
+                            }
+                        }
                     }
                 }
             }
             .listStyle(.plain)
-            .listSectionSpacing(0)
             .coordinateSpace(.named("budgetList"))
             .onGeometryChange(for: CGFloat.self) { proxy in
                 proxy.size.height
@@ -780,7 +774,7 @@ struct BudgetCategoryRow: View {
         } label: {
             HStack(spacing: 8) {
                 Text(category.name)
-                    .font(.subheadline)
+                    .font(.body)
                     .lineLimit(1)
 
                 Spacer()
