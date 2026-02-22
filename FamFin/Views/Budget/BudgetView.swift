@@ -41,7 +41,8 @@ struct BudgetView: View {
     /// Updated immediately on save so the "Available" column reflects changes without waiting for @Query.
     @State private var localAvailable: [String: Decimal] = [:]
     @State private var isEditingCategories = false
-    @State private var overspentExpanded = false
+    @State private var showFixOverbudgeted = false
+    @State private var showFixOverspent = false
     @State private var showMonthPicker = false
     @State private var navigationPath = NavigationPath()
     /// The category currently being edited via the custom keypad.
@@ -121,8 +122,7 @@ struct BudgetView: View {
         NavigationStack(path: $navigationPath) {
             VStack(spacing: 0) {
                 monthSelector
-                toBudgetBanner(historic: historicToBudget, future: futureBudgeted)
-                overspentWarnings
+                budgetStatusButtons(historic: historicToBudget, future: futureBudgeted)
 
                 if headerCategories.isEmpty {
                     emptyState
@@ -213,6 +213,19 @@ struct BudgetView: View {
             }
             .sheet(isPresented: $showAutoFill) {
                 AutoFillBudgetView(month: selectedMonth) {
+                    syncLocalBudgets()
+                }
+            }
+            .sheet(isPresented: $showFixOverbudgeted) {
+                FixOverbudgetedSheet(
+                    month: selectedMonth,
+                    initialOverbudgetedAmount: -computeHistoricToBudget()
+                ) {
+                    syncLocalBudgets()
+                }
+            }
+            .sheet(isPresented: $showFixOverspent) {
+                FixOverspentSheet(month: selectedMonth) {
                     syncLocalBudgets()
                 }
             }
@@ -343,98 +356,19 @@ struct BudgetView: View {
         .accessibilityHint("Double tap to return to the current month")
     }
 
-    // MARK: - "To Budget" Banner
+    // MARK: - Budget Status
 
-    /// Banner logic:
-    /// - If historic To Budget is negative → Overbudgeted (warning amber)
-    /// - If historic To Budget is positive and not absorbed by future → To Budget (green)
-    /// - Otherwise (zero or fully absorbed) → hidden
-    @ViewBuilder
-    func toBudgetBanner(historic: Decimal, future: Decimal) -> some View {
-        if historic < 0 {
-            // Overbudgeted this month
-            bannerContent(amount: historic, label: "Overbudgeted", labelColor: Color("WarningColor"), bgColor: Color("WarningColor").opacity(0.12))
-        } else if historic > 0 {
-            let remainder = historic - future
-            if remainder > 0 {
-                // Genuinely unbudgeted money remains
-                bannerContent(amount: remainder, label: "To Budget", labelColor: .green, bgColor: .green.opacity(0.12))
-            }
-            // else: future absorbs it — hide banner
-        }
-        // else: exactly zero — hide banner
-    }
-
-    private func bannerContent(amount: Decimal, label: String, labelColor: Color, bgColor: Color) -> some View {
-        VStack(spacing: 4) {
-            GBPText(amount: amount, font: .title2.bold())
-            Text(label)
-                .font(.subheadline)
-                .bold()
-                .foregroundStyle(labelColor)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 12)
-        .background(bgColor)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(label): \(formatGBP(amount, currencyCode: currencyCode))")
-    }
-
-    // MARK: - Overspent Warnings
-
-    var overspentWarnings: some View {
-        Group {
-            if !overspentCategories.isEmpty && focusedCategory == nil {
-                let totalOverspent = overspentCategories.reduce(Decimal.zero) { $0 + $1.amount }
-                let count = overspentCategories.count
-                VStack(spacing: 0) {
-                    Button {
-                        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
-                            overspentExpanded.toggle()
-                        }
-                    } label: {
-                        HStack(spacing: 8) {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .font(.caption)
-                            Text("\(count) \(count == 1 ? "category" : "categories") overspent by \(formatGBP(-totalOverspent, currencyCode: currencyCode))")
-                                .font(.caption)
-                                .bold()
-                            Spacer()
-                            Image(systemName: overspentExpanded ? "chevron.up" : "chevron.down")
-                                .font(.caption)
-                        }
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
-                    }
-                    .accessibilityLabel("Warning: \(count) \(count == 1 ? "category" : "categories") overspent by \(formatGBP(-totalOverspent, currencyCode: currencyCode))")
-                    .accessibilityHint(overspentExpanded ? "Double tap to collapse details" : "Double tap to expand details")
-                    .background(Color("WarningColor"))
-
-                    if overspentExpanded {
-                        VStack(spacing: 0) {
-                            ForEach(overspentCategories, id: \.id) { item in
-                                HStack(spacing: 8) {
-                                    Text(item.name)
-                                        .font(.caption)
-                                    Spacer()
-                                    Text(formatGBP(-item.amount, currencyCode: currencyCode))
-                                        .font(.caption)
-                                        .monospacedDigit()
-                                        .bold()
-                                }
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 8)
-                                .accessibilityElement(children: .combine)
-                                .accessibilityLabel("\(item.name) overspent by \(formatGBP(-item.amount, currencyCode: currencyCode))")
-                            }
-                        }
-                        .background(Color("WarningColor").opacity(0.85))
-                    }
-                }
-            }
-        }
+    private func budgetStatusButtons(historic: Decimal, future: Decimal) -> some View {
+        let effective = historic > 0 ? historic - future : historic
+        return BudgetStatusButtons(
+            toBudgetAmount: effective > 0 ? effective : 0,
+            isOverbudgeted: historic < 0,
+            overbudgetedAmount: historic < 0 ? -historic : 0,
+            overspentCount: focusedCategory == nil ? overspentCategories.count : 0,
+            currencyCode: currencyCode,
+            onFixOverbudgeted: { showFixOverbudgeted = true },
+            onFixOverspent: { showFixOverspent = true }
+        )
     }
 
     // MARK: - Category List
@@ -444,7 +378,45 @@ struct BudgetView: View {
             List {
                 ForEach(headerCategories) { header in
                     Section {
-                        // Collapsible header row with inline column labels
+                        // Subcategories (only shown when expanded)
+                        if expandedHeaders.contains("\(header.persistentModelID)") {
+                            ForEach(header.visibleSortedChildren) { subcategory in
+                                let catKey = "\(subcategory.persistentModelID)"
+                                let budgeted = localBudgets[catKey] ?? Decimal.zero
+                                let avail = localAvailable[catKey] ?? subcategory.available(through: selectedMonth)
+                                let isCategoryFocused = focusedCategory?.persistentModelID == subcategory.persistentModelID
+
+                                BudgetCategoryRow(
+                                    category: subcategory,
+                                    budgetedDisplay: isCategoryFocused
+                                        ? engine.displayString
+                                        : formatGBP(budgeted, currencyCode: currencyCode),
+                                    available: avail,
+                                    isFocused: isCategoryFocused,
+                                    expressionDisplay: isCategoryFocused
+                                        ? engine.expressionDisplayString
+                                        : nil,
+                                    onTap: { activateKeypad(for: subcategory) }
+                                )
+                                .id(subcategory.persistentModelID)
+                                .onGeometryChange(for: CGRect.self) { proxy in
+                                    proxy.frame(in: .named("budgetList"))
+                                } action: { frame in
+                                    if isCategoryFocused {
+                                        let fullyVisible = frame.minY >= 0
+                                            && frame.maxY <= budgetListHeight
+                                        focusedRowNeedsScroll = !fullyVisible
+                                    }
+                                }
+                                .listRowBackground(
+                                    isCategoryFocused
+                                        ? Color.accentColor.opacity(0.12)
+                                        : Color(.systemBackground)
+                                )
+                            }
+                        }
+                    } header: {
+                        // Sticky collapsible header row with inline column labels
                         Button {
                             withAnimation(reduceMotion ? nil : .default) {
                                 let headerKey = "\(header.persistentModelID)"
@@ -507,54 +479,22 @@ struct BudgetView: View {
                                 .frame(width: 88, alignment: .trailing)
                             }
                         }
+                        .buttonStyle(.plain)
+                        .textCase(nil)
                         .accessibilityElement(children: .combine)
                         .accessibilityAddTraits(.isHeader)
                         .accessibilityLabel("\(header.name), budgeted \(formatGBP(headerBudgeted(header), currencyCode: currencyCode)), available \(formatGBP(headerAvailable(header), currencyCode: currencyCode))\(headerAvailable(header) < 0 ? ", overspent" : "")")
                         .accessibilityHint(expandedHeaders.contains("\(header.persistentModelID)") ? "Double tap to collapse" : "Double tap to expand")
-                        .listRowBackground(Color(.secondarySystemBackground))
-                        .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
-
-                        // Subcategories (only shown when expanded)
-                        if expandedHeaders.contains("\(header.persistentModelID)") {
-                            ForEach(header.visibleSortedChildren) { subcategory in
-                                let catKey = "\(subcategory.persistentModelID)"
-                                let budgeted = localBudgets[catKey] ?? Decimal.zero
-                                let avail = localAvailable[catKey] ?? subcategory.available(through: selectedMonth)
-                                let isCategoryFocused = focusedCategory?.persistentModelID == subcategory.persistentModelID
-
-                                BudgetCategoryRow(
-                                    category: subcategory,
-                                    budgetedDisplay: isCategoryFocused
-                                        ? engine.displayString
-                                        : formatGBP(budgeted, currencyCode: currencyCode),
-                                    available: avail,
-                                    isFocused: isCategoryFocused,
-                                    expressionDisplay: isCategoryFocused
-                                        ? engine.expressionDisplayString
-                                        : nil,
-                                    onTap: { activateKeypad(for: subcategory) }
-                                )
-                                .id(subcategory.persistentModelID)
-                                .onGeometryChange(for: CGRect.self) { proxy in
-                                    proxy.frame(in: .named("budgetList"))
-                                } action: { frame in
-                                    if isCategoryFocused {
-                                        let fullyVisible = frame.minY >= 0
-                                            && frame.maxY <= budgetListHeight
-                                        focusedRowNeedsScroll = !fullyVisible
-                                    }
-                                }
-                                .listRowBackground(
-                                    isCategoryFocused
-                                        ? Color.accentColor.opacity(0.12)
-                                        : Color(.systemBackground)
-                                )
-                            }
-                        }
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 16)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color(.secondarySystemBackground))
+                        .listRowInsets(EdgeInsets())
                     }
                 }
             }
             .listStyle(.plain)
+            .listSectionSpacing(0)
             .coordinateSpace(.named("budgetList"))
             .onGeometryChange(for: CGFloat.self) { proxy in
                 proxy.size.height
