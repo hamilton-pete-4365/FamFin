@@ -72,7 +72,7 @@ The hallmark of a truly polished app is not what it has, but what it doesn't nee
 | Role | Light Mode | Dark Mode | Usage |
 |------|-----------|-----------|-------|
 | **Accent** (Forest Green) | `rgb(6, 64, 43)` | `rgb(10, 122, 80)` | Primary actions, selected states, tint color |
-| **Warning** (Amber) | `rgb(204, 119, 0)` | `rgb(229, 163, 38)` | Overspent banners, caution states |
+| **Warning** (Amber) | `rgb(204, 119, 0)` | `rgb(229, 163, 38)` | Overspent pills, caution states |
 
 #### Semantic Colors
 
@@ -174,10 +174,11 @@ Use shadow sparingly — it should create subtle depth, not dramatic drama.
 |-------|--------|-------|
 | **Flat** | None | Default list rows, inline content |
 | **Raised** | `color: .black.opacity(0.06), radius: 4, y: 2` | Cards within scroll views |
-| **Floating** | `color: .black.opacity(0.08), radius: 8, y: 4` | Keyboard hint bars, floating action areas |
+| **Bar** | None (material-based) | Inline keypads, action bars — use `.bar` background material for translucency that adapts to light/dark mode and scroll content beneath |
+| **Floating** | `color: .black.opacity(0.08), radius: 8, y: 4` | Floating action areas |
 | **Modal** | System sheet shadow | Sheets, popovers (handled by SwiftUI) |
 
-In dark mode, reduce shadow opacity or rely on surface color differentiation instead.
+In dark mode, reduce shadow opacity or rely on surface color differentiation instead. The `.bar` material level handles dark mode automatically through system translucency.
 
 ---
 
@@ -213,6 +214,7 @@ Before adding any new screen or feature, answer: "If a user wanted to find this,
 | **Long press** | Context menu, reorder mode | Haptic (`.impact(.medium)`) + menu/scale |
 | **Swipe leading** | Quick positive action (mark cleared) | Green reveal + haptic |
 | **Swipe trailing** | Delete / destructive action | Red reveal + haptic |
+| **Swipe horizontal** | Navigate between time periods (months) | Animated content transition |
 | **Pull down** | Refresh data | Standard refresh indicator |
 | **Drag** | Reorder items (categories, accounts) | Haptic on pickup + drop |
 
@@ -246,7 +248,8 @@ FamFin uses pence-based entry for amounts: digits build from the right, like an 
 - Display the formatted currency as the user types (e.g., typing "1536" shows "£15.36").
 - Clear with a single backspace-like action (delete last digit).
 - Show a visible "0.00" placeholder before any input.
-- Make contextual suggestions (e.g. historical data, averages, goal targets) available during amount entry so users can fill values quickly without mental arithmetic.
+- **Math operators (+/−)** allow relative budgeting. Pressing + or − appends to the current value, showing a secondary expression line (e.g., "£15.00 + £5.00") below the running total. The = key resolves the expression. This lets users think in adjustments ("add £20 more") rather than recalculating totals.
+- Make contextual suggestions (e.g. historical data, averages, goal targets) available via a **Quick Fill popover** during amount entry so users can fill values quickly without mental arithmetic. Quick Fill presents last month's budgeted and spent amounts alongside 12-month averages, tapping a suggestion applies the value directly to the keypad.
 
 #### Form Design
 
@@ -302,8 +305,10 @@ Every view has four states. Design all four:
 
 ### 4.3 Micro-Interactions
 
-- **Budget cell edit:** Tap in = subtle scale + border highlight. Tap out = smooth number update to the row.
-- **"To Budget" banner:** Amount changes animate with a counting effect (roll numbers up or down).
+- **Budget cell focus:** Tap in = accent-tinted row background (`.accentColor.opacity(0.12)`) with `.selection` haptic. The keypad slides up from the bottom with a spring animation. Tap another row = auto-save the current value, shift focus immediately, light haptic on save.
+- **Budget number update:** Budgeted and available amounts use `.contentTransition(.numericText())` so digits roll smoothly between values rather than snapping.
+- **Status pills:** The "To Budget" pill updates its amount live as allocations change, reflecting the new balance without any page reload or manual refresh.
+- **Math expression appearance:** When a + or − operator is pressed, a secondary expression line fades in below the budgeted amount (`.transition(.opacity)`). The row may grow taller; if it extends below the visible area, the list scrolls the minimum distance needed to reveal it.
 - **Goal progress ring:** Fill animates from current to new value on contribution.
 - **Transaction save:** Row inserts with a standard list insert animation and the balance header updates simultaneously.
 - **Category available amount:** When budget allocation changes, the available column animates to its new value.
@@ -325,7 +330,7 @@ Every screen should have a clear top-to-bottom priority:
 - **Left = identity, Right = value.** In any row, the left side identifies what it is (category name, payee), the right side shows the number.
 - **Group related items.** Use section headers with clear labels. "Budget Accounts" and "Tracking Accounts" not a flat mixed list.
 - **Limit list columns.** Show at most 3 columns of data in a row (name, secondary info, amount). More than that requires a detail view.
-- **Zebra striping is unnecessary** in iOS — rely on system list separators and grouping instead.
+- **Zebra striping is unnecessary** in iOS — rely on system list separators and grouping instead. List separators should extend edge-to-edge (full bleed) for a clean, uncluttered look.
 
 ### 5.3 Number Formatting
 
@@ -398,20 +403,39 @@ Standard list rows follow a consistent anatomy:
 
 ### 7.3 Section Headers
 
-- Use `.headerProminence(.increased)` for top-level sections in lists.
 - Header text should be short and scannable — "Budget Accounts" not "Your Budget Accounts Listed Below".
-- Collapsible headers use a chevron rotation animation (standard disclosure indicator).
+- Collapsible headers use a leading disclosure chevron (`chevron.right` / `chevron.down`) at `.caption2.bold()` in `.secondary`.
 
-### 7.4 Banners
+**Summary headers** (used on the budget screen) extend the basic pattern with trailing aggregate columns:
 
-Banners sit at the top of a screen to communicate status:
+```
+[ ▸ ] [ HEADER NAME (uppercased) ] [ Budgeted column ] [ Available column ]
+```
 
-| Banner Type | Background | Text | Icon | Example |
-|-------------|------------|------|------|---------|
-| **Positive** | `.green.opacity(0.12)` | `.green` | `checkmark.circle.fill` | "To Budget: £500" (fully funded) |
-| **Warning** | `WarningColor.opacity(0.12)` | `WarningColor` | `exclamationmark.triangle.fill` | "Overbudgeted by £50" |
-| **Negative** | `.red.opacity(0.12)` | `.red` | `xmark.circle.fill` | "Overspent in 3 categories" |
-| **Info** | `.accentColor.opacity(0.08)` | `.accentColor` | `info.circle.fill` | Trial banner, sync status |
+- Header name: `.headline` + `.secondary` + `.uppercased()`
+- Column labels: `.caption2` + `.tertiary`, sitting above the value
+- Column values: `.subheadline.bold()` + `.monospacedDigit()`, `.secondary` for budgeted, semantic colour for available
+- Column widths: fixed (100pt budgeted, 88pt available) with `.minimumScaleFactor(0.5)` for overflow
+- Background: `.secondarySystemBackground` to visually separate from child rows
+- Row insets: 10pt vertical, 16pt horizontal
+- Collapsing a header auto-saves any active keypad editing within that group
+
+### 7.4 Status Pills
+
+Status pills sit below the navigation area to communicate the screen's primary status. They are compact, tappable where actionable, and occupy minimal vertical space compared to full-width banners.
+
+| Pill Type | Background | Text | Font | Corner Radius | Example |
+|-----------|------------|------|------|---------------|---------|
+| **Primary (positive)** | `.accentColor.opacity(0.15)` | `.accentColor` | `.subheadline.bold()` | 10pt | "To Budget: £500" |
+| **Warning** | `.red.opacity(0.08)` | `.red.opacity(0.7)` | `.subheadline` | 10pt | "Overbudgeted by £50" |
+| **Negative** | `.red.opacity(0.08)` | `.red.opacity(0.7)` | `.subheadline` | 10pt | "Overspent in 3 categories" |
+| **Info** | `.accentColor.opacity(0.08)` | `.accentColor` | `.subheadline` | 10pt | Trial status, sync info |
+
+**Tappable pills** (those that lead to a fix-it sheet or detail) include a trailing chevron (`chevron.right`) for affordance, with an invisible matching chevron on the leading side to keep text centred. Use `.buttonStyle(.plain)`.
+
+**Layout:** Pills stack vertically with 8pt spacing. The primary pill spans full width; secondary pills sit side by side when both are present. Horizontal padding matches the screen edge inset (12–16pt).
+
+**When to use pills vs. inline indicators:** Use a status pill for screen-level status that the user should notice immediately (budget health, overdue warnings). Use inline semantic colour for row-level status (a single overspent category's red available amount).
 
 ### 7.5 Action Sheets & Confirmation Dialogs
 
@@ -428,6 +452,37 @@ Use `ContentUnavailableView` with:
 - A one-line description: "Add your first transaction to start tracking"
 - A call-to-action button when creation is possible from that screen
 
+### 7.7 Inline Keypads
+
+When a screen needs rapid numeric entry without leaving context (budget allocation, goal contributions), present a custom keypad as a `safeAreaInset(edge: .bottom)` rather than a sheet or system keyboard.
+
+**Keypad layout:** 4×4 grid using `LazyVGrid` with flexible columns and 8pt spacing. Rows: digits 1–9, then dismiss / 0 / equals / done. Operators (+/−) and backspace occupy the right column.
+
+**Key button styles:**
+
+| Role | Font | Foreground | Background | Corner Radius | Min Height |
+|------|------|-----------|------------|---------------|------------|
+| **Digit** | `.title3` | `.primary` | `.systemFill` | 10pt | 48pt |
+| **Operator** | `.title3` | `.accentColor` | `.accentColor.opacity(0.15)` | 10pt | 48pt |
+| **Dismiss / Backspace** | `.title3` | `.secondary` | `.quaternarySystemFill` + `.separator` border | 10pt | 48pt |
+| **Done** | `.title3.bold()` | `.white` | `.accentColor` | 10pt | 48pt |
+
+**Presentation:** The keypad slides up from the bottom with a spring animation (response 0.35s, damping 0.85). When `accessibilityReduceMotion` is enabled, use a simple opacity crossfade instead. The keypad's background uses `.bar` material for translucency.
+
+**Haptics:** Each key press triggers `.impact(flexibility: .rigid, intensity: 0.4)`. This is lightweight enough for rapid tapping without feeling heavy.
+
+**Auto-save behaviour:** Changing focus to a different editable row auto-saves the current value and shifts the keypad context. Changing month or navigating away also auto-saves. Cancel reverts to the pre-edit value.
+
+### 7.8 Action Bars
+
+An action bar is a thin strip that sits directly above an inline keypad (or at the bottom of a scroll view) to provide contextual actions related to the current editing state.
+
+- Background: `.bar` material (matches the keypad)
+- Horizontal padding: 12pt, vertical: 8pt
+- Buttons use `.subheadline.bold()` with `.accentColor` text on `.accentColor.opacity(0.15)` background, 8pt corner radius, 12pt horizontal / 6pt vertical padding
+- Button widths are equalised using `onGeometryChange` so neither button dominates
+- Actions are context-specific: on the budget screen, "Quick Fill" (opens a popover with historical suggestions) and "Details" (navigates to category detail)
+
 ---
 
 ## 8. Screen-Specific Guidelines
@@ -435,20 +490,25 @@ Use `ContentUnavailableView` with:
 ### 8.1 Budget Screen (Primary)
 
 The budget screen is the heart of the app. It must answer three questions at a glance:
-1. "How much can I still allocate?" (To Budget banner)
-2. "Am I overspending anywhere?" (Red available amounts)
-3. "What's my overall budget health?" (Category list)
+1. "How much can I still allocate?" (To Budget status pill)
+2. "Am I overspending anywhere?" (Red available amounts + overspent pill)
+3. "What's my overall budget health?" (Category list with header summaries)
 
-**Layout priority:**
-1. "To Budget" banner — largest, most prominent element
-2. Category groups — expandable, with inline editing
-3. Toolbar — settings and navigation, minimal visual weight
+**Layout (top to bottom):**
+1. **Month selector** — Previous/next chevrons at edges, tappable month label with dropdown in centre. When not on the current month, a "Today" pill appears in the gap between the chevron and the month label to allow quick return. Horizontal swipe anywhere on the screen also navigates months.
+2. **Status pills** — Compact tappable pills showing "To Budget" amount (always visible), plus "Overbudgeted" and/or "Overspent" pills when applicable. Tapping a warning pill opens a fix-it sheet.
+3. **Category list** — Collapsible header groups with summary columns (Budgeted, Available). Each subcategory row shows name, budgeted amount, and available balance. Tapping a row activates the inline keypad.
+4. **Inline keypad** — Appears as a `safeAreaInset(edge: .bottom)` with an action bar (Quick Fill, Details) above the key grid. The list resizes to accommodate the keypad; the focused row scrolls into view if needed.
+5. **Toolbar** — Profile button (leading), "Budget" title (principal), add-transaction button and overflow menu (trailing). The overflow menu provides Auto-Fill Budget and Edit Categories.
 
 **Inline editing behaviour:**
-- Tapping an allocation field enters edit mode immediately (no navigation, no sheet)
-- The keyboard hint bar shows contextual suggestions (last month, 3-month average, goal target)
-- Tapping outside the field saves and exits edit mode
-- The "To Budget" banner updates live as allocations change
+- Tapping a category row activates the keypad immediately (no navigation, no sheet)
+- The action bar above the keypad offers Quick Fill (popover with last month, 12-month averages) and Details (navigates to category detail)
+- Tapping a different row auto-saves the current value and shifts focus
+- Changing month, collapsing a header group, or navigating away all auto-save
+- Cancel reverts to the pre-edit value; Done confirms
+- The "To Budget" pill updates live as allocations change
+- Focused row gets `.accentColor.opacity(0.12)` background with `.selection` haptic
 
 ### 8.2 Transaction List
 
@@ -525,9 +585,9 @@ Blur your eyes and look at any screen. You should still be able to identify: (1)
 Every screen in the app should feel like it belongs to the same family. This means:
 
 - **Same row structure everywhere.** A row on the budget screen, transaction list, and goal list should share the same anatomy: leading visual, title + subtitle, trailing value. The specific content changes; the skeleton does not.
-- **Same interaction patterns everywhere.** If tapping a row on the budget screen opens a detail sheet, tapping a row on the goals screen should also open a detail sheet — not push a new view. Pick one pattern per interaction type and use it across the entire app.
+- **Same interaction patterns everywhere.** Pick one pattern per interaction type and use it across the entire app. On the budget screen, tapping a category row activates inline editing (the keypad); navigating to a category's detail pushes within the same `NavigationStack`. Other screens should follow the same conventions: inline editing stays in-place, detail views push, and creation/editing of discrete items uses sheets.
 - **Same empty state treatment everywhere.** Every empty list uses `ContentUnavailableView` with the same structure (icon, title, description, optional action). No screen gets a custom empty layout.
-- **Same banner treatment everywhere.** The "To Budget" banner, "Overspent" warning, and "Trial expires" info all use the same banner component with different semantic colors. They should not look like three different UI elements.
+- **Same status pill treatment everywhere.** The "To Budget" pill, "Overspent" warning, and "Trial expires" info all use the same pill component with different semantic colors. They should not look like three different UI elements.
 
 ### 10.3 Optical Alignment
 
@@ -543,7 +603,7 @@ Resist the urge to fill space. A screen with breathing room feels premium and co
 
 - The area above and below hero numbers (the "To Budget" amount, account totals)
 - The space between section groups in lists
-- The padding inside cards and banners
+- The padding inside cards and status pills
 - The gap between the last list item and the bottom of the screen
 
 ### 10.5 Polish Signals

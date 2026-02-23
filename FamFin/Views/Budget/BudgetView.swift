@@ -195,7 +195,8 @@ struct BudgetView: View {
                         Button("Auto-Fill Budget", systemImage: "sparkles") {
                             showAutoFill = true
                         }
-                        Button("Manage Categories", systemImage: "slider.horizontal.3") {
+                        Divider()
+                        Button("Edit Categories", systemImage: "rectangle.stack") {
                             isEditingCategories = true
                         }
                     } label: {
@@ -445,8 +446,19 @@ struct BudgetView: View {
                         .accessibilityAddTraits(.isHeader)
                         .accessibilityLabel("\(header.name), budgeted \(formatGBP(headerBudgeted(header), currencyCode: currencyCode)), available \(formatGBP(headerAvailable(header), currencyCode: currencyCode))\(headerAvailable(header) < 0 ? ", overspent" : "")")
                         .accessibilityHint(expandedHeaders.contains("\(header.persistentModelID)") ? "Double tap to collapse" : "Double tap to expand")
-                        .listRowBackground(Color(.secondarySystemBackground))
+                        .listRowBackground(
+                            Color(.secondarySystemBackground)
+                                .overlay(alignment: .top) {
+                                    if header.persistentModelID == headerCategories.first?.persistentModelID {
+                                        Color(.opaqueSeparator)
+                                            .frame(height: 0.5)
+                                    }
+                                }
+                        )
                         .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
+                        .alignmentGuide(.listRowSeparatorLeading) { _ in -16 }
+                        .alignmentGuide(.listRowSeparatorTrailing) { d in d[.trailing] + 16 }
+                        .listSectionSeparator(.hidden, edges: .top)
 
                         // Subcategories (only shown when expanded)
                         if expandedHeaders.contains("\(header.persistentModelID)") {
@@ -483,12 +495,15 @@ struct BudgetView: View {
                                         ? Color.accentColor.opacity(0.12)
                                         : Color(.systemBackground)
                                 )
+                                .alignmentGuide(.listRowSeparatorLeading) { _ in -16 }
+                                .alignmentGuide(.listRowSeparatorTrailing) { d in d[.trailing] + 16 }
                             }
                         }
                     }
                 }
             }
             .listStyle(.plain)
+            .listSectionSpacing(0)
             .coordinateSpace(.named("budgetList"))
             .onGeometryChange(for: CGFloat.self) { proxy in
                 proxy.size.height

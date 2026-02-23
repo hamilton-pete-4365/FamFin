@@ -11,6 +11,7 @@ struct FamFinApp: App {
     @State private var sharingManager = SharingManager()
     @State private var reviewPromptManager = ReviewPromptManager()
     @Environment(\.scenePhase) private var scenePhase
+    @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .auto
 
     init() {
         do {
@@ -72,6 +73,7 @@ struct FamFinApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .preferredColorScheme(appearanceMode.colorScheme)
                 .environment(premiumManager)
                 .environment(syncManager)
                 .environment(notificationManager)

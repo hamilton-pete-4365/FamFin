@@ -15,14 +15,6 @@
 		A1B2C3D4E5F60001000A0006 /* BudgetMonth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0006 /* BudgetMonth.swift */; };
 		A1B2C3D4E5F60001000A0007 /* BudgetAllocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0007 /* BudgetAllocation.swift */; };
 		A1B2C3D4E5F60001000A0009 /* BudgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0009 /* BudgetView.swift */; };
-		M1Y2P3K4R5S60001000A0001 /* MonthYearPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = M1Y2P3K4R5S60002000A0001 /* MonthYearPicker.swift */; };
-		F7A8B9C0D1E2F3A4B5C60001 /* AmountKeypad.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A8B9C0D1E2F3A4B5C60002 /* AmountKeypad.swift */; };
-		F7A8B9C0D1E2F3A4B5C60003 /* AmountActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A8B9C0D1E2F3A4B5C60004 /* AmountActionBar.swift */; };
-		F7A8B9C0D1E2F3A4B5C60005 /* QuickFillPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A8B9C0D1E2F3A4B5C60006 /* QuickFillPopover.swift */; };
-		AFB1000000000001 /* AutoFillBudgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFB1000000000002 /* AutoFillBudgetView.swift */; };
-		BSB1000000000001 /* BudgetStatusButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = BSB1000000000002 /* BudgetStatusButtons.swift */; };
-		FOB1000000000001 /* FixOverbudgetedSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = FOB1000000000002 /* FixOverbudgetedSheet.swift */; };
-		FSB1000000000001 /* FixOverspentSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = FSB1000000000002 /* FixOverspentSheet.swift */; };
 		A1B2C3D4E5F60001000A000A /* AccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A000A /* AccountsView.swift */; };
 		A1B2C3D4E5F60001000A000B /* TransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A000B /* TransactionsView.swift */; };
 		A1B2C3D4E5F60001000A000E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A000E /* Assets.xcassets */; };
@@ -43,11 +35,11 @@
 		A1B2C3D4E5F60001000A0020 /* RecurrenceEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0020 /* RecurrenceEngine.swift */; };
 		A1B2C3D4E5F60001000A0021 /* RecurringTransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0021 /* RecurringTransactionsView.swift */; };
 		A1B2C3D4E5F60001000A0022 /* AddRecurringTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0022 /* AddRecurringTransactionView.swift */; };
+		AFB1000000000001 /* AutoFillBudgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFB1000000000002 /* AutoFillBudgetView.swift */; };
 		B1C2D3E4F5A60001000B0001 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B0001 /* TestHelpers.swift */; };
 		B1C2D3E4F5A60001000B0002 /* AccountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B0002 /* AccountTests.swift */; };
 		B1C2D3E4F5A60001000B0003 /* CategoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B0003 /* CategoryTests.swift */; };
 		B1C2D3E4F5A60001000B0004 /* BudgetCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B0004 /* BudgetCalculatorTests.swift */; };
-		K1P2D3E4F5A60001000B0001 /* AmountKeypadEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = K1P2D3E4F5A60002000B0001 /* AmountKeypadEngineTests.swift */; };
 		B1C2D3E4F5A60001000B0005 /* CurrencyFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B0005 /* CurrencyFormatterTests.swift */; };
 		B1C2D3E4F5A60001000B0006 /* DataExporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B0006 /* DataExporterTests.swift */; };
 		B1C2D3E4F5A60001000B0007 /* PayeeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B0007 /* PayeeTests.swift */; };
@@ -57,13 +49,12 @@
 		B1C2D3E4F5A60001000B000D /* RecurrenceEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B000D /* RecurrenceEngineTests.swift */; };
 		B1C2D3E4F5A60001000B000E /* CategoryAveragesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B000E /* CategoryAveragesTests.swift */; };
 		B1C2D3E4F5A60001000B000F /* ActivityEntryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B000F /* ActivityEntryTests.swift */; };
+		BSB1000000000001 /* BudgetStatusButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = BSB1000000000002 /* BudgetStatusButtons.swift */; };
 		C1D2E3F4A5B60001000C0001 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D2E3F4A5B60002000C0001 /* SyncManager.swift */; };
 		C1D2E3F4A5B60001000C0002 /* iCloudSyncSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D2E3F4A5B60002000C0002 /* iCloudSyncSection.swift */; };
-
 		E1F2A3B4C5D60001000E0001 /* ImportedTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F2A3B4C5D60002000E0001 /* ImportedTransaction.swift */; };
 		E1F2A3B4C5D60001000E0002 /* CSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F2A3B4C5D60002000E0002 /* CSVParser.swift */; };
 		E1F2A3B4C5D60001000E0003 /* OFXParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F2A3B4C5D60002000E0003 /* OFXParser.swift */; };
-		K1P2D3E4F5A60001000A0001 /* AmountKeypadEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = K1P2D3E4F5A60002000A0001 /* AmountKeypadEngine.swift */; };
 		E1F2A3B4C5D60001000E0004 /* AutoCategorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F2A3B4C5D60002000E0004 /* AutoCategorizer.swift */; };
 		E1F2A3B4C5D60001000E0005 /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F2A3B4C5D60002000E0005 /* ImportView.swift */; };
 		E1F2A3B4C5D60001000E0006 /* CSVColumnMappingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F2A3B4C5D60002000E0006 /* CSVColumnMappingView.swift */; };
@@ -71,6 +62,14 @@
 		F1A2B3C4D5E60001000F0001 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E60002000F0001 /* NotificationManager.swift */; };
 		F1A2B3C4D5E60001000F0002 /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E60002000F0002 /* NotificationSettingsView.swift */; };
 		F1A2B3C4D5E60001000F0003 /* SharedModelContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E60002000F0003 /* SharedModelContainer.swift */; };
+		F7A8B9C0D1E2F3A4B5C60001 /* AmountKeypad.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A8B9C0D1E2F3A4B5C60002 /* AmountKeypad.swift */; };
+		F7A8B9C0D1E2F3A4B5C60003 /* AmountActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A8B9C0D1E2F3A4B5C60004 /* AmountActionBar.swift */; };
+		F7A8B9C0D1E2F3A4B5C60005 /* QuickFillPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A8B9C0D1E2F3A4B5C60006 /* QuickFillPopover.swift */; };
+		FOB1000000000001 /* FixOverbudgetedSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = FOB1000000000002 /* FixOverbudgetedSheet.swift */; };
+		FSB1000000000001 /* FixOverspentSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = FSB1000000000002 /* FixOverspentSheet.swift */; };
+		K1P2D3E4F5A60001000A0001 /* AmountKeypadEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = K1P2D3E4F5A60002000A0001 /* AmountKeypadEngine.swift */; };
+		K1P2D3E4F5A60001000B0001 /* AmountKeypadEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = K1P2D3E4F5A60002000B0001 /* AmountKeypadEngineTests.swift */; };
+		M1Y2P3K4R5S60001000A0001 /* MonthYearPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = M1Y2P3K4R5S60002000A0001 /* MonthYearPicker.swift */; };
 		P4A1B2C3D5E60001000A0001 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = P4A1B2C3D5E60002000A0001 /* OnboardingView.swift */; };
 		P4A1B2C3D5E60001000A0002 /* OnboardingWelcomeStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = P4A1B2C3D5E60002000A0002 /* OnboardingWelcomeStep.swift */; };
 		P4A1B2C3D5E60001000A0003 /* OnboardingCurrencyStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = P4A1B2C3D5E60002000A0003 /* OnboardingCurrencyStep.swift */; };
@@ -107,13 +106,14 @@
 		W1D2E3F4A5B60001000A0018 /* BudgetCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0013 /* BudgetCalculator.swift */; };
 		W1D2E3F4A5B60001000A0019 /* CurrencySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0016 /* CurrencySettings.swift */; };
 		W1D2E3F4A5B60001000A001A /* SharedModelContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = G1A2B3C4D5E60002000A0027 /* SharedModelContainer.swift */; };
-		W1D2E3F4A5B60001000A001B /* FamFinWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = W1D2E3F4A5B60003000A0001 /* FamFinWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		W1D2E3F4A5B60001000A001B /* FamFinWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = W1D2E3F4A5B60003000A0001 /* FamFinWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		W1D2E3F4A5B60001000A001C /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = W1D2E3F4A5B60002000A000C /* WidgetKit.framework */; };
 		W1D2E3F4A5B60001000A001D /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = W1D2E3F4A5B60002000A000D /* SwiftUI.framework */; };
 		X1A2B3C4D5E60001000A0001 /* ProfileButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = X1A2B3C4D5E60002000A0001 /* ProfileButton.swift */; };
 		X1A2B3C4D5E60001000A0002 /* AccountDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = X1A2B3C4D5E60002000A0002 /* AccountDetailView.swift */; };
 		X1A2B3C4D5E60001000A0003 /* ReconcileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = X1A2B3C4D5E60002000A0003 /* ReconcileView.swift */; };
 		X1A2B3C4D5E60001000A0004 /* CategoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = X1A2B3C4D5E60002000A0004 /* CategoryDetailView.swift */; };
+		Y1A2B3C4D5E60001000A0001 /* AppearanceMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = Y1A2B3C4D5E60002000A0001 /* AppearanceMode.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -134,15 +134,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		W1D2E3F4A5B60007000A0003 /* Embed App Extensions */ = {
+		W1D2E3F4A5B60007000A0003 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				W1D2E3F4A5B60001000A001B /* FamFinWidgetExtension.appex in Embed App Extensions */,
+				W1D2E3F4A5B60001000A001B /* FamFinWidgetExtension.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -156,14 +156,6 @@
 		A1B2C3D4E5F60002000A0006 /* BudgetMonth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetMonth.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0007 /* BudgetAllocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetAllocation.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0009 /* BudgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetView.swift; sourceTree = "<group>"; };
-		M1Y2P3K4R5S60002000A0001 /* MonthYearPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthYearPicker.swift; sourceTree = "<group>"; };
-		F7A8B9C0D1E2F3A4B5C60002 /* AmountKeypad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmountKeypad.swift; sourceTree = "<group>"; };
-		F7A8B9C0D1E2F3A4B5C60004 /* AmountActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmountActionBar.swift; sourceTree = "<group>"; };
-		F7A8B9C0D1E2F3A4B5C60006 /* QuickFillPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickFillPopover.swift; sourceTree = "<group>"; };
-		AFB1000000000002 /* AutoFillBudgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoFillBudgetView.swift; sourceTree = "<group>"; };
-		BSB1000000000002 /* BudgetStatusButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetStatusButtons.swift; sourceTree = "<group>"; };
-		FOB1000000000002 /* FixOverbudgetedSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixOverbudgetedSheet.swift; sourceTree = "<group>"; };
-		FSB1000000000002 /* FixOverspentSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixOverspentSheet.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A000A /* AccountsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A000B /* TransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A000E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -185,11 +177,11 @@
 		A1B2C3D4E5F60002000A0021 /* RecurringTransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringTransactionsView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0022 /* AddRecurringTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRecurringTransactionView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60003000A0001 /* FamFin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FamFin.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AFB1000000000002 /* AutoFillBudgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoFillBudgetView.swift; sourceTree = "<group>"; };
 		B1C2D3E4F5A60002000B0001 /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
 		B1C2D3E4F5A60002000B0002 /* AccountTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountTests.swift; sourceTree = "<group>"; };
 		B1C2D3E4F5A60002000B0003 /* CategoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTests.swift; sourceTree = "<group>"; };
 		B1C2D3E4F5A60002000B0004 /* BudgetCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetCalculatorTests.swift; sourceTree = "<group>"; };
-		K1P2D3E4F5A60002000B0001 /* AmountKeypadEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmountKeypadEngineTests.swift; sourceTree = "<group>"; };
 		B1C2D3E4F5A60002000B0005 /* CurrencyFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyFormatterTests.swift; sourceTree = "<group>"; };
 		B1C2D3E4F5A60002000B0006 /* DataExporterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExporterTests.swift; sourceTree = "<group>"; };
 		B1C2D3E4F5A60002000B0007 /* PayeeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayeeTests.swift; sourceTree = "<group>"; };
@@ -200,14 +192,13 @@
 		B1C2D3E4F5A60002000B000E /* CategoryAveragesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryAveragesTests.swift; sourceTree = "<group>"; };
 		B1C2D3E4F5A60002000B000F /* ActivityEntryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityEntryTests.swift; sourceTree = "<group>"; };
 		B1C2D3E4F5A60003000B0001 /* FamFinTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FamFinTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BSB1000000000002 /* BudgetStatusButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetStatusButtons.swift; sourceTree = "<group>"; };
 		C1D2E3F4A5B60002000C0001 /* SyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManager.swift; sourceTree = "<group>"; };
 		C1D2E3F4A5B60002000C0002 /* iCloudSyncSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iCloudSyncSection.swift; sourceTree = "<group>"; };
 		C1D2E3F4A5B60002000C0003 /* FamFin.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FamFin.entitlements; sourceTree = "<group>"; };
-
 		E1F2A3B4C5D60002000E0001 /* ImportedTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportedTransaction.swift; sourceTree = "<group>"; };
 		E1F2A3B4C5D60002000E0002 /* CSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVParser.swift; sourceTree = "<group>"; };
 		E1F2A3B4C5D60002000E0003 /* OFXParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OFXParser.swift; sourceTree = "<group>"; };
-		K1P2D3E4F5A60002000A0001 /* AmountKeypadEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmountKeypadEngine.swift; sourceTree = "<group>"; };
 		E1F2A3B4C5D60002000E0004 /* AutoCategorizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoCategorizer.swift; sourceTree = "<group>"; };
 		E1F2A3B4C5D60002000E0005 /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
 		E1F2A3B4C5D60002000E0006 /* CSVColumnMappingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVColumnMappingView.swift; sourceTree = "<group>"; };
@@ -215,7 +206,15 @@
 		F1A2B3C4D5E60002000F0001 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		F1A2B3C4D5E60002000F0002 /* NotificationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingsView.swift; sourceTree = "<group>"; };
 		F1A2B3C4D5E60002000F0003 /* SharedModelContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedModelContainer.swift; sourceTree = "<group>"; };
+		F7A8B9C0D1E2F3A4B5C60002 /* AmountKeypad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmountKeypad.swift; sourceTree = "<group>"; };
+		F7A8B9C0D1E2F3A4B5C60004 /* AmountActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmountActionBar.swift; sourceTree = "<group>"; };
+		F7A8B9C0D1E2F3A4B5C60006 /* QuickFillPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickFillPopover.swift; sourceTree = "<group>"; };
+		FOB1000000000002 /* FixOverbudgetedSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixOverbudgetedSheet.swift; sourceTree = "<group>"; };
+		FSB1000000000002 /* FixOverspentSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixOverspentSheet.swift; sourceTree = "<group>"; };
 		G1A2B3C4D5E60002000A0027 /* SharedModelContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedModelContainer.swift; sourceTree = "<group>"; };
+		K1P2D3E4F5A60002000A0001 /* AmountKeypadEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmountKeypadEngine.swift; sourceTree = "<group>"; };
+		K1P2D3E4F5A60002000B0001 /* AmountKeypadEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmountKeypadEngineTests.swift; sourceTree = "<group>"; };
+		M1Y2P3K4R5S60002000A0001 /* MonthYearPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthYearPicker.swift; sourceTree = "<group>"; };
 		P4A1B2C3D5E60002000A0001 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		P4A1B2C3D5E60002000A0002 /* OnboardingWelcomeStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWelcomeStep.swift; sourceTree = "<group>"; };
 		P4A1B2C3D5E60002000A0003 /* OnboardingCurrencyStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCurrencyStep.swift; sourceTree = "<group>"; };
@@ -249,6 +248,7 @@
 		X1A2B3C4D5E60002000A0002 /* AccountDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDetailView.swift; sourceTree = "<group>"; };
 		X1A2B3C4D5E60002000A0003 /* ReconcileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconcileView.swift; sourceTree = "<group>"; };
 		X1A2B3C4D5E60002000A0004 /* CategoryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDetailView.swift; sourceTree = "<group>"; };
+		Y1A2B3C4D5E60002000A0001 /* AppearanceMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceMode.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -420,6 +420,7 @@
 		A1B2C3D4E5F60005000A000D /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				Y1A2B3C4D5E60002000A0001 /* AppearanceMode.swift */,
 				S1A2B3C4D5E60002000A0005 /* FamilySharingSettingsSection.swift */,
 				C1D2E3F4A5B60002000C0002 /* iCloudSyncSection.swift */,
 				F1A2B3C4D5E60002000F0002 /* NotificationSettingsView.swift */,
@@ -530,7 +531,7 @@
 				A1B2C3D4E5F60007000A0001 /* Sources */,
 				A1B2C3D4E5F60004000A0001 /* Frameworks */,
 				A1B2C3D4E5F60007000A0002 /* Resources */,
-				W1D2E3F4A5B60007000A0003 /* Embed App Extensions */,
+				W1D2E3F4A5B60007000A0003 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -712,6 +713,7 @@
 				S1A2B3C4D5E60001000A0005 /* FamilySharingSettingsSection.swift in Sources */,
 				R1A2B3C4D5E60001000A0001 /* ReviewPromptManager.swift in Sources */,
 				X1A2B3C4D5E60001000A0001 /* ProfileButton.swift in Sources */,
+				Y1A2B3C4D5E60001000A0001 /* AppearanceMode.swift in Sources */,
 				X1A2B3C4D5E60001000A0002 /* AccountDetailView.swift in Sources */,
 				X1A2B3C4D5E60001000A0003 /* ReconcileView.swift in Sources */,
 				X1A2B3C4D5E60001000A0004 /* CategoryDetailView.swift in Sources */,
@@ -819,6 +821,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = PH88BM78VD;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -842,6 +845,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -882,6 +886,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = PH88BM78VD;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -898,6 +903,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -912,7 +918,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FamFin/Preview Content\"";
-				DEVELOPMENT_TEAM = PH88BM78VD;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = FamFin;
@@ -926,7 +931,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.petehamilton.famfin-app;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.petehamilton.famfin-app";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = minimal;
@@ -944,7 +949,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FamFin/Preview Content\"";
-				DEVELOPMENT_TEAM = PH88BM78VD;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = FamFin;
@@ -958,7 +962,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.petehamilton.famfin-app;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.petehamilton.famfin-app";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = minimal;
@@ -973,11 +977,10 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = PH88BM78VD;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.petehamilton.famfin-app.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.petehamilton.famfin-app.tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_STRICT_CONCURRENCY = minimal;
@@ -993,11 +996,10 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = PH88BM78VD;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.petehamilton.famfin-app.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.petehamilton.famfin-app.tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_STRICT_CONCURRENCY = minimal;
@@ -1015,7 +1017,6 @@
 				CODE_SIGN_ENTITLEMENTS = FamFinWidget/FamFinWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = PH88BM78VD;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FamFinWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FamFinWidget;
@@ -1026,7 +1027,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.petehamilton.famfin-app.widget;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.petehamilton.famfin-app.widget";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1044,7 +1045,6 @@
 				CODE_SIGN_ENTITLEMENTS = FamFinWidget/FamFinWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = PH88BM78VD;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FamFinWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FamFinWidget;
@@ -1055,7 +1055,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.petehamilton.famfin-app.widget;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.petehamilton.famfin-app.widget";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;

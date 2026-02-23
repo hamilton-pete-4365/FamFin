@@ -7,6 +7,7 @@ struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(SyncManager.self) private var syncManager
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
+    @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .auto
 
     @State private var exportDocument: BackupDocument?
     @State private var showingExportPicker = false
@@ -47,6 +48,15 @@ struct SettingsView: View {
                     Text("Currency")
                 } footer: {
                     Text("Changing currency only affects how amounts are displayed. Existing values are not converted at an exchange rate.")
+                }
+
+                Section("Appearance") {
+                    Picker("Appearance", selection: $appearanceMode) {
+                        ForEach(AppearanceMode.allCases) { mode in
+                            Text(mode.label).tag(mode)
+                        }
+                    }
+                    .pickerStyle(.segmented)
                 }
 
                 Section {
