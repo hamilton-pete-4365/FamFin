@@ -10,7 +10,6 @@ struct FixOverspentSheet: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(SharingManager.self) private var sharingManager
     @Query(sort: \Category.sortOrder) private var allCategories: [Category]
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
@@ -341,14 +340,6 @@ struct FixOverspentSheet: View {
 
         try? modelContext.save()
         HapticManager.medium()
-
-        if sharingManager.isShared {
-            sharingManager.logActivity(
-                message: "\(sharingManager.currentUserName) moved budget funds to cover overspent categories",
-                type: .editedBudget,
-                context: modelContext
-            )
-        }
 
         withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
             showSuccess = true

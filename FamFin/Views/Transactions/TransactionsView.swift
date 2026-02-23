@@ -10,7 +10,6 @@ struct TransactionGroup: Identifiable {
 
 struct TransactionsView: View {
     @Environment(\.modelContext) private var modelContext
-    @Environment(SharingManager.self) private var sharingManager
     @Query(sort: \Transaction.date, order: .reverse) private var allTransactions: [Transaction]
     @Query(sort: \Account.sortOrder) private var accounts: [Account]
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
@@ -256,14 +255,6 @@ struct TransactionsView: View {
     }
 
     private func deleteSingleTransaction(_ transaction: Transaction) {
-        if sharingManager.isShared {
-            let message = "\(sharingManager.currentUserName) deleted \(transaction.payee) (\(transaction.amount))"
-            sharingManager.logActivity(
-                message: message,
-                type: .deletedTransaction,
-                context: modelContext
-            )
-        }
         modelContext.delete(transaction)
     }
 }
@@ -849,7 +840,6 @@ struct TransactionFormFields: View {
 struct AddTransactionView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @Environment(SharingManager.self) private var sharingManager
 
     @Query(sort: \Account.sortOrder) private var accounts: [Account]
     @Query(sort: \Category.sortOrder) private var allCategories: [Category]
@@ -984,23 +974,6 @@ struct AddTransactionView: View {
         modelContext.insert(transaction)
         updatePayeeRecord(name: finalPayee, category: transaction.category)
 
-        // Log activity for shared budgets
-        if sharingManager.isShared {
-            let categoryName = transaction.category?.name ?? ""
-            let message: String
-            if type == .transfer {
-                message = "\(sharingManager.currentUserName) added a transfer of \(amountText)"
-            } else {
-                let categoryPart = categoryName.isEmpty ? "" : " to \(categoryName)"
-                message = "\(sharingManager.currentUserName) added a \(amount) \(type.rawValue.lowercased())\(categoryPart)"
-            }
-            sharingManager.logActivity(
-                message: message,
-                type: .addedTransaction,
-                context: modelContext
-            )
-        }
-
         dismiss()
     }
 
@@ -1023,7 +996,6 @@ struct AddTransactionView: View {
 struct EditTransactionView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @Environment(SharingManager.self) private var sharingManager
 
     @Query(sort: \Account.sortOrder) private var accounts: [Account]
     @Query(sort: \Category.sortOrder) private var allCategories: [Category]
@@ -1148,13 +1120,6 @@ struct EditTransactionView: View {
                 titleVisibility: .visible
             ) {
                 Button("Delete", role: .destructive) {
-                    if sharingManager.isShared {
-                        sharingManager.logActivity(
-                            message: "\(sharingManager.currentUserName) deleted \(transaction.payee)",
-                            type: .deletedTransaction,
-                            context: modelContext
-                        )
-                    }
                     modelContext.delete(transaction)
                     dismiss()
                 }
@@ -1191,16 +1156,6 @@ struct EditTransactionView: View {
             }
         }
 
-        // Log activity for shared budgets
-        if sharingManager.isShared {
-            let message = "\(sharingManager.currentUserName) edited \(finalPayee) (\(amountText))"
-            sharingManager.logActivity(
-                message: message,
-                type: .editedTransaction,
-                context: modelContext
-            )
-        }
-
         dismiss()
     }
 }
@@ -1209,6 +1164,5 @@ struct EditTransactionView: View {
     NavigationStack {
         TransactionsView()
     }
-    .modelContainer(for: [Transaction.self, Account.self, Category.self, Payee.self, RecurringTransaction.self, ActivityEntry.self], inMemory: true)
-    .environment(SharingManager())
+    .modelContainer(for: [Transaction.self, Account.self, Category.self, Payee.self, RecurringTransaction.self], inMemory: true)
 }

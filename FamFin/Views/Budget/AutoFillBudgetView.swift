@@ -6,7 +6,6 @@ import SwiftData
 struct AutoFillBudgetView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @Environment(SharingManager.self) private var sharingManager
     @Query(sort: \Category.sortOrder) private var allCategories: [Category]
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
@@ -271,16 +270,6 @@ struct AutoFillBudgetView: View {
 
         try? modelContext.save()
         HapticManager.medium()
-
-        // Log activity for shared budgets
-        if sharingManager.isShared {
-            let message = "\(sharingManager.currentUserName) auto-filled \(preview.count) category budgets"
-            sharingManager.logActivity(
-                message: message,
-                type: .editedBudget,
-                context: modelContext
-            )
-        }
 
         onApplied()
         dismiss()

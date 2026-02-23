@@ -97,9 +97,6 @@ struct KeyboardShortcutButtons: View {
             Category.self,
             BudgetMonth.self,
             BudgetAllocation.self,
-            RecurringTransaction.self,
-            ActivityEntry.self
+            RecurringTransaction.self
         ], inMemory: true)
-        .environment(SharingManager())
-        .environment(ReviewPromptManager())
 }

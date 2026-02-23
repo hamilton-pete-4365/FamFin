@@ -3,9 +3,6 @@ import SwiftData
 
 struct BudgetView: View {
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.requestReview) private var requestReview
-    @Environment(SharingManager.self) private var sharingManager
-    @Environment(ReviewPromptManager.self) private var reviewPromptManager
     @Query(sort: \Account.sortOrder) private var accounts: [Account]
     @Query private var allBudgetMonths: [BudgetMonth]
     @Query(sort: \Category.sortOrder) private var allCategories: [Category]
@@ -709,8 +706,6 @@ struct BudgetView: View {
             modelContext.insert(newBM)
             bm = newBM
 
-            // First budget allocation for this month — record as a meaningful event
-            reviewPromptManager.recordEvent(.budgetMonthCompleted, requestReview: requestReview)
         }
 
         // Find or create allocation — fetch directly from modelContext for fresh data
@@ -740,15 +735,6 @@ struct BudgetView: View {
         try? modelContext.save()
         HapticManager.light()
 
-        // Log activity for shared budgets
-        if sharingManager.isShared && delta != .zero {
-            let message = "\(sharingManager.currentUserName) updated \(category.name) budget to \(amount)"
-            sharingManager.logActivity(
-                message: message,
-                type: .editedBudget,
-                context: modelContext
-            )
-        }
     }
 
     /// Compute "To Budget" from persistent data (no local overrides)
@@ -996,8 +982,5 @@ struct CategoryDetailSheet: View {
             BudgetMonth.self,
             BudgetAllocation.self,
             Payee.self,
-            ActivityEntry.self,
         ], inMemory: true)
-        .environment(SharingManager())
-        .environment(ReviewPromptManager())
 }

@@ -21,7 +21,6 @@ func makeTestContainer() throws -> ModelContainer {
              BudgetAllocation.self,
              Payee.self,
              RecurringTransaction.self,
-             ActivityEntry.self,
         configurations: config
     )
 }

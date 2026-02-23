@@ -17,7 +17,6 @@ enum SharedModelContainer {
         BudgetAllocation.self,
         Payee.self,
         RecurringTransaction.self,
-        ActivityEntry.self
     ])
 
     /// URL for the shared SwiftData store inside the App Group container.
@@ -28,23 +27,17 @@ enum SharedModelContainer {
             .appending(path: "FamFin.store")
     }
 
-    /// Whether iCloud entitlements are available at runtime.
-    /// When false, CloudKit sync is disabled and the store falls back to local-only.
-    static var isCloudKitAvailable: Bool {
-        storeURL != nil
-    }
-
     /// Creates a ModelContainer pointing to the shared App Group container.
-    /// Uses CloudKit when entitlements are present, otherwise falls back to local-only storage.
+    /// Currently uses local-only storage (CloudKit sync will be added after
+    /// Apple Developer enrollment is complete).
     static func makeAppContainer() throws -> ModelContainer {
         let url = storeURL ?? URL.documentsDirectory.appending(path: "FamFin.store")
-        let cloudKit: ModelConfiguration.CloudKitDatabase = isCloudKitAvailable ? .automatic : .none
 
         let configuration = ModelConfiguration(
             "FamFin",
             schema: schema,
             url: url,
-            cloudKitDatabase: cloudKit
+            cloudKitDatabase: .none
         )
 
         return try ModelContainer(

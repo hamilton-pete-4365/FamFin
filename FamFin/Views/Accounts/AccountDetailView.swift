@@ -5,7 +5,6 @@ import SwiftData
 /// Shows the account balance, recent transactions, and a reconcile button.
 struct AccountDetailView: View {
     @Environment(\.modelContext) private var modelContext
-    @Environment(SharingManager.self) private var sharingManager
     @Query(sort: \Transaction.date, order: .reverse) private var allTransactions: [Transaction]
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
@@ -218,14 +217,6 @@ struct AccountDetailView: View {
     }
 
     private func deleteTransaction(_ transaction: Transaction) {
-        if sharingManager.isShared {
-            let message = "\(sharingManager.currentUserName) deleted \(transaction.payee) (\(transaction.amount))"
-            sharingManager.logActivity(
-                message: message,
-                type: .deletedTransaction,
-                context: modelContext
-            )
-        }
         modelContext.delete(transaction)
     }
 }

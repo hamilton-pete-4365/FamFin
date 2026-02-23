@@ -5,7 +5,6 @@ import SwiftData
 /// and transactions for the selected month.
 struct CategoryDetailView: View {
     @Environment(\.modelContext) private var modelContext
-    @Environment(SharingManager.self) private var sharingManager
     @Query(sort: \Transaction.date, order: .reverse) private var allTransactions: [Transaction]
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
@@ -136,13 +135,6 @@ struct CategoryDetailView: View {
     }
 
     private func deleteTransaction(_ transaction: Transaction) {
-        if sharingManager.isShared {
-            sharingManager.logActivity(
-                message: "\(sharingManager.currentUserName) deleted \(transaction.payee)",
-                type: .deletedTransaction,
-                context: modelContext
-            )
-        }
         modelContext.delete(transaction)
     }
 }

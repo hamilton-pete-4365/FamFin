@@ -8,7 +8,6 @@ struct AccountsView: View {
     @State private var editingAccount: Account?
     @State private var isEditing = false
     @State private var expandedSections: Set<String> = ["Budget", "Tracking"]
-    @State private var showingBankImport = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var budgetAccounts: [Account] {
@@ -170,9 +169,6 @@ struct AccountsView: View {
                         Button("Add Account", systemImage: "plus") {
                             showingAddAccount = true
                         }
-                        Button("Bank Import", systemImage: "doc.text.fill") {
-                            showingBankImport = true
-                        }
                         if !accounts.isEmpty {
                             Divider()
                             Button(isEditing ? "Done Editing" : "Edit Accounts", systemImage: isEditing ? "checkmark" : "pencil") {
@@ -194,9 +190,6 @@ struct AccountsView: View {
             }
             .sheet(item: $editingAccount) { account in
                 EditAccountView(account: account)
-            }
-            .sheet(isPresented: $showingBankImport) {
-                ImportView()
             }
             .sensoryFeedback(.selection, trigger: showingAddAccount)
         }

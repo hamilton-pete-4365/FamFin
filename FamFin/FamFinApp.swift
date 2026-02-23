@@ -5,11 +5,6 @@ import WidgetKit
 @main
 struct FamFinApp: App {
     let modelContainer: ModelContainer
-    @State private var premiumManager = PremiumManager()
-    @State private var syncManager = SyncManager()
-    @State private var notificationManager = NotificationManager()
-    @State private var sharingManager = SharingManager()
-    @State private var reviewPromptManager = ReviewPromptManager()
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .auto
 
@@ -74,21 +69,8 @@ struct FamFinApp: App {
         WindowGroup {
             ContentView()
                 .preferredColorScheme(appearanceMode.colorScheme)
-                .environment(premiumManager)
-                .environment(syncManager)
-                .environment(notificationManager)
-                .environment(sharingManager)
-                .environment(reviewPromptManager)
-                .onAppear {
-                    reviewPromptManager.incrementSessionCount()
-                }
                 .onChange(of: scenePhase) { _, newPhase in
                     if newPhase == .active {
-                        Task {
-                            await notificationManager.updateNotifications(
-                                context: modelContainer.mainContext
-                            )
-                        }
                         // Sync currency preference and refresh widgets
                         CurrencySettings.syncToSharedDefaults()
                         WidgetCenter.shared.reloadAllTimelines()

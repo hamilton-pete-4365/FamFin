@@ -9,7 +9,6 @@ struct FixOverbudgetedSheet: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(SharingManager.self) private var sharingManager
     @Query(sort: \Category.sortOrder) private var allCategories: [Category]
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
@@ -276,13 +275,6 @@ struct FixOverbudgetedSheet: View {
 
         try? modelContext.save()
 
-        if sharingManager.isShared {
-            sharingManager.logActivity(
-                message: "\(sharingManager.currentUserName) reduced \(category.name) budget to fix overbudgeting",
-                type: .editedBudget,
-                context: modelContext
-            )
-        }
     }
 
     // MARK: - Success View
