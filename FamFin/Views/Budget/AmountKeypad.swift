@@ -73,7 +73,7 @@ struct AmountKeypad: View {
             doneKey()
         }
         .padding(.horizontal, 12)
-        .padding(.top, 8)
+        .padding(.top, 12)
         .padding(.bottom, 12)
         .background(.bar)
         .sensoryFeedback(.impact(flexibility: .rigid, intensity: 0.4), trigger: tapCount)

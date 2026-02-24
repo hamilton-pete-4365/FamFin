@@ -87,36 +87,11 @@ struct RecurringTransactionFormFields: View {
     }
 
     var toBudgetCategory: Category? {
-        categories.first { $0.isSystem && $0.name == DefaultCategories.toBudgetName }
+        findToBudgetCategory(in: categories)
     }
 
     var groupedCategories: [CategoryGroup] {
-        var seen = Set<String>()
-        var headerOrder: [(name: String, parent: Category)] = []
-        for category in categories where !category.isSystem {
-            if let parent = category.parent, !seen.contains(parent.name) {
-                seen.insert(parent.name)
-                headerOrder.append((parent.name, parent))
-            }
-        }
-        headerOrder.sort { $0.parent.sortOrder < $1.parent.sortOrder }
-
-        var result: [CategoryGroup] = []
-        for header in headerOrder {
-            let subs = categories
-                .filter { !$0.isSystem && $0.parent?.name == header.name }
-                .sorted { $0.sortOrder < $1.sortOrder }
-            if !subs.isEmpty {
-                result.append(CategoryGroup(headerName: "\(header.parent.emoji) \(header.name)", subcategories: subs))
-            }
-        }
-        let orphans = categories
-            .filter { !$0.isSystem && $0.parent == nil && !$0.isHeader }
-            .sorted { $0.sortOrder < $1.sortOrder }
-        if !orphans.isEmpty {
-            result.append(CategoryGroup(headerName: "Other", subcategories: orphans))
-        }
-        return result
+        buildCategoryGroups(from: categories)
     }
 
     var body: some View {
@@ -195,11 +170,7 @@ struct RecurringTransactionFormFields: View {
 
         // Details
         Section("Details") {
-            PayeeSuggestionField(
-                payeeText: $payee,
-                suggestedCategory: $selectedCategory,
-                isOptional: type == .transfer
-            )
+            TextField(type == .transfer ? "Payee (optional)" : "Payee", text: $payee)
             TextField("Memo (optional)", text: $memo)
         }
 
