@@ -65,22 +65,46 @@ struct EditTransactionView: View {
                     .padding(.top, 8)
                     .background(.bar)
                     .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
+                } else if !viewModel.isDatePickerVisible {
+                    HStack {
+                        Spacer()
+
+                        Button {
+                            viewModel.update(transaction: transaction, context: modelContext, currencyCode: currencyCode)
+                            HapticManager.success()
+                            dismiss()
+                        } label: {
+                            Text("Done")
+                                .font(.title3)
+                                .bold()
+                                .foregroundStyle(viewModel.canSave ? .white : .accent)
+                                .padding(.horizontal, 24)
+                                .padding(.vertical, 12)
+                                .background {
+                                    if viewModel.canSave {
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(.accent)
+                                    } else {
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .strokeBorder(.accent, lineWidth: 1.5)
+                                    }
+                                }
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(!viewModel.canSave)
+                        .animation(reduceMotion ? nil : .default, value: viewModel.canSave)
+                    }
+                    .padding()
+                    .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
                 }
             }
             .animation(reduceMotion ? nil : .spring(response: 0.35, dampingFraction: 0.85), value: viewModel.isKeypadVisible)
+            .animation(reduceMotion ? nil : .default, value: viewModel.isDatePickerVisible)
             .navigationTitle("Edit Transaction")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        viewModel.update(transaction: transaction, context: modelContext, currencyCode: currencyCode)
-                        HapticManager.success()
-                        dismiss()
-                    }
-                    .disabled(!viewModel.canSave)
                 }
             }
             .onAppear {
