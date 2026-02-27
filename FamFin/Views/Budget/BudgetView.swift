@@ -796,7 +796,7 @@ struct BudgetCategoryRow: View {
                         Text(expr)
                             .font(.subheadline.bold())
                             .monospacedDigit()
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.primary)
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
                             .transition(.opacity)

@@ -3,8 +3,8 @@ import SwiftData
 
 /// The scrollable form body for the Add/Edit Transaction screen.
 ///
-/// Contains the transaction type picker, and tappable rows for payee, account,
-/// category, date, and memo. Each tappable row opens its respective search sheet.
+/// Contains the transaction type picker, and tappable rows for payee, category,
+/// account, date, and memo. The four key rows always remain in the same position.
 struct TransactionFormContent: View {
     let viewModel: TransactionFormViewModel
     let accounts: [Account]
@@ -18,15 +18,13 @@ struct TransactionFormContent: View {
     @State private var showingAccountPicker = false
     @State private var showingTransferToPicker = false
     @State private var showingCategoryPicker = false
-    @State private var showDatePicker = false
-
-    private var budgetAccounts: [Account] {
-        accounts.filter { $0.isBudget }
+    /// Bound to the view model so the parent view can observe date picker visibility.
+    private var showDatePicker: Bool {
+        get { viewModel.isDatePickerVisible }
+        nonmutating set { viewModel.isDatePickerVisible = newValue }
     }
-
-    private var trackingAccounts: [Account] {
-        accounts.filter { !$0.isBudget }
-    }
+    @State private var accountBeforeTransfer: Account?
+    @FocusState private var isMemoFocused: Bool
 
     private var groupedCategories: [CategoryGroup] {
         buildCategoryGroups(from: categories)
@@ -37,14 +35,22 @@ struct TransactionFormContent: View {
     }
 
     var body: some View {
-        Form {
-            typeSection
-            detailsSection
-            accountSection
-            categorySection
-            deleteSection
+        ScrollViewReader { proxy in
+            Form {
+                typeSection
+                detailsSection
+                memoSection
+                deleteSection
+            }
+            .onChange(of: showDatePicker) {
+                if showDatePicker {
+                    withAnimation(reduceMotion ? nil : .default) {
+                        proxy.scrollTo("datePicker", anchor: .bottom)
+                    }
+                }
+            }
         }
-        .sheet(isPresented: $showingPayeeSearch) {
+        .navigationDestination(isPresented: $showingPayeeSearch) {
             PayeeSearchSheet(
                 onSelect: { payee in
                     viewModel.selectPayee(payee)
@@ -89,170 +95,180 @@ struct TransactionFormContent: View {
                 }
             }
             .pickerStyle(.segmented)
+            .onChange(of: viewModel.type) { _, newType in
+                if newType == .transfer {
+                    accountBeforeTransfer = viewModel.selectedAccount
+                    viewModel.selectedAccount = nil
+                    viewModel.selectedTransferTo = nil
+                    viewModel.selectedCategory = nil
+                } else {
+                    if viewModel.selectedAccount == nil, let saved = accountBeforeTransfer {
+                        viewModel.selectedAccount = saved
+                    }
+                }
+            }
         }
     }
 
     @ViewBuilder
     private var detailsSection: some View {
-        Section("Details") {
-            // Payee row
-            Button {
-                showingPayeeSearch = true
-            } label: {
-                PickerRow(
-                    label: "Payee",
-                    value: viewModel.payee.isEmpty ? nil : viewModel.payee,
-                    placeholder: viewModel.type == .transfer ? "Optional" : "Required",
-                    systemImage: "person"
-                )
+        Section {
+            // Payee — hidden for transfers
+            if viewModel.type != .transfer {
+                payeeRow
             }
-            .tint(.primary)
 
-            // Memo
-            TextField("Memo (optional)", text: Bindable(viewModel).memo)
+            // Category — always shown, disabled for tracking accounts
+            categoryRow
 
-            // Date row
-            Button {
-                withAnimation(reduceMotion ? nil : .default) { showDatePicker.toggle() }
-            } label: {
-                HStack {
-                    Image(systemName: "calendar")
-                        .foregroundStyle(.secondary)
-                        .accessibilityHidden(true)
-                    Text("Date")
-                        .foregroundStyle(.primary)
-                    Spacer()
-                    Text(viewModel.date, format: .dateTime.day().month().year())
-                        .foregroundStyle(showDatePicker ? Color.accentColor : .secondary)
-                }
+            // Account(s) — single or transfer from/to
+            if viewModel.type == .transfer {
+                transferAccountRows
+            } else {
+                singleAccountRow
             }
-            .tint(.primary)
 
-            if showDatePicker {
-                DatePicker("", selection: Bindable(viewModel).date, displayedComponents: .date)
-                    .datePickerStyle(.graphical)
-                    .onChange(of: viewModel.date) { _, _ in
-                        withAnimation(reduceMotion ? nil : .default) { showDatePicker = false }
-                    }
-            }
+            // Date — always shown
+            dateRow
         }
     }
 
+    // MARK: - Payee
+
+    private var payeeRow: some View {
+        Button {
+            viewModel.dismissKeypadIfVisible()
+            showingPayeeSearch = true
+        } label: {
+            PickerRow(
+                label: "Payee",
+                value: viewModel.payee.isEmpty ? nil : viewModel.payee,
+                placeholder: viewModel.type == .transfer ? "Optional" : "Required",
+                systemImage: "person"
+            )
+        }
+        .tint(.primary)
+    }
+
+    // MARK: - Category
+
     @ViewBuilder
-    private var accountSection: some View {
-        if viewModel.type == .transfer {
-            transferAccountSections
+    private var categoryRow: some View {
+        if viewModel.isCategoryEnabled {
+            Button {
+                showingCategoryPicker = true
+            } label: {
+                PickerRow(
+                    label: "Category",
+                    value: viewModel.selectedCategory.map { "\($0.emoji) \($0.name)" },
+                    placeholder: "Required",
+                    systemImage: "folder"
+                )
+            }
+            .tint(.primary)
         } else {
-            singleAccountSection
+            PickerRow(
+                label: "Category",
+                value: nil,
+                placeholder: "Not applicable",
+                systemImage: "folder"
+            )
+            .foregroundStyle(.tertiary)
         }
     }
 
-    private var singleAccountSection: some View {
-        Section("Account") {
-            if accounts.isEmpty {
-                Text("Add an account first")
-                    .foregroundStyle(.secondary)
-            } else {
-                Button {
-                    showingAccountPicker = true
-                } label: {
-                    PickerRow(
-                        label: "Account",
-                        value: viewModel.selectedAccount?.name,
-                        placeholder: "Select account",
-                        systemImage: "building.columns"
-                    )
-                }
-                .tint(.primary)
+    // MARK: - Account
 
-                if viewModel.selectedAccount == nil {
-                    Text("An account is required.")
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                }
-            }
+    @ViewBuilder
+    private var singleAccountRow: some View {
+        Button {
+            showingAccountPicker = true
+        } label: {
+            PickerRow(
+                label: "Account",
+                value: viewModel.selectedAccount?.name,
+                placeholder: "Required",
+                systemImage: "building.columns"
+            )
         }
+        .tint(.primary)
     }
 
     @ViewBuilder
-    private var transferAccountSections: some View {
-        Section("Transfer From") {
-            if accounts.isEmpty {
-                Text("Add an account first")
-                    .foregroundStyle(.secondary)
-            } else {
-                Button {
-                    showingAccountPicker = true
-                } label: {
-                    PickerRow(
-                        label: "From",
-                        value: viewModel.selectedAccount?.name,
-                        placeholder: "Select account",
-                        systemImage: "arrow.up.right"
-                    )
-                }
-                .tint(.primary)
-            }
+    private var transferAccountRows: some View {
+        Button {
+            showingAccountPicker = true
+        } label: {
+            PickerRow(
+                label: "From",
+                value: viewModel.selectedAccount?.name,
+                placeholder: "Required",
+                systemImage: "arrow.up.right"
+            )
         }
+        .tint(.primary)
 
-        Section("Transfer To") {
-            Button {
-                showingTransferToPicker = true
-            } label: {
-                PickerRow(
-                    label: "To",
-                    value: viewModel.selectedTransferTo?.name,
-                    placeholder: "Select account",
-                    systemImage: "arrow.down.left"
-                )
-            }
-            .tint(.primary)
-
-            if let from = viewModel.selectedAccount, let to = viewModel.selectedTransferTo,
-               from.persistentModelID == to.persistentModelID {
-                Text("From and To accounts must be different.")
-                    .font(.caption)
-                    .foregroundStyle(.red)
-            }
-
-            if viewModel.transferNeedsCategory {
-                Text("This transfer crosses Budget/Tracking boundary and needs a category.")
-                    .font(.caption)
-                    .foregroundStyle(.orange)
-            }
+        Button {
+            showingTransferToPicker = true
+        } label: {
+            PickerRow(
+                label: "To",
+                value: viewModel.selectedTransferTo?.name,
+                placeholder: "Required",
+                systemImage: "arrow.down.left"
+            )
         }
+        .tint(.primary)
     }
+
+    // MARK: - Date
 
     @ViewBuilder
-    private var categorySection: some View {
-        if viewModel.showCategory {
-            Section("Category") {
-                if categories.isEmpty {
-                    Text("No categories yet")
-                        .foregroundStyle(.secondary)
-                } else {
-                    Button {
-                        showingCategoryPicker = true
-                    } label: {
-                        PickerRow(
-                            label: "Category",
-                            value: viewModel.selectedCategory.map { "\($0.emoji) \($0.name)" },
-                            placeholder: "Select category",
-                            systemImage: "folder",
-                            emoji: viewModel.selectedCategory?.emoji
-                        )
-                    }
-                    .tint(.primary)
-
-                    if viewModel.selectedCategory == nil {
-                        Text("A category is required.")
-                            .font(.caption)
-                            .foregroundStyle(.red)
-                    }
-                }
+    private var dateRow: some View {
+        Button {
+            viewModel.dismissKeypadIfVisible()
+            isMemoFocused = false
+            withAnimation(reduceMotion ? nil : .default) { showDatePicker.toggle() }
+        } label: {
+            HStack {
+                Image(systemName: "calendar")
+                    .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
+                Text("Date")
+                    .foregroundStyle(.primary)
+                Spacer()
+                Text(viewModel.date, format: .dateTime.day().month().year())
+                    .foregroundStyle(showDatePicker ? Color.accentColor : .secondary)
             }
         }
+        .tint(.primary)
+
+        if showDatePicker {
+            DatePicker("", selection: Bindable(viewModel).date, displayedComponents: .date)
+                .datePickerStyle(.graphical)
+                .id("datePicker")
+                .onChange(of: viewModel.date) { _, _ in
+                    withAnimation(reduceMotion ? nil : .default) { showDatePicker = false }
+                }
+        }
     }
+
+    // MARK: - Memo
+
+    private var memoSection: some View {
+        Section {
+            TextField("Memo (optional)", text: Bindable(viewModel).memo)
+                .focused($isMemoFocused)
+                .submitLabel(.done)
+                .onChange(of: isMemoFocused) {
+                    if isMemoFocused {
+                        viewModel.dismissKeypadIfVisible()
+                    }
+                }
+        }
+    }
+
+    // MARK: - Delete
 
     @ViewBuilder
     private var deleteSection: some View {

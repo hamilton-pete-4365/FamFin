@@ -1,22 +1,23 @@
 import SwiftUI
 import SwiftData
 
-/// Full-screen searchable list of payees, sorted by most recent usage.
+/// Pushed view for finding or creating a payee.
 ///
-/// Selecting an existing payee calls `onSelect` with the `Payee` record,
-/// allowing the caller to auto-fill the category from the payee's history.
-/// Typing a new name and tapping "Use [name]" calls `onCustomPayee` with just the string.
+/// Starts blank with the keyboard ready. As the user types, matching payees
+/// appear alphabetically. Selecting an existing payee calls `onSelect`;
+/// typing a new name and tapping "Use [name]" calls `onCustomPayee`.
 struct PayeeSearchSheet: View {
     @Environment(\.dismiss) private var dismiss
-    @Query(sort: \Payee.lastUsedDate, order: .reverse) private var allPayees: [Payee]
+    @Query(sort: \Payee.name) private var allPayees: [Payee]
 
     let onSelect: (Payee) -> Void
     let onCustomPayee: (String) -> Void
 
     @State private var searchText = ""
+    @FocusState private var isSearchFocused: Bool
 
     private var filteredPayees: [Payee] {
-        guard !searchText.isEmpty else { return allPayees }
+        guard !searchText.isEmpty else { return [] }
         return allPayees.filter { $0.name.localizedStandardContains(searchText) }
     }
 
@@ -26,17 +27,12 @@ struct PayeeSearchSheet: View {
     }
 
     var body: some View {
-        NavigationStack {
-            List {
-                if !searchText.isEmpty && !hasExactMatch {
-                    Button {
-                        onCustomPayee(searchText)
-                        dismiss()
-                    } label: {
-                        Label("Use \"\(searchText)\"", systemImage: "plus.circle")
-                    }
-                }
+        VStack(spacing: 0) {
+            searchField
 
+            Divider()
+
+            List {
                 ForEach(filteredPayees) { payee in
                     Button {
                         onSelect(payee)
@@ -48,45 +44,74 @@ struct PayeeSearchSheet: View {
                 }
             }
             .listStyle(.plain)
-            .searchable(
-                text: $searchText,
-                placement: .navigationBarDrawer(displayMode: .always),
-                prompt: "Search or enter payee"
-            )
-            .navigationTitle("Payee")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+            .overlay {
+                if searchText.isEmpty {
+                    ContentUnavailableView(
+                        "Search for a payee",
+                        systemImage: "magnifyingglass",
+                        description: Text("Start typing to find or create a payee")
+                    )
                 }
             }
         }
+        .navigationTitle("Payee")
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            // Skip the keyboard slide-up animation so it appears instantly
+            // once the navigation push completes.
+            let transaction = SwiftUI.Transaction(animation: nil)
+            withTransaction(transaction) {
+                isSearchFocused = true
+            }
+        }
+    }
+
+    // MARK: - Search Field
+
+    private var searchField: some View {
+        HStack {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(.secondary)
+
+            TextField("Search or enter payee", text: $searchText)
+                .focused($isSearchFocused)
+                .textInputAutocapitalization(.words)
+                .autocorrectionDisabled()
+                .submitLabel(.done)
+                .onSubmit {
+                    if !searchText.isEmpty && !hasExactMatch {
+                        onCustomPayee(searchText)
+                        dismiss()
+                    }
+                }
+
+            if !searchText.isEmpty {
+                Button("Clear", systemImage: "xmark.circle.fill") {
+                    searchText = ""
+                }
+                .foregroundStyle(.secondary)
+                .buttonStyle(.plain)
+            }
+        }
+        .padding()
     }
 }
 
 // MARK: - Payee Row
 
-/// Displays a single payee in the search list with their last-used category and recency.
+/// Displays a single payee with their last-used category.
 private struct PayeeRow: View {
     let payee: Payee
 
     var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(payee.name)
+        VStack(alignment: .leading, spacing: 4) {
+            Text(payee.name)
 
-                if let cat = payee.lastUsedCategory {
-                    Text("\(cat.emoji) \(cat.name)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+            if let cat = payee.lastUsedCategory {
+                Text("\(cat.emoji) \(cat.name)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
-
-            Spacer()
-
-            Text(payee.lastUsedDate, style: .relative)
-                .font(.caption)
-                .foregroundStyle(.tertiary)
         }
         .accessibilityElement(children: .combine)
     }

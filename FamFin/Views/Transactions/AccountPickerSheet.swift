@@ -82,7 +82,7 @@ struct AccountPickerSheet: View {
                     .foregroundStyle(.primary)
                 Spacer()
                 Text(account.type.rawValue.capitalized)
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
         }

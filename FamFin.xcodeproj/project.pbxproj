@@ -31,16 +31,6 @@
 		A1B2C3D4E5F60001000A0020 /* RecurrenceEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0020 /* RecurrenceEngine.swift */; };
 		A1B2C3D4E5F60001000A0021 /* RecurringTransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0021 /* RecurringTransactionsView.swift */; };
 		A1B2C3D4E5F60001000A0022 /* AddRecurringTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0022 /* AddRecurringTransactionView.swift */; };
-		T1X0000000000001 /* CategoryGrouping.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000002 /* CategoryGrouping.swift */; };
-		T1X0000000000003 /* PickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000004 /* PickerRow.swift */; };
-		T1X0000000000005 /* TransactionFormViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000006 /* TransactionFormViewModel.swift */; };
-		T1X0000000000007 /* PayeeSearchSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000008 /* PayeeSearchSheet.swift */; };
-		T1X0000000000009 /* AccountPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X000000000000A /* AccountPickerSheet.swift */; };
-		T1X000000000000B /* CategoryPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X000000000000C /* CategoryPickerSheet.swift */; };
-		T1X000000000000D /* TransactionAmountHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X000000000000E /* TransactionAmountHeader.swift */; };
-		T1X000000000000F /* TransactionFormContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000010 /* TransactionFormContent.swift */; };
-		T1X0000000000011 /* AddTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000012 /* AddTransactionView.swift */; };
-		T1X0000000000013 /* EditTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000014 /* EditTransactionView.swift */; };
 		AFB1000000000001 /* AutoFillBudgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFB1000000000002 /* AutoFillBudgetView.swift */; };
 		B1C2D3E4F5A60001000B0001 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B0001 /* TestHelpers.swift */; };
 		B1C2D3E4F5A60001000B0002 /* AccountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B0002 /* AccountTests.swift */; };
@@ -72,6 +62,16 @@
 		P4A1B2C3D5E60001000A0006 /* OnboardingCompletionStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = P4A1B2C3D5E60002000A0006 /* OnboardingCompletionStep.swift */; };
 		P4A1B2C3D5E60001000A0007 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = P4A1B2C3D5E60002000A0007 /* ConfettiView.swift */; };
 		P4A1B2C3D5E60001000A0008 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = P4A1B2C3D5E60002000A0008 /* HapticManager.swift */; };
+		T1X0000000000001 /* CategoryGrouping.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000002 /* CategoryGrouping.swift */; };
+		T1X0000000000003 /* PickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000004 /* PickerRow.swift */; };
+		T1X0000000000005 /* TransactionFormViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000006 /* TransactionFormViewModel.swift */; };
+		T1X0000000000007 /* PayeeSearchSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000008 /* PayeeSearchSheet.swift */; };
+		T1X0000000000009 /* AccountPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X000000000000A /* AccountPickerSheet.swift */; };
+		T1X000000000000B /* CategoryPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X000000000000C /* CategoryPickerSheet.swift */; };
+		T1X000000000000D /* TransactionAmountHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X000000000000E /* TransactionAmountHeader.swift */; };
+		T1X000000000000F /* TransactionFormContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000010 /* TransactionFormContent.swift */; };
+		T1X0000000000011 /* AddTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000012 /* AddTransactionView.swift */; };
+		T1X0000000000013 /* EditTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000014 /* EditTransactionView.swift */; };
 		W1D2E3F4A5B60001000A0001 /* FamFinWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = W1D2E3F4A5B60002000A0001 /* FamFinWidgetBundle.swift */; };
 		W1D2E3F4A5B60001000A0002 /* FamFinTimelineProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = W1D2E3F4A5B60002000A0002 /* FamFinTimelineProvider.swift */; };
 		W1D2E3F4A5B60001000A0003 /* WidgetDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = W1D2E3F4A5B60002000A0003 /* WidgetDataProvider.swift */; };
@@ -159,16 +159,6 @@
 		A1B2C3D4E5F60002000A0020 /* RecurrenceEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurrenceEngine.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0021 /* RecurringTransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringTransactionsView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0022 /* AddRecurringTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRecurringTransactionView.swift; sourceTree = "<group>"; };
-		T1X0000000000002 /* CategoryGrouping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryGrouping.swift; sourceTree = "<group>"; };
-		T1X0000000000004 /* PickerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerRow.swift; sourceTree = "<group>"; };
-		T1X0000000000006 /* TransactionFormViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionFormViewModel.swift; sourceTree = "<group>"; };
-		T1X0000000000008 /* PayeeSearchSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayeeSearchSheet.swift; sourceTree = "<group>"; };
-		T1X000000000000A /* AccountPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountPickerSheet.swift; sourceTree = "<group>"; };
-		T1X000000000000C /* CategoryPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryPickerSheet.swift; sourceTree = "<group>"; };
-		T1X000000000000E /* TransactionAmountHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionAmountHeader.swift; sourceTree = "<group>"; };
-		T1X0000000000010 /* TransactionFormContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionFormContent.swift; sourceTree = "<group>"; };
-		T1X0000000000012 /* AddTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionView.swift; sourceTree = "<group>"; };
-		T1X0000000000014 /* EditTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTransactionView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60003000A0001 /* FamFin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FamFin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AFB1000000000002 /* AutoFillBudgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoFillBudgetView.swift; sourceTree = "<group>"; };
 		B1C2D3E4F5A60002000B0001 /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
@@ -204,6 +194,16 @@
 		P4A1B2C3D5E60002000A0006 /* OnboardingCompletionStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCompletionStep.swift; sourceTree = "<group>"; };
 		P4A1B2C3D5E60002000A0007 /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
 		P4A1B2C3D5E60002000A0008 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
+		T1X0000000000002 /* CategoryGrouping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryGrouping.swift; sourceTree = "<group>"; };
+		T1X0000000000004 /* PickerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerRow.swift; sourceTree = "<group>"; };
+		T1X0000000000006 /* TransactionFormViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionFormViewModel.swift; sourceTree = "<group>"; };
+		T1X0000000000008 /* PayeeSearchSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayeeSearchSheet.swift; sourceTree = "<group>"; };
+		T1X000000000000A /* AccountPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountPickerSheet.swift; sourceTree = "<group>"; };
+		T1X000000000000C /* CategoryPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryPickerSheet.swift; sourceTree = "<group>"; };
+		T1X000000000000E /* TransactionAmountHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionAmountHeader.swift; sourceTree = "<group>"; };
+		T1X0000000000010 /* TransactionFormContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionFormContent.swift; sourceTree = "<group>"; };
+		T1X0000000000012 /* AddTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionView.swift; sourceTree = "<group>"; };
+		T1X0000000000014 /* EditTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTransactionView.swift; sourceTree = "<group>"; };
 		W1D2E3F4A5B60002000A0001 /* FamFinWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamFinWidgetBundle.swift; sourceTree = "<group>"; };
 		W1D2E3F4A5B60002000A0002 /* FamFinTimelineProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamFinTimelineProvider.swift; sourceTree = "<group>"; };
 		W1D2E3F4A5B60002000A0003 /* WidgetDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataProvider.swift; sourceTree = "<group>"; };
@@ -852,6 +852,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FamFin/Preview Content\"";
+				DEVELOPMENT_TEAM = PH88BM78VD;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = FamFin;
@@ -866,7 +867,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.petehamilton.famfin-app";
+				PRODUCT_BUNDLE_IDENTIFIER = com.petehamilton.famfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = minimal;
@@ -884,6 +885,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FamFin/Preview Content\"";
+				DEVELOPMENT_TEAM = PH88BM78VD;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = FamFin;
@@ -898,7 +900,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.petehamilton.famfin-app";
+				PRODUCT_BUNDLE_IDENTIFIER = com.petehamilton.famfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = minimal;
@@ -916,7 +918,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.petehamilton.famfin-app.tests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.petehamilton.famfin.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_STRICT_CONCURRENCY = minimal;
@@ -935,7 +937,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.petehamilton.famfin-app.tests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.petehamilton.famfin.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_STRICT_CONCURRENCY = minimal;
@@ -963,7 +965,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.petehamilton.famfin-app.widget";
+				PRODUCT_BUNDLE_IDENTIFIER = com.petehamilton.famfin.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -991,7 +993,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.petehamilton.famfin-app.widget";
+				PRODUCT_BUNDLE_IDENTIFIER = com.petehamilton.famfin.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;

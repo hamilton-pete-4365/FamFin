@@ -68,6 +68,7 @@ struct FamFinApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .tint(.accent)
                 .preferredColorScheme(appearanceMode.colorScheme)
                 .onChange(of: scenePhase) { _, newPhase in
                     if newPhase == .active {

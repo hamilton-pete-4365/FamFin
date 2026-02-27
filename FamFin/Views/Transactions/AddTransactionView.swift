@@ -56,28 +56,52 @@ struct AddTransactionView: View {
                             viewModel.handleKeypadDone(amount: amount, currencyCode: currencyCode)
                         }
                     )
-                    .padding(.top, 20)
+                    .padding(.top, 8)
                     .background(.bar)
+                    .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
+                } else if !viewModel.isDatePickerVisible {
+                    HStack {
+                        Spacer()
+
+                        Button {
+                            viewModel.save(context: modelContext, currencyCode: currencyCode)
+                            if let account = viewModel.selectedAccount {
+                                lastUsedAccountID = "\(account.persistentModelID)"
+                            }
+                            HapticManager.success()
+                            dismiss()
+                        } label: {
+                            Text("Done")
+                                .font(.title3)
+                                .bold()
+                                .foregroundStyle(viewModel.canSave ? .white : .accent)
+                                .padding(.horizontal, 24)
+                                .padding(.vertical, 12)
+                                .background {
+                                    if viewModel.canSave {
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(.accent)
+                                    } else {
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .strokeBorder(.accent, lineWidth: 1.5)
+                                    }
+                                }
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(!viewModel.canSave)
+                        .animation(reduceMotion ? nil : .default, value: viewModel.canSave)
+                    }
+                    .padding()
                     .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
                 }
             }
             .animation(reduceMotion ? nil : .spring(response: 0.35, dampingFraction: 0.85), value: viewModel.isKeypadVisible)
+            .animation(reduceMotion ? nil : .default, value: viewModel.isDatePickerVisible)
             .navigationTitle("New Transaction")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        viewModel.save(context: modelContext, currencyCode: currencyCode)
-                        if let account = viewModel.selectedAccount {
-                            lastUsedAccountID = "\(account.persistentModelID)"
-                        }
-                        HapticManager.success()
-                        dismiss()
-                    }
-                    .disabled(!viewModel.canSave)
                 }
             }
             .onAppear {
@@ -88,13 +112,14 @@ struct AddTransactionView: View {
                 viewModel.engine.activate(currentPence: 0, currencyCode: currencyCode)
                 viewModel.isKeypadVisible = true
 
-                // Set initial account: preselected > last used > single account
+                // Set initial account: preselected > last used > first budget account > single account
                 if let preselected = preselectedAccount {
                     viewModel.selectedAccount = preselected
-                } else if !lastUsedAccountID.isEmpty {
-                    viewModel.selectedAccount = accounts.first {
-                        "\($0.persistentModelID)" == lastUsedAccountID
-                    }
+                } else if !lastUsedAccountID.isEmpty,
+                          let lastUsed = accounts.first(where: { "\($0.persistentModelID)" == lastUsedAccountID }) {
+                    viewModel.selectedAccount = lastUsed
+                } else if let firstBudget = accounts.first(where: { $0.isBudget }) {
+                    viewModel.selectedAccount = firstBudget
                 } else if accounts.count == 1 {
                     viewModel.selectedAccount = accounts.first
                 }

@@ -62,7 +62,7 @@ struct EditTransactionView: View {
                             viewModel.handleKeypadDone(amount: amount, currencyCode: currencyCode)
                         }
                     )
-                    .padding(.top, 20)
+                    .padding(.top, 8)
                     .background(.bar)
                     .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
                 }

@@ -19,6 +19,7 @@ final class TransactionFormViewModel {
     var selectedTransferTo: Account?
     var selectedCategory: Category?
     var isKeypadVisible: Bool = true
+    var isDatePickerVisible: Bool = false
 
     // MARK: - Engine
 
@@ -42,6 +43,15 @@ final class TransactionFormViewModel {
 
     /// Whether the category picker should be shown.
     var showCategory: Bool {
+        if type == .transfer {
+            return shouldHaveCategory
+        }
+        return selectedAccountIsBudget
+    }
+
+    /// Whether the category row is interactive (budget account selected or cross-boundary transfer).
+    /// When false the row appears greyed out.
+    var isCategoryEnabled: Bool {
         if type == .transfer {
             return shouldHaveCategory
         }
@@ -113,6 +123,19 @@ final class TransactionFormViewModel {
     func handleKeypadDone(amount: Decimal, currencyCode: String) {
         let currency = SupportedCurrency(rawValue: currencyCode) ?? .gbp
         let multiplier = Decimal(currency.minorUnitMultiplier)
+        amountPence = NSDecimalNumber(decimal: amount * multiplier).intValue
+        isKeypadVisible = false
+    }
+
+    /// Dismiss the keypad if visible, resolving any pending expression and saving the amount.
+    ///
+    /// Called when the user navigates away from the keypad (e.g. taps the payee row)
+    /// without explicitly pressing Done.
+    func dismissKeypadIfVisible() {
+        guard isKeypadVisible else { return }
+        let currency = SupportedCurrency(rawValue: engine.currencyCode) ?? .gbp
+        let multiplier = Decimal(currency.minorUnitMultiplier)
+        let amount = engine.doneTapped()
         amountPence = NSDecimalNumber(decimal: amount * multiplier).intValue
         isKeypadVisible = false
     }
