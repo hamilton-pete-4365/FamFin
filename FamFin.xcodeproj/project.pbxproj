@@ -72,6 +72,7 @@
 		T1X000000000000F /* TransactionFormContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000010 /* TransactionFormContent.swift */; };
 		T1X0000000000011 /* AddTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000012 /* AddTransactionView.swift */; };
 		T1X0000000000013 /* EditTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000014 /* EditTransactionView.swift */; };
+		T1X0000000000015 /* CalendarDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000016 /* CalendarDatePicker.swift */; };
 		W1D2E3F4A5B60001000A0001 /* FamFinWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = W1D2E3F4A5B60002000A0001 /* FamFinWidgetBundle.swift */; };
 		W1D2E3F4A5B60001000A0002 /* FamFinTimelineProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = W1D2E3F4A5B60002000A0002 /* FamFinTimelineProvider.swift */; };
 		W1D2E3F4A5B60001000A0003 /* WidgetDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = W1D2E3F4A5B60002000A0003 /* WidgetDataProvider.swift */; };
@@ -204,6 +205,7 @@
 		T1X0000000000010 /* TransactionFormContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionFormContent.swift; sourceTree = "<group>"; };
 		T1X0000000000012 /* AddTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionView.swift; sourceTree = "<group>"; };
 		T1X0000000000014 /* EditTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTransactionView.swift; sourceTree = "<group>"; };
+		T1X0000000000016 /* CalendarDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDatePicker.swift; sourceTree = "<group>"; };
 		W1D2E3F4A5B60002000A0001 /* FamFinWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamFinWidgetBundle.swift; sourceTree = "<group>"; };
 		W1D2E3F4A5B60002000A0002 /* FamFinTimelineProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamFinTimelineProvider.swift; sourceTree = "<group>"; };
 		W1D2E3F4A5B60002000A0003 /* WidgetDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataProvider.swift; sourceTree = "<group>"; };
@@ -350,6 +352,7 @@
 				T1X0000000000004 /* PickerRow.swift */,
 				A1B2C3D4E5F60002000A0021 /* RecurringTransactionsView.swift */,
 				A1B2C3D4E5F60002000A0022 /* AddRecurringTransactionView.swift */,
+				T1X0000000000016 /* CalendarDatePicker.swift */,
 			);
 			path = Transactions;
 			sourceTree = "<group>";
@@ -626,6 +629,7 @@
 				T1X000000000000F /* TransactionFormContent.swift in Sources */,
 				T1X0000000000011 /* AddTransactionView.swift in Sources */,
 				T1X0000000000013 /* EditTransactionView.swift in Sources */,
+				T1X0000000000015 /* CalendarDatePicker.swift in Sources */,
 				A1B2C3D4E5F60001000A0010 /* DefaultCategories.swift in Sources */,
 				A1B2C3D4E5F60001000A0011 /* CurrencyFormatter.swift in Sources */,
 				A1B2C3D4E5F60001000A0012 /* Payee.swift in Sources */,

@@ -137,8 +137,15 @@ struct TransactionFormContent: View {
 
     private var payeeRow: some View {
         Button {
+            let keypadWasVisible = viewModel.isKeypadVisible
             viewModel.dismissKeypadIfVisible()
-            showingPayeeSearch = true
+            if keypadWasVisible {
+                Task { @MainActor in
+                    showingPayeeSearch = true
+                }
+            } else {
+                showingPayeeSearch = true
+            }
         } label: {
             PickerRow(
                 label: "Payee",
@@ -156,6 +163,7 @@ struct TransactionFormContent: View {
     private var categoryRow: some View {
         if viewModel.isCategoryEnabled {
             Button {
+                viewModel.dismissKeypadIfVisible()
                 showingCategoryPicker = true
             } label: {
                 PickerRow(
@@ -182,6 +190,7 @@ struct TransactionFormContent: View {
     @ViewBuilder
     private var singleAccountRow: some View {
         Button {
+            viewModel.dismissKeypadIfVisible()
             showingAccountPicker = true
         } label: {
             PickerRow(
@@ -197,6 +206,7 @@ struct TransactionFormContent: View {
     @ViewBuilder
     private var transferAccountRows: some View {
         Button {
+            viewModel.dismissKeypadIfVisible()
             showingAccountPicker = true
         } label: {
             PickerRow(
@@ -209,6 +219,7 @@ struct TransactionFormContent: View {
         .tint(.primary)
 
         Button {
+            viewModel.dismissKeypadIfVisible()
             showingTransferToPicker = true
         } label: {
             PickerRow(
@@ -244,12 +255,10 @@ struct TransactionFormContent: View {
         .tint(.primary)
 
         if showDatePicker {
-            DatePicker("", selection: Bindable(viewModel).date, displayedComponents: .date)
-                .datePickerStyle(.graphical)
-                .id("datePicker")
-                .onChange(of: viewModel.date) { _, _ in
-                    withAnimation(reduceMotion ? nil : .default) { showDatePicker = false }
-                }
+            CalendarDatePicker(selectedDate: Bindable(viewModel).date) {
+                withAnimation(reduceMotion ? nil : .default) { showDatePicker = false }
+            }
+            .id("datePicker")
         }
     }
 
