@@ -69,9 +69,16 @@ struct FamFinApp: App {
         WindowGroup {
             ContentView()
                 .tint(.accent)
-                .preferredColorScheme(appearanceMode.colorScheme)
+                .onChange(of: appearanceMode) { _, newMode in
+                    newMode.applyToAllWindows()
+                }
                 .onChange(of: scenePhase) { _, newPhase in
                     if newPhase == .active {
+                        // Ensure the appearance override is applied when the
+                        // app becomes active (covers initial launch and return
+                        // from background where new windows may have appeared).
+                        appearanceMode.applyToAllWindows()
+
                         // Sync currency preference and refresh widgets
                         CurrencySettings.syncToSharedDefaults()
                         WidgetCenter.shared.reloadAllTimelines()

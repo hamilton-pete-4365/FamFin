@@ -40,6 +40,8 @@ struct QuickFillPopover: View {
                 quickFillButton(label: "Spent", amount: lastSpent)
             }
 
+            Divider()
+
             sectionHeader("12-Month Average")
             HStack(spacing: 8) {
                 quickFillButton(label: "Budgeted", amount: avgBudgeted)
@@ -54,9 +56,8 @@ struct QuickFillPopover: View {
 
     private func sectionHeader(_ title: String) -> some View {
         Text(title)
-            .font(.caption)
+            .font(.subheadline)
             .bold()
-            .textCase(.uppercase)
             .foregroundStyle(.secondary)
             .accessibilityAddTraits(.isHeader)
     }

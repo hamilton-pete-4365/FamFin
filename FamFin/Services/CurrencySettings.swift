@@ -20,19 +20,19 @@ enum SupportedCurrency: String, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .gbp: return "British Pound (£)"
-        case .usd: return "US Dollar ($)"
-        case .eur: return "Euro (€)"
-        case .cad: return "Canadian Dollar (C$)"
-        case .aud: return "Australian Dollar (A$)"
-        case .nzd: return "New Zealand Dollar (NZ$)"
-        case .chf: return "Swiss Franc (CHF)"
-        case .sek: return "Swedish Krona (kr)"
-        case .nok: return "Norwegian Krone (kr)"
-        case .dkk: return "Danish Krone (kr)"
-        case .jpy: return "Japanese Yen (¥)"
-        case .inr: return "Indian Rupee (₹)"
-        case .zar: return "South African Rand (R)"
+        case .gbp: return "British Pound"
+        case .usd: return "US Dollar"
+        case .eur: return "Euro"
+        case .cad: return "Canadian Dollar"
+        case .aud: return "Australian Dollar"
+        case .nzd: return "New Zealand Dollar"
+        case .chf: return "Swiss Franc"
+        case .sek: return "Swedish Krona"
+        case .nok: return "Norwegian Krone"
+        case .dkk: return "Danish Krone"
+        case .jpy: return "Japanese Yen"
+        case .inr: return "Indian Rupee"
+        case .zar: return "South African Rand"
         }
     }
 

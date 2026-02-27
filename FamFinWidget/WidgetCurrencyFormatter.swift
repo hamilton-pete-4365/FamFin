@@ -10,6 +10,7 @@ enum WidgetCurrencyFormatter {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.currencyCode = currency.rawValue
+        formatter.currencySymbol = currency.symbol
         formatter.minimumFractionDigits = currency.minorUnitDigits
         formatter.maximumFractionDigits = currency.minorUnitDigits
 
@@ -29,6 +30,7 @@ enum WidgetCurrencyFormatter {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.currencyCode = currency.rawValue
+        formatter.currencySymbol = currency.symbol
         formatter.minimumFractionDigits = currency.minorUnitDigits
         formatter.maximumFractionDigits = currency.minorUnitDigits
 
@@ -66,6 +68,7 @@ enum WidgetCurrencyFormatter {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.currencyCode = currency.rawValue
+        formatter.currencySymbol = currency.symbol
         formatter.minimumFractionDigits = 0
         formatter.maximumFractionDigits = currency.hasMinorUnits ? 2 : 0
 

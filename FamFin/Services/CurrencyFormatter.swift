@@ -5,6 +5,7 @@ private func currencyFormatter(for currency: SupportedCurrency) -> NumberFormatt
     let f = NumberFormatter()
     f.numberStyle = .currency
     f.currencyCode = currency.rawValue
+    f.currencySymbol = currency.symbol
     f.minimumFractionDigits = currency.minorUnitDigits
     f.maximumFractionDigits = currency.minorUnitDigits
     return f

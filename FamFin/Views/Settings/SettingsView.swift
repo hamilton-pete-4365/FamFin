@@ -17,45 +17,22 @@ struct SettingsView: View {
     @State private var importError: String?
     @State private var importSuccess = false
 
+    private var currentCurrency: SupportedCurrency {
+        SupportedCurrency(rawValue: currencyCode) ?? .gbp
+    }
+
     var body: some View {
         NavigationStack {
-            Form {
-                Section {
-                    Picker("Currency", selection: $currencyCode) {
-                        ForEach(SupportedCurrency.allCases) { currency in
-                            Text(currency.displayName).tag(currency.rawValue)
-                        }
-                    }
-                    .pickerStyle(.navigationLink)
-                } header: {
-                    Text("Currency")
-                } footer: {
-                    Text("Changing currency only affects how amounts are displayed. Existing values are not converted at an exchange rate.")
+            ScrollView {
+                VStack(spacing: 28) {
+                    appearanceSection
+                    currencySection
+                    dataSection
                 }
-
-                Section("Appearance") {
-                    Picker("Appearance", selection: $appearanceMode) {
-                        ForEach(AppearanceMode.allCases) { mode in
-                            Text(mode.label).tag(mode)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                }
-
-                Section {
-                    Button("Export Data Backup", systemImage: "square.and.arrow.up") {
-                        exportData()
-                    }
-
-                    Button("Restore from Backup", systemImage: "square.and.arrow.down") {
-                        showingImportPicker = true
-                    }
-                } header: {
-                    Text("Data")
-                } footer: {
-                    Text("Export saves all your data as a JSON file. Restore replaces all current data with a backup file.")
-                }
+                .padding(.top, 16)
+                .padding(.bottom, 32)
             }
+            .background(Color(.systemGroupedBackground))
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -71,7 +48,7 @@ struct SettingsView: View {
             ) { result in
                 switch result {
                 case .success:
-                    break // saved successfully
+                    break
                 case .failure(let error):
                     exportError = error.localizedDescription
                 }
@@ -124,6 +101,103 @@ struct SettingsView: View {
         }
     }
 
+    // MARK: - Appearance
+
+    private var appearanceSection: some View {
+        Picker("Appearance", selection: $appearanceMode) {
+            ForEach(AppearanceMode.allCases) { mode in
+                Text(mode.label).tag(mode)
+            }
+        }
+        .pickerStyle(.segmented)
+        .padding(.horizontal)
+        .onChange(of: appearanceMode) { _, newMode in
+            newMode.applyToAllWindows()
+        }
+    }
+
+    // MARK: - Currency
+
+    private var currencySection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            NavigationLink {
+                CurrencyPickerView(currencyCode: $currencyCode)
+            } label: {
+                HStack {
+                    Text(currentCurrency.symbol)
+                        .font(.title2)
+                        .frame(width: 40)
+
+                    Text(currentCurrency.displayName)
+                        .font(.body)
+                        .foregroundStyle(.primary)
+
+                    Spacer()
+                }
+                .padding()
+                .background(Color(.secondarySystemGroupedBackground))
+                .clipShape(.rect(cornerRadius: 12))
+            }
+            .padding(.horizontal)
+
+            Text("Existing values are converted 1:1. No exchange rates are applied.")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+                .padding(.horizontal)
+        }
+    }
+
+    // MARK: - Data
+
+    private var dataSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            VStack(spacing: 0) {
+                Button {
+                    exportData()
+                } label: {
+                    HStack {
+                        Label("Export Backup", systemImage: "square.and.arrow.up")
+                            .font(.body)
+                            .foregroundStyle(.primary)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
+                    }
+                    .padding()
+                }
+
+                Divider()
+                    .padding(.leading)
+
+                Button {
+                    showingImportPicker = true
+                } label: {
+                    HStack {
+                        Label("Restore from Backup", systemImage: "square.and.arrow.down")
+                            .font(.body)
+                            .foregroundStyle(.primary)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
+                    }
+                    .padding()
+                }
+            }
+            .background(Color(.secondarySystemGroupedBackground))
+            .clipShape(.rect(cornerRadius: 12))
+            .padding(.horizontal)
+
+            Text("Export saves all your data as a JSON file. Restore replaces all current data with a backup.")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+                .padding(.horizontal)
+        }
+    }
+
+    // MARK: - Actions
+
     private func exportData() {
         do {
             let data = try DataExporter.exportJSON(context: modelContext)
@@ -148,6 +222,48 @@ struct SettingsView: View {
         importURL = nil
     }
 }
+
+// MARK: - Currency Picker View
+
+/// Full-screen currency list pushed via NavigationLink.
+private struct CurrencyPickerView: View {
+    @Binding var currencyCode: String
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        List {
+            ForEach(SupportedCurrency.allCases) { currency in
+                Button {
+                    currencyCode = currency.rawValue
+                    dismiss()
+                } label: {
+                    HStack {
+                        Text(currency.symbol)
+                            .font(.body)
+                            .frame(width: 32, alignment: .leading)
+
+                        Text(currency.displayName)
+                            .font(.body)
+                            .foregroundStyle(.primary)
+
+                        Spacer()
+
+                        if currency.rawValue == currencyCode {
+                            Image(systemName: "checkmark")
+                                .font(.body)
+                                .foregroundStyle(Color.accentColor)
+                        }
+                    }
+                }
+                .tint(.primary)
+            }
+        }
+        .navigationTitle("Currency")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+// MARK: - Backup Document
 
 /// A FileDocument wrapper for exporting JSON backup data.
 struct BackupDocument: FileDocument {
