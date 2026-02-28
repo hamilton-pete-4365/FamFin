@@ -22,6 +22,7 @@ struct TransactionsView: View {
     @State private var isSearching = false
     @State private var transactionToDelete: Transaction?
     @State private var showMonthPicker = false
+    @State private var showFilterPopover = false
     @Environment(SelectedMonthStore.self) private var monthStore
 
     /// Reads from the shared store so both Budget and Transactions stay in sync.
@@ -373,45 +374,59 @@ struct TransactionsView: View {
     // MARK: - Filter Menu
 
     private var filterMenu: some View {
-        Menu {
-            Button {
-                withAnimation { filterAccountIDs.removeAll() }
-            } label: {
-                Label("All Accounts", systemImage: filterAccountIDs.isEmpty
-                    ? "checkmark.circle.fill"
-                    : "circle")
-            }
-
-            if !budgetAccounts.isEmpty {
-                Section("Budget Accounts") {
-                    ForEach(budgetAccounts) { account in
-                        accountToggleButton(account)
-                    }
-                }
-            }
-
-            if !trackingAccounts.isEmpty {
-                Section("Tracking Accounts") {
-                    ForEach(trackingAccounts) { account in
-                        accountToggleButton(account)
-                    }
-                }
-            }
-        } label: {
-            Label(
-                "Filter",
-                systemImage: hasActiveFilters
-                    ? "line.3.horizontal.decrease.circle.fill"
-                    : "line.3.horizontal.decrease.circle"
-            )
+        Button("Filter", systemImage: hasActiveFilters
+            ? "line.3.horizontal.decrease.circle.fill"
+            : "line.3.horizontal.decrease.circle"
+        ) {
+            showFilterPopover.toggle()
+        }
+        .popover(isPresented: $showFilterPopover, arrowEdge: .top) {
+            filterPopoverContent
+                .presentationCompactAdaptation(.popover)
         }
         .accessibilityLabel("Account filter")
         .accessibilityHint(hasActiveFilters ? "Filter is active" : "Double tap to filter by account")
     }
 
-    private func accountToggleButton(_ account: Account) -> some View {
+    private var filterPopoverContent: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            filterRow(
+                label: "All Accounts",
+                isSelected: filterAccountIDs.isEmpty
+            ) {
+                withAnimation { filterAccountIDs.removeAll() }
+            }
+
+            if !budgetAccounts.isEmpty {
+                sectionHeader("Budget Accounts")
+                ForEach(budgetAccounts) { account in
+                    accountToggleRow(account)
+                }
+            }
+
+            if !trackingAccounts.isEmpty {
+                sectionHeader("Tracking Accounts")
+                ForEach(trackingAccounts) { account in
+                    accountToggleRow(account)
+                }
+            }
+        }
+        .padding(.vertical, 8)
+        .frame(minWidth: 240)
+    }
+
+    private func sectionHeader(_ title: String) -> some View {
+        Text(title)
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+            .padding(.bottom, 4)
+    }
+
+    private func accountToggleRow(_ account: Account) -> some View {
         let isSelected = filterAccountIDs.contains(account.persistentModelID)
-        return Button {
+        return filterRow(label: account.name, isSelected: isSelected) {
             withAnimation {
                 if isSelected {
                     filterAccountIDs.remove(account.persistentModelID)
@@ -419,11 +434,25 @@ struct TransactionsView: View {
                     filterAccountIDs.insert(account.persistentModelID)
                 }
             }
-        } label: {
-            Label(account.name, systemImage: isSelected
-                ? "checkmark.circle.fill"
-                : "circle")
         }
+    }
+
+    private func filterRow(label: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        Button {
+            action()
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .foregroundStyle(isSelected ? Color.accentColor : .secondary)
+                Text(label)
+                    .foregroundStyle(.primary)
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Transaction List
