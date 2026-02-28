@@ -32,6 +32,15 @@ final class Transaction {
         self.isCleared = isCleared
     }
 
+    /// Signed amount for sorting: expenses negative, income positive, transfers zero.
+    var signedAmount: Decimal {
+        switch type {
+        case .expense: return -amount
+        case .income: return amount
+        case .transfer: return 0
+        }
+    }
+
     /// Whether this transfer crosses the Budget/Tracking boundary (requires a category)
     var transferNeedsCategory: Bool {
         guard type == .transfer,

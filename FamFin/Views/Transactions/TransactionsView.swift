@@ -16,7 +16,7 @@ struct TransactionsView: View {
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
 
     @State private var showingAddTransaction = false
-    @State private var filterAccountID: PersistentIdentifier?  // nil = All Accounts
+    @State private var filterAccountIDs: Set<PersistentIdentifier> = []
     @State private var editingTransaction: Transaction?
     @State private var searchText = ""
     @State private var isSearching = false
@@ -29,14 +29,13 @@ struct TransactionsView: View {
 
     // MARK: - Computed
 
-    var filterAccount: Account? {
-        guard let id = filterAccountID else { return nil }
-        return accounts.first { $0.persistentModelID == id }
+    var filterAccounts: [Account] {
+        accounts.filter { filterAccountIDs.contains($0.persistentModelID) }
     }
 
     /// Whether an account filter or search is active (drives the toolbar icon fill state).
     var hasActiveFilters: Bool {
-        filterAccountID != nil || isSearching
+        !filterAccountIDs.isEmpty || isSearching
     }
 
     /// Whether the selected month is the current calendar month.
@@ -60,12 +59,13 @@ struct TransactionsView: View {
         }
     }
 
-    /// Step 2: filter by account
+    /// Step 2: filter by selected accounts
     var accountFiltered: [Transaction] {
-        guard let account = filterAccount else { return monthFiltered }
+        guard !filterAccountIDs.isEmpty else { return monthFiltered }
         return monthFiltered.filter {
-            $0.account?.persistentModelID == account.persistentModelID ||
-            $0.transferToAccount?.persistentModelID == account.persistentModelID
+            if let id = $0.account?.persistentModelID, filterAccountIDs.contains(id) { return true }
+            if let id = $0.transferToAccount?.persistentModelID, filterAccountIDs.contains(id) { return true }
+            return false
         }
     }
 
@@ -87,7 +87,9 @@ struct TransactionsView: View {
         }
         return grouped
             .sorted { $0.key > $1.key }
-            .map { TransactionGroup(date: $0.key, transactions: $0.value) }
+            .map { TransactionGroup(date: $0.key, transactions: $0.value.sorted { a, b in
+                a.signedAmount < b.signedAmount
+            }) }
     }
 
     // MARK: - Body
@@ -96,10 +98,8 @@ struct TransactionsView: View {
         VStack(spacing: 0) {
             monthSelector
 
-            // Filter chip (visible when account filter is active)
-            if let account = filterAccount {
-                accountFilterChip(account: account)
-            }
+            // Filter banners (visible when account filter is active)
+            accountFilterBanners
 
             // Search bar (visible when search is active)
             if isSearching {
@@ -166,7 +166,7 @@ struct TransactionsView: View {
         }
         .sheet(isPresented: $showingAddTransaction) {
             AddTransactionView(
-                preselectedAccount: filterAccount,
+                preselectedAccount: filterAccounts.count == 1 ? filterAccounts.first : nil,
                 defaultDate: isCurrentMonth ? nil : lastDayOfSelectedMonth
             )
         }
@@ -273,30 +273,57 @@ struct TransactionsView: View {
         .accessibilityHint("Double tap to return to the current month")
     }
 
-    // MARK: - Filter Chip
+    // MARK: - Filter Banners
 
-    private func accountFilterChip(account: Account) -> some View {
-        HStack(spacing: 6) {
-            Text(account.name)
-                .font(.subheadline.bold())
-                .foregroundStyle(Color.accentColor)
-            Button("Clear filter", systemImage: "xmark.circle.fill") {
-                withAnimation {
-                    filterAccountID = nil
+    @ViewBuilder
+    private var accountFilterBanners: some View {
+        let selected = filterAccounts
+        if !selected.isEmpty {
+            VStack(spacing: 8) {
+                if selected.count <= 3 {
+                    ForEach(selected) { account in
+                        filterBanner(
+                            text: account.name,
+                            accessibilityLabel: "Filtered by \(account.name)"
+                        ) {
+                            withAnimation { _ = filterAccountIDs.remove(account.persistentModelID) }
+                        }
+                    }
+                } else {
+                    filterBanner(
+                        text: "Filtering \(selected.count) of \(accounts.count) accounts",
+                        accessibilityLabel: "Filtering \(selected.count) of \(accounts.count) accounts"
+                    ) {
+                        withAnimation { filterAccountIDs.removeAll() }
+                    }
                 }
             }
+            .padding(.horizontal)
+            .padding(.bottom, 12)
+        }
+    }
+
+    private func filterBanner(text: String, accessibilityLabel: String, onDismiss: @escaping () -> Void) -> some View {
+        HStack {
+            Text(text)
+                .font(.subheadline)
+                .bold()
+            Spacer()
+            Button("Remove filter", systemImage: "xmark.circle.fill") {
+                onDismiss()
+            }
             .labelStyle(.iconOnly)
-            .foregroundStyle(Color.accentColor.opacity(0.6))
             .font(.subheadline)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
+        .foregroundStyle(Color.accentColor)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .frame(maxWidth: .infinity)
         .background(Color.accentColor.opacity(0.15))
         .clipShape(.rect(cornerRadius: 10))
-        .padding(.bottom, 8)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Filtered by \(account.name)")
-        .accessibilityHint("Double tap to clear filter")
+        .accessibilityLabel(accessibilityLabel)
+        .accessibilityHint("Double tap to remove filter")
     }
 
     // MARK: - Search Bar
@@ -348,27 +375,17 @@ struct TransactionsView: View {
     private var filterMenu: some View {
         Menu {
             Button {
-                filterAccountID = nil
+                withAnimation { filterAccountIDs.removeAll() }
             } label: {
-                if filterAccountID == nil {
-                    Label("All Accounts", systemImage: "checkmark")
-                } else {
-                    Text("All Accounts")
-                }
+                Label("All Accounts", systemImage: filterAccountIDs.isEmpty
+                    ? "checkmark.circle.fill"
+                    : "circle")
             }
 
             if !budgetAccounts.isEmpty {
                 Section("Budget Accounts") {
                     ForEach(budgetAccounts) { account in
-                        Button {
-                            filterAccountID = account.persistentModelID
-                        } label: {
-                            if filterAccountID == account.persistentModelID {
-                                Label(account.name, systemImage: "checkmark")
-                            } else {
-                                Text(account.name)
-                            }
-                        }
+                        accountToggleButton(account)
                     }
                 }
             }
@@ -376,15 +393,7 @@ struct TransactionsView: View {
             if !trackingAccounts.isEmpty {
                 Section("Tracking Accounts") {
                     ForEach(trackingAccounts) { account in
-                        Button {
-                            filterAccountID = account.persistentModelID
-                        } label: {
-                            if filterAccountID == account.persistentModelID {
-                                Label(account.name, systemImage: "checkmark")
-                            } else {
-                                Text(account.name)
-                            }
-                        }
+                        accountToggleButton(account)
                     }
                 }
             }
@@ -398,6 +407,23 @@ struct TransactionsView: View {
         }
         .accessibilityLabel("Account filter")
         .accessibilityHint(hasActiveFilters ? "Filter is active" : "Double tap to filter by account")
+    }
+
+    private func accountToggleButton(_ account: Account) -> some View {
+        let isSelected = filterAccountIDs.contains(account.persistentModelID)
+        return Button {
+            withAnimation {
+                if isSelected {
+                    filterAccountIDs.remove(account.persistentModelID)
+                } else {
+                    filterAccountIDs.insert(account.persistentModelID)
+                }
+            }
+        } label: {
+            Label(account.name, systemImage: isSelected
+                ? "checkmark.circle.fill"
+                : "circle")
+        }
     }
 
     // MARK: - Transaction List
@@ -415,9 +441,7 @@ struct TransactionsView: View {
                             editingTransaction = transaction
                         } label: {
                             TransactionRow(
-                                transaction: transaction,
-                                showAccount: filterAccount == nil,
-                                viewingAccount: filterAccount
+                                transaction: transaction
                             )
                         }
                         .buttonStyle(.plain)
@@ -464,11 +488,11 @@ struct TransactionsView: View {
     private var emptyState: some View {
         if !searchText.isEmpty {
             ContentUnavailableView.search(text: searchText)
-        } else if filterAccount != nil {
+        } else if !filterAccountIDs.isEmpty {
             ContentUnavailableView(
                 "No Transactions",
                 systemImage: "list.bullet.rectangle.fill",
-                description: Text("No transactions for this account in \(selectedMonth, format: .dateTime.month(.wide).year()).")
+                description: Text("No transactions for the selected \(filterAccountIDs.count == 1 ? "account" : "accounts") in \(selectedMonth, format: .dateTime.month(.wide).year()).")
             )
         } else {
             ContentUnavailableView(
