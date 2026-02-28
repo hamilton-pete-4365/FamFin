@@ -18,6 +18,9 @@ struct AddTransactionView: View {
 
     var preselectedAccount: Account?
     var preselectedCategory: Category?
+    /// When set, the transaction date defaults to this instead of today.
+    /// Used when adding from a non-current month view.
+    var defaultDate: Date?
 
     @State private var viewModel = TransactionFormViewModel()
     @State private var hasInitialised = false
@@ -111,6 +114,11 @@ struct AddTransactionView: View {
                 // Activate keypad immediately
                 viewModel.engine.activate(currentPence: 0, currencyCode: currencyCode)
                 viewModel.isKeypadVisible = true
+
+                // Set initial date if a non-current month is selected
+                if let defaultDate {
+                    viewModel.date = defaultDate
+                }
 
                 // Set initial account: preselected > last used > first budget account > single account
                 if let preselected = preselectedAccount {

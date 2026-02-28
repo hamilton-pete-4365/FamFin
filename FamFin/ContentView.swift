@@ -42,7 +42,7 @@ struct ContentView: View {
             )
         }
         .sheet(isPresented: $showingNewTransaction) {
-            AddTransactionView()
+            AddTransactionView(defaultDate: defaultTransactionDate)
         }
         .fullScreenCover(isPresented: Binding(
             get: { !hasCompletedOnboarding },
@@ -50,6 +50,20 @@ struct ContentView: View {
         )) {
             OnboardingView()
         }
+    }
+
+    /// When the selected month is not the current month, default new transactions
+    /// to the last day of that month; otherwise use today (nil = default).
+    private var defaultTransactionDate: Date? {
+        let calendar = Calendar.current
+        guard !calendar.isDate(monthStore.selectedMonth, equalTo: Date(), toGranularity: .month) else {
+            return nil
+        }
+        let month = monthStore.selectedMonth
+        guard let range = calendar.range(of: .day, in: .month, for: month),
+              let lastDay = calendar.date(bySetting: .day, value: range.upperBound - 1, of: month)
+        else { return month }
+        return lastDay
     }
 
     private func handleDeepLink(_ url: URL) {

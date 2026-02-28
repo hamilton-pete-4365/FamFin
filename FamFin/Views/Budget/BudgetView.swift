@@ -120,6 +120,11 @@ struct BudgetView: View {
                 monthSelector
                 budgetStatusButtons(historic: historicToBudget, future: futureBudgeted)
 
+                // Persistent separator between header area and scrollable content
+                Color(.opaqueSeparator)
+                    .frame(height: 0.5)
+                    .frame(maxWidth: .infinity)
+
                 if headerCategories.isEmpty {
                     emptyState
                 } else {
@@ -206,7 +211,9 @@ struct BudgetView: View {
                 }
             }
             .sheet(isPresented: $showAddTransaction) {
-                AddTransactionView()
+                AddTransactionView(
+                    defaultDate: isCurrentMonth ? nil : lastDayOfSelectedMonth
+                )
             }
             .sheet(isPresented: $showAutoFill) {
                 AutoFillBudgetView(month: selectedMonth) {
@@ -254,6 +261,15 @@ struct BudgetView: View {
     /// Whether the selected month is the current calendar month.
     private var isCurrentMonth: Bool {
         Calendar.current.isDate(selectedMonth, equalTo: Date(), toGranularity: .month)
+    }
+
+    /// The last day of the currently selected month (e.g. 28 Feb, 31 Mar).
+    private var lastDayOfSelectedMonth: Date {
+        let calendar = Calendar.current
+        guard let range = calendar.range(of: .day, in: .month, for: selectedMonth),
+              let lastDay = calendar.date(bySetting: .day, value: range.upperBound - 1, of: selectedMonth)
+        else { return selectedMonth }
+        return lastDay
     }
 
     /// Navigate back to the current calendar month.
@@ -443,15 +459,7 @@ struct BudgetView: View {
                         .accessibilityAddTraits(.isHeader)
                         .accessibilityLabel("\(header.name), budgeted \(formatGBP(headerBudgeted(header), currencyCode: currencyCode)), available \(formatGBP(headerAvailable(header), currencyCode: currencyCode))\(headerAvailable(header) < 0 ? ", overspent" : "")")
                         .accessibilityHint(expandedHeaders.contains("\(header.persistentModelID)") ? "Double tap to collapse" : "Double tap to expand")
-                        .listRowBackground(
-                            Color(.secondarySystemBackground)
-                                .overlay(alignment: .top) {
-                                    if header.persistentModelID == headerCategories.first?.persistentModelID {
-                                        Color(.opaqueSeparator)
-                                            .frame(height: 0.5)
-                                    }
-                                }
-                        )
+                        .listRowBackground(Color(.secondarySystemBackground))
                         .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
                         .alignmentGuide(.listRowSeparatorLeading) { _ in -16 }
                         .alignmentGuide(.listRowSeparatorTrailing) { d in d[.trailing] + 16 }

@@ -19,6 +19,7 @@ struct TransactionsView: View {
     @State private var filterAccountID: PersistentIdentifier?  // nil = All Accounts
     @State private var editingTransaction: Transaction?
     @State private var searchText = ""
+    @State private var isSearching = false
     @State private var transactionToDelete: Transaction?
     @State private var showMonthPicker = false
     @Environment(SelectedMonthStore.self) private var monthStore
@@ -33,9 +34,9 @@ struct TransactionsView: View {
         return accounts.first { $0.persistentModelID == id }
     }
 
-    /// Whether an account filter is active (drives the toolbar icon fill state).
+    /// Whether an account filter or search is active (drives the toolbar icon fill state).
     var hasActiveFilters: Bool {
-        filterAccountID != nil
+        filterAccountID != nil || isSearching
     }
 
     /// Whether the selected month is the current calendar month.
@@ -100,6 +101,16 @@ struct TransactionsView: View {
                 accountFilterChip(account: account)
             }
 
+            // Search bar (visible when search is active)
+            if isSearching {
+                searchBar
+            }
+
+            // Persistent separator between header area and scrollable content
+            Color(.opaqueSeparator)
+                .frame(height: 0.5)
+                .frame(maxWidth: .infinity)
+
             // Transaction list
             if groupedTransactions.isEmpty {
                 Spacer()
@@ -122,11 +133,22 @@ struct TransactionsView: View {
                     }
                 }
         )
-        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search payee, memo, or category")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 ProfileButton()
+            }
+            ToolbarSpacer(.fixed, placement: .topBarLeading)
+            ToolbarItem(placement: .topBarLeading) {
+                Button("Search", systemImage: "magnifyingglass") {
+                    withAnimation {
+                        isSearching.toggle()
+                        if !isSearching {
+                            searchText = ""
+                        }
+                    }
+                }
+                .foregroundStyle(isSearching ? Color.accentColor : .secondary)
             }
             ToolbarItem(placement: .principal) {
                 Text("Transactions")
@@ -143,7 +165,10 @@ struct TransactionsView: View {
             }
         }
         .sheet(isPresented: $showingAddTransaction) {
-            AddTransactionView(preselectedAccount: filterAccount)
+            AddTransactionView(
+                preselectedAccount: filterAccount,
+                defaultDate: isCurrentMonth ? nil : lastDayOfSelectedMonth
+            )
         }
         .sheet(item: $editingTransaction) { transaction in
             EditTransactionView(transaction: transaction)
@@ -274,6 +299,50 @@ struct TransactionsView: View {
         .accessibilityHint("Double tap to clear filter")
     }
 
+    // MARK: - Search Bar
+
+    @FocusState private var isSearchFieldFocused: Bool
+
+    private var searchBar: some View {
+        HStack(spacing: 8) {
+            HStack(spacing: 6) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(.secondary)
+                    .font(.subheadline)
+                TextField("Search payee, memo, or category", text: $searchText)
+                    .font(.body)
+                    .focused($isSearchFieldFocused)
+                    .submitLabel(.search)
+                if !searchText.isEmpty {
+                    Button("Clear", systemImage: "xmark.circle.fill") {
+                        searchText = ""
+                    }
+                    .labelStyle(.iconOnly)
+                    .foregroundStyle(.secondary)
+                    .font(.subheadline)
+                }
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 8)
+            .background(Color(.tertiarySystemFill))
+            .clipShape(.rect(cornerRadius: 10))
+
+            Button("Cancel") {
+                withAnimation {
+                    searchText = ""
+                    isSearching = false
+                }
+            }
+            .font(.body)
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 8)
+        .onAppear {
+            isSearchFieldFocused = true
+        }
+        .accessibilityElement(children: .contain)
+    }
+
     // MARK: - Filter Menu
 
     private var filterMenu: some View {
@@ -338,7 +407,7 @@ struct TransactionsView: View {
             ForEach(groupedTransactions.enumerated(), id: \.element.id) { index, group in
                 Section {
                     // Day header row — styled like Budget's category header
-                    dayHeader(for: group.date, isFirst: index == 0)
+                    dayHeader(for: group.date)
 
                     // Transaction rows
                     ForEach(group.transactions) { transaction in
@@ -372,7 +441,7 @@ struct TransactionsView: View {
     }
 
     /// Day section header styled to match Budget's category group headers.
-    private func dayHeader(for date: Date, isFirst: Bool) -> some View {
+    private func dayHeader(for date: Date) -> some View {
         HStack {
             Text(date, format: .dateTime.weekday(.wide).day().month(.wide))
                 .font(.headline)
@@ -381,15 +450,7 @@ struct TransactionsView: View {
                 .lineLimit(1)
             Spacer()
         }
-        .listRowBackground(
-            Color(.secondarySystemBackground)
-                .overlay(alignment: .top) {
-                    if isFirst {
-                        Color(.opaqueSeparator)
-                            .frame(height: 0.5)
-                    }
-                }
-        )
+        .listRowBackground(Color(.secondarySystemBackground))
         .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
         .alignmentGuide(.listRowSeparatorLeading) { _ in -16 }
         .alignmentGuide(.listRowSeparatorTrailing) { d in d[.trailing] + 16 }
@@ -419,6 +480,15 @@ struct TransactionsView: View {
     }
 
     // MARK: - Helpers
+
+    /// The last day of the currently selected month (e.g. 28 Feb, 31 Mar).
+    private var lastDayOfSelectedMonth: Date {
+        let calendar = Calendar.current
+        guard let range = calendar.range(of: .day, in: .month, for: selectedMonth),
+              let lastDay = calendar.date(bySetting: .day, value: range.upperBound - 1, of: selectedMonth)
+        else { return selectedMonth }
+        return lastDay
+    }
 
     private func changeMonth(by offset: Int) {
         let calendar = Calendar.current
@@ -518,12 +588,14 @@ struct TransactionRow: View {
                             Text("\(from.name) → \(to.name)")
                         }
                     } else {
-                        if let category = transaction.category {
-                            Text(category.name)
-                        }
                         if showAccount, let account = transaction.account {
-                            Text("·")
                             Text(account.name)
+                        }
+                        if let category = transaction.category {
+                            if showAccount && transaction.account != nil {
+                                Text("·")
+                            }
+                            Text(category.name)
                         }
                     }
                 }
