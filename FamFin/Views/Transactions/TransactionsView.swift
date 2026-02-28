@@ -10,6 +10,7 @@ struct TransactionGroup: Identifiable {
 
 struct TransactionsView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Query(sort: \Transaction.date, order: .reverse) private var allTransactions: [Transaction]
     @Query(sort: \Account.sortOrder) private var accounts: [Account]
     @AppStorage(CurrencySettings.key) private var currencyCode: String = "GBP"
@@ -18,49 +19,28 @@ struct TransactionsView: View {
     @State private var filterAccountID: PersistentIdentifier?  // nil = All Accounts
     @State private var editingTransaction: Transaction?
     @State private var searchText = ""
-    @State private var showingRecurring = false
     @State private var transactionToDelete: Transaction?
+    @State private var showMonthPicker = false
+    @Environment(SelectedMonthStore.self) private var monthStore
+
+    /// Reads from the shared store so both Budget and Transactions stay in sync.
+    private var selectedMonth: Date { monthStore.selectedMonth }
+
+    // MARK: - Computed
 
     var filterAccount: Account? {
         guard let id = filterAccountID else { return nil }
         return accounts.first { $0.persistentModelID == id }
     }
 
-    /// Step 1: filter by account
-    var accountFiltered: [Transaction] {
-        guard let account = filterAccount else { return allTransactions }
-        return allTransactions.filter {
-            $0.account?.persistentModelID == account.persistentModelID ||
-            $0.transferToAccount?.persistentModelID == account.persistentModelID
-        }
+    /// Whether an account filter is active (drives the toolbar icon fill state).
+    var hasActiveFilters: Bool {
+        filterAccountID != nil
     }
 
-    /// Step 2: filter by search text (payee, memo, category name)
-    var filteredTransactions: [Transaction] {
-        guard !searchText.isEmpty else { return accountFiltered }
-        return accountFiltered.filter { transaction in
-            transaction.payee.localizedStandardContains(searchText) ||
-            transaction.memo.localizedStandardContains(searchText) ||
-            (transaction.category?.name.localizedStandardContains(searchText) ?? false)
-        }
-    }
-
-    /// Step 3: group by calendar day
-    var groupedTransactions: [TransactionGroup] {
-        let calendar = Calendar.current
-        let grouped = Dictionary(grouping: filteredTransactions) { transaction in
-            calendar.startOfDay(for: transaction.date)
-        }
-        return grouped
-            .sorted { $0.key > $1.key }
-            .map { TransactionGroup(date: $0.key, transactions: $0.value) }
-    }
-
-    var displayBalance: Decimal {
-        if let account = filterAccount {
-            return account.balance
-        }
-        return accounts.reduce(Decimal.zero) { $0 + $1.balance }
+    /// Whether the selected month is the current calendar month.
+    var isCurrentMonth: Bool {
+        Calendar.current.isDate(selectedMonth, equalTo: Date(), toGranularity: .month)
     }
 
     var budgetAccounts: [Account] {
@@ -71,162 +51,96 @@ struct TransactionsView: View {
         accounts.filter { !$0.isBudget }
     }
 
-    var navigationTitle: String {
-        filterAccount?.name ?? "Transactions"
+    /// Step 1: filter by selected month
+    var monthFiltered: [Transaction] {
+        let calendar = Calendar.current
+        return allTransactions.filter {
+            calendar.isDate($0.date, equalTo: selectedMonth, toGranularity: .month)
+        }
     }
+
+    /// Step 2: filter by account
+    var accountFiltered: [Transaction] {
+        guard let account = filterAccount else { return monthFiltered }
+        return monthFiltered.filter {
+            $0.account?.persistentModelID == account.persistentModelID ||
+            $0.transferToAccount?.persistentModelID == account.persistentModelID
+        }
+    }
+
+    /// Step 3: filter by search text (payee, memo, category name)
+    var filteredTransactions: [Transaction] {
+        guard !searchText.isEmpty else { return accountFiltered }
+        return accountFiltered.filter { transaction in
+            transaction.payee.localizedStandardContains(searchText) ||
+            transaction.memo.localizedStandardContains(searchText) ||
+            (transaction.category?.name.localizedStandardContains(searchText) ?? false)
+        }
+    }
+
+    /// Step 4: group by calendar day
+    var groupedTransactions: [TransactionGroup] {
+        let calendar = Calendar.current
+        let grouped = Dictionary(grouping: filteredTransactions) { transaction in
+            calendar.startOfDay(for: transaction.date)
+        }
+        return grouped
+            .sorted { $0.key > $1.key }
+            .map { TransactionGroup(date: $0.key, transactions: $0.value) }
+    }
+
+    // MARK: - Body
 
     var body: some View {
         VStack(spacing: 0) {
-            // Top bar: balance + account filter — solid background, above the list
-            VStack(spacing: 0) {
-                // Balance header — shows sign
-                VStack(spacing: 4) {
-                    Text(filterAccount == nil ? "Total Balance" : "Account Balance")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                    GBPText(amount: displayBalance, font: .title.bold(), showSign: true)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .accessibilityElement(children: .combine)
-                .accessibilityLabel("\(filterAccount == nil ? "Total balance" : "Account balance"): \(formatGBP(displayBalance, currencyCode: currencyCode))\(displayBalance < 0 ? ", negative" : "")")
+            monthSelector
 
-                // Account filter dropdown
-                if accounts.count > 1 {
-                    Menu {
-                    Button {
-                        filterAccountID = nil
-                    } label: {
-                        if filterAccountID == nil {
-                            Label("All Accounts", systemImage: "checkmark")
-                        } else {
-                            Text("All Accounts")
-                        }
-                    }
-                    Divider()
-                    if !budgetAccounts.isEmpty {
-                        Section("Budget Accounts") {
-                            ForEach(budgetAccounts) { account in
-                                Button {
-                                    filterAccountID = account.persistentModelID
-                                } label: {
-                                    if filterAccountID == account.persistentModelID {
-                                        Label(account.name, systemImage: "checkmark")
-                                    } else {
-                                        Text(account.name)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if !trackingAccounts.isEmpty {
-                        Section("Tracking Accounts") {
-                            ForEach(trackingAccounts) { account in
-                                Button {
-                                    filterAccountID = account.persistentModelID
-                                } label: {
-                                    if filterAccountID == account.persistentModelID {
-                                        Label(account.name, systemImage: "checkmark")
-                                    } else {
-                                        Text(account.name)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } label: {
-                    HStack {
-                        Image(systemName: "line.3.horizontal.decrease.circle")
-                        Text(filterAccount?.name ?? "All Accounts")
-                            .bold()
-                        Image(systemName: "chevron.down")
-                            .font(.caption)
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(Color(.secondarySystemGroupedBackground))
-                    .clipShape(.capsule)
-                }
-                .accessibilityLabel("Filter: \(filterAccount?.name ?? "All Accounts")")
-                .accessibilityHint("Double tap to change account filter")
-                .padding(.vertical, 8)
-                }
+            // Filter chip (visible when account filter is active)
+            if let account = filterAccount {
+                accountFilterChip(account: account)
             }
-            .background(Color(.systemBackground))
-            .shadow(color: .black.opacity(0.06), radius: 4, x: 0, y: 2)
-            .zIndex(1)
 
             // Transaction list
             if groupedTransactions.isEmpty {
                 Spacer()
-                if !searchText.isEmpty {
-                    ContentUnavailableView.search(text: searchText)
-                } else {
-                    ContentUnavailableView(
-                        "No Transactions",
-                        systemImage: "list.bullet.rectangle.fill",
-                        description: Text("Tap + to add your first transaction.")
-                    )
-                }
+                emptyState
                 Spacer()
             } else {
-                List {
-                    ForEach(groupedTransactions) { group in
-                        Section {
-                            ForEach(group.transactions) { transaction in
-                                Button {
-                                    editingTransaction = transaction
-                                } label: {
-                                    TransactionRow(transaction: transaction, showAccount: filterAccount == nil, viewingAccount: filterAccount)
-                                }
-                                .buttonStyle(.plain)
-                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                    Button(role: .destructive) {
-                                        transactionToDelete = transaction
-                                    } label: {
-                                        Label("Delete", systemImage: "trash")
-                                    }
-                                }
-                            }
-                        } header: {
-                            Text(group.date, format: .dateTime.weekday(.wide).day().month(.wide).year())
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.secondary)
-                                .textCase(.uppercase)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.vertical, 8)
-                                .padding(.horizontal, 16)
-                                .background(Color(.systemBackground))
-                                .listRowInsets(EdgeInsets())
-                                .accessibilityAddTraits(.isHeader)
+                transactionList
+            }
+        }
+        .gesture(
+            DragGesture(minimumDistance: 50, coordinateSpace: .local)
+                .onEnded { value in
+                    guard abs(value.translation.width) > abs(value.translation.height) else { return }
+                    withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
+                        if value.translation.width < 0 {
+                            changeMonth(by: 1)
+                        } else {
+                            changeMonth(by: -1)
                         }
                     }
                 }
-                .listStyle(.plain)
-                .scrollDismissesKeyboard(.interactively)
-            }
-        }
+        )
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search payee, memo, or category")
-        .navigationTitle(navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 ProfileButton()
             }
+            ToolbarItem(placement: .principal) {
+                Text("Transactions")
+                    .font(.headline)
+            }
             ToolbarItem(placement: .primaryAction) {
-                HStack(spacing: 12) {
-                    Button("Recurring", systemImage: "arrow.triangle.2.circlepath") {
-                        showingRecurring = true
-                    }
-                    .accessibilityLabel("Recurring Transactions")
-                    Button("Add", systemImage: "plus") {
-                        showingAddTransaction = true
-                    }
+                Button("Add Transaction", systemImage: "plus") {
+                    showingAddTransaction = true
                 }
             }
-        }
-        .navigationDestination(isPresented: $showingRecurring) {
-            RecurringTransactionsView()
+            ToolbarSpacer(.fixed, placement: .primaryAction)
+            ToolbarItem(placement: .primaryAction) {
+                filterMenu
+            }
         }
         .sheet(isPresented: $showingAddTransaction) {
             AddTransactionView(preselectedAccount: filterAccount)
@@ -252,6 +166,274 @@ struct TransactionsView: View {
             Text("This will update your account balance and budget. This cannot be undone.")
         }
         .sensoryFeedback(.selection, trigger: showingAddTransaction)
+    }
+
+    // MARK: - Month Selector
+
+    var monthSelector: some View {
+        @Bindable var store = monthStore
+        return HStack {
+            Button("Previous month", systemImage: "chevron.left") {
+                withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
+                    changeMonth(by: -1)
+                }
+            }
+            .labelStyle(.iconOnly)
+            .font(.title3.bold())
+            .accessibilityHint("Double tap to go to the previous month")
+
+            Spacer()
+
+            Button {
+                showMonthPicker = true
+            } label: {
+                HStack(spacing: 4) {
+                    Text(selectedMonth, format: .dateTime.month(.wide).year())
+                        .font(.headline)
+                    Image(systemName: "chevron.down")
+                        .font(.caption2.bold())
+                        .foregroundStyle(.secondary)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityAddTraits(.isHeader)
+            .accessibilityHint("Double tap to choose a different month")
+            .popover(isPresented: $showMonthPicker) {
+                MonthYearPicker(selectedMonth: $store.selectedMonth)
+                    .presentationCompactAdaptation(.popover)
+            }
+
+            Spacer()
+
+            Button("Next month", systemImage: "chevron.right") {
+                withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
+                    changeMonth(by: 1)
+                }
+            }
+            .labelStyle(.iconOnly)
+            .font(.title3.bold())
+            .accessibilityHint("Double tap to go to the next month")
+        }
+        .overlay {
+            if !isCurrentMonth {
+                HStack {
+                    if selectedMonth < Date() {
+                        Spacer()
+                    }
+                    todayButton
+                    if selectedMonth > Date() {
+                        Spacer()
+                    }
+                }
+                .padding(.horizontal, 28)
+            }
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 12)
+    }
+
+    private var todayButton: some View {
+        Button("Today") {
+            goToToday()
+        }
+        .font(.caption)
+        .bold()
+        .foregroundStyle(Color.accentColor)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(Color.accentColor.opacity(0.15))
+        .clipShape(.rect(cornerRadius: 6))
+        .buttonStyle(.plain)
+        .accessibilityHint("Double tap to return to the current month")
+    }
+
+    // MARK: - Filter Chip
+
+    private func accountFilterChip(account: Account) -> some View {
+        HStack(spacing: 6) {
+            Text(account.name)
+                .font(.subheadline.bold())
+                .foregroundStyle(Color.accentColor)
+            Button("Clear filter", systemImage: "xmark.circle.fill") {
+                withAnimation {
+                    filterAccountID = nil
+                }
+            }
+            .labelStyle(.iconOnly)
+            .foregroundStyle(Color.accentColor.opacity(0.6))
+            .font(.subheadline)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(Color.accentColor.opacity(0.15))
+        .clipShape(.rect(cornerRadius: 10))
+        .padding(.bottom, 8)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Filtered by \(account.name)")
+        .accessibilityHint("Double tap to clear filter")
+    }
+
+    // MARK: - Filter Menu
+
+    private var filterMenu: some View {
+        Menu {
+            Button {
+                filterAccountID = nil
+            } label: {
+                if filterAccountID == nil {
+                    Label("All Accounts", systemImage: "checkmark")
+                } else {
+                    Text("All Accounts")
+                }
+            }
+
+            if !budgetAccounts.isEmpty {
+                Section("Budget Accounts") {
+                    ForEach(budgetAccounts) { account in
+                        Button {
+                            filterAccountID = account.persistentModelID
+                        } label: {
+                            if filterAccountID == account.persistentModelID {
+                                Label(account.name, systemImage: "checkmark")
+                            } else {
+                                Text(account.name)
+                            }
+                        }
+                    }
+                }
+            }
+
+            if !trackingAccounts.isEmpty {
+                Section("Tracking Accounts") {
+                    ForEach(trackingAccounts) { account in
+                        Button {
+                            filterAccountID = account.persistentModelID
+                        } label: {
+                            if filterAccountID == account.persistentModelID {
+                                Label(account.name, systemImage: "checkmark")
+                            } else {
+                                Text(account.name)
+                            }
+                        }
+                    }
+                }
+            }
+        } label: {
+            Label(
+                "Filter",
+                systemImage: hasActiveFilters
+                    ? "line.3.horizontal.decrease.circle.fill"
+                    : "line.3.horizontal.decrease.circle"
+            )
+        }
+        .accessibilityLabel("Account filter")
+        .accessibilityHint(hasActiveFilters ? "Filter is active" : "Double tap to filter by account")
+    }
+
+    // MARK: - Transaction List
+
+    private var transactionList: some View {
+        List {
+            ForEach(groupedTransactions.enumerated(), id: \.element.id) { index, group in
+                Section {
+                    // Day header row — styled like Budget's category header
+                    dayHeader(for: group.date, isFirst: index == 0)
+
+                    // Transaction rows
+                    ForEach(group.transactions) { transaction in
+                        Button {
+                            editingTransaction = transaction
+                        } label: {
+                            TransactionRow(
+                                transaction: transaction,
+                                showAccount: filterAccount == nil,
+                                viewingAccount: filterAccount
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+                        .alignmentGuide(.listRowSeparatorLeading) { _ in -16 }
+                        .alignmentGuide(.listRowSeparatorTrailing) { d in d[.trailing] + 16 }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button(role: .destructive) {
+                                transactionToDelete = transaction
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .listStyle(.plain)
+        .listSectionSpacing(0)
+        .scrollDismissesKeyboard(.interactively)
+    }
+
+    /// Day section header styled to match Budget's category group headers.
+    private func dayHeader(for date: Date, isFirst: Bool) -> some View {
+        HStack {
+            Text(date, format: .dateTime.weekday(.wide).day().month(.wide))
+                .font(.headline)
+                .foregroundStyle(.secondary)
+                .textCase(.uppercase)
+                .lineLimit(1)
+            Spacer()
+        }
+        .listRowBackground(
+            Color(.secondarySystemBackground)
+                .overlay(alignment: .top) {
+                    if isFirst {
+                        Color(.opaqueSeparator)
+                            .frame(height: 0.5)
+                    }
+                }
+        )
+        .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
+        .alignmentGuide(.listRowSeparatorLeading) { _ in -16 }
+        .alignmentGuide(.listRowSeparatorTrailing) { d in d[.trailing] + 16 }
+        .listSectionSeparator(.hidden, edges: .top)
+        .accessibilityAddTraits(.isHeader)
+    }
+
+    // MARK: - Empty State
+
+    @ViewBuilder
+    private var emptyState: some View {
+        if !searchText.isEmpty {
+            ContentUnavailableView.search(text: searchText)
+        } else if filterAccount != nil {
+            ContentUnavailableView(
+                "No Transactions",
+                systemImage: "list.bullet.rectangle.fill",
+                description: Text("No transactions for this account in \(selectedMonth, format: .dateTime.month(.wide).year()).")
+            )
+        } else {
+            ContentUnavailableView(
+                "No Transactions",
+                systemImage: "list.bullet.rectangle.fill",
+                description: Text("No transactions in \(selectedMonth, format: .dateTime.month(.wide).year()). Tap + to add one.")
+            )
+        }
+    }
+
+    // MARK: - Helpers
+
+    private func changeMonth(by offset: Int) {
+        let calendar = Calendar.current
+        if let newMonth = calendar.date(byAdding: .month, value: offset, to: selectedMonth) {
+            let comps = calendar.dateComponents([.year, .month], from: newMonth)
+            monthStore.selectedMonth = calendar.date(from: comps) ?? newMonth
+        }
+    }
+
+    private func goToToday() {
+        let calendar = Calendar.current
+        let comps = calendar.dateComponents([.year, .month], from: Date())
+        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
+            monthStore.selectedMonth = calendar.date(from: comps) ?? Date()
+        }
     }
 
     private func deleteSingleTransaction(_ transaction: Transaction) {
@@ -310,33 +492,26 @@ struct TransactionRow: View {
     }
 
     var body: some View {
-        HStack {
+        HStack(spacing: 8) {
             if transaction.type == .transfer {
                 Text("↔️")
-                    .font(.title2)
+                    .font(.title3)
                     .accessibilityHidden(true)
             } else if let category = transaction.category {
                 Text(category.emoji)
-                    .font(.title2)
+                    .font(.title3)
                     .accessibilityHidden(true)
             } else {
                 Image(systemName: "banknote")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundStyle(.secondary)
                     .accessibilityHidden(true)
             }
 
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 8) {
-                    Text(displayPayee)
-                        .font(.headline)
-                    if transaction.isAutoGenerated {
-                        Image(systemName: "arrow.triangle.2.circlepath")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .accessibilityLabel("Recurring")
-                    }
-                }
+            VStack(alignment: .leading, spacing: 2) {
+                Text(displayPayee)
+                    .font(.body)
+                    .lineLimit(1)
                 HStack(spacing: 4) {
                     if transaction.type == .transfer {
                         if let from = transaction.account, let to = transaction.transferToAccount {
@@ -354,33 +529,35 @@ struct TransactionRow: View {
                 }
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+                .lineLimit(1)
             }
 
             Spacer()
 
-            VStack(alignment: .trailing, spacing: 4) {
-                if transaction.type == .transfer {
-                    if let viewing = viewingAccount {
-                        if transaction.transferToAccount?.persistentModelID == viewing.persistentModelID {
-                            TransactionAmountText(amount: transaction.amount, type: .income)
-                        } else {
-                            TransactionAmountText(amount: transaction.amount, type: .expense)
-                        }
-                    } else {
-                        TransactionAmountText(amount: transaction.amount, type: .transfer)
-                    }
-                } else {
-                    TransactionAmountText(amount: transaction.amount, type: transaction.type)
-                }
-                Text(transaction.date, style: .date)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
+            transactionAmount
         }
         .padding(.vertical, 4)
+        .contentShape(Rectangle())
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityDescription)
         .accessibilityHint("Double tap to edit transaction")
+    }
+
+    @ViewBuilder
+    private var transactionAmount: some View {
+        if transaction.type == .transfer {
+            if let viewing = viewingAccount {
+                if transaction.transferToAccount?.persistentModelID == viewing.persistentModelID {
+                    TransactionAmountText(amount: transaction.amount, type: .income, font: .subheadline.bold())
+                } else {
+                    TransactionAmountText(amount: transaction.amount, type: .expense, font: .subheadline.bold())
+                }
+            } else {
+                TransactionAmountText(amount: transaction.amount, type: .transfer, font: .subheadline.bold())
+            }
+        } else {
+            TransactionAmountText(amount: transaction.amount, type: transaction.type, font: .subheadline.bold())
+        }
     }
 }
 
@@ -390,5 +567,6 @@ struct TransactionRow: View {
     NavigationStack {
         TransactionsView()
     }
-    .modelContainer(for: [Transaction.self, Account.self, Category.self, Payee.self, RecurringTransaction.self], inMemory: true)
+    .environment(SelectedMonthStore())
+    .modelContainer(for: [Transaction.self, Account.self, Category.self, Payee.self], inMemory: true)
 }

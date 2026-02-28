@@ -196,6 +196,16 @@ The five-tab structure (Budget, Accounts, Transactions, Goals, Reports) is the a
 - **Sheets for creation, push for detail.** Adding a transaction presents a sheet (focused, modal task). Viewing a goal pushes to a detail view (exploration, drill-down).
 - **Every piece of data has one home, but can be acted on anywhere it appears.** Accounts live on the Accounts tab. Transactions live on the Transactions tab. But when a transaction appears in a category detail or a goal summary, the user should be able to tap through to view or edit it right there — opening the same form, just from a different starting point. The distinction: *browsing and managing* a data type happens in its home tab; *acting on a specific item* you've already found should never require navigating elsewhere first.
 
+#### Standardised Tab Header Pattern
+
+Budget and Transactions share a common header structure. Future tabs should follow the same pattern to maintain visual cohesion:
+
+- **Toolbar:** Profile button (`.topBarLeading`), tab title (`.principal`), add-transaction `+` button plus an optional context menu (`.primaryAction`). Use `ToolbarSpacer(.fixed)` between the + and the menu.
+- **Month selector:** Directly below the toolbar. `chevron.left` / tappable month label with `MonthYearPicker` popover / `chevron.right`. A "Today" pill appears between the chevron and month label when not on the current month. Horizontal swipe on the screen body also navigates months.
+- **Status area:** Below the month selector. Status pills on Budget; filter chip + search bar on Transactions. Each tab uses this zone for its own contextual indicators.
+
+This consistent skeleton means switching between tabs feels like moving within one surface, not jumping between different apps.
+
 #### Navigation Depth Limits
 
 - **Maximum 3 levels deep** from any tab. If a flow requires more, rethink the information architecture.
@@ -514,11 +524,16 @@ The budget screen is the heart of the app. It must answer three questions at a g
 
 The transaction list must support rapid scanning. Users glance at dozens of rows to find what they need.
 
-**Grouping:** Transactions are grouped by date (most recent first). Each date header shows the day in relative terms when possible ("Today", "Yesterday", "Monday") with the full date alongside.
+**Layout (top to bottom):**
+1. **Month selector** — Identical to the budget screen: previous/next chevrons, tappable month label with picker, "Today" pill for quick return. Horizontal swipe also navigates months.
+2. **Filter chip** — When an account filter is active, a dismissible accent-coloured pill appears below the month selector showing the account name with an × to clear.
+3. **Search bar** — Toggled from the filter menu. A custom inline search bar appears below the month selector (and filter chip if present) with payee/memo/category search.
+4. **Day-grouped list** — Transactions within the selected month, grouped by calendar day (most recent first). Each date section header shows the weekday and full date.
+5. **Toolbar** — Profile button (leading), "Transactions" title (principal), add-transaction button and filter menu (trailing). The filter menu provides search toggle and account filtering. The filter icon fills when any filter or search is active.
 
 **Row design:** Payee name and amount are the two most important pieces — they should be visually dominant. Category and account are supporting context.
 
-**Filtering:** The account filter dropdown at the top should be fast to use and clearly indicate when a filter is active.
+**Filtering:** Account filtering and search live in a toolbar filter menu (icon: `line.3.horizontal.decrease.circle`). The icon uses its filled variant when a filter or search is active. Active account filters show as a dismissible chip below the month selector for clear visibility and one-tap dismissal.
 
 ### 8.3 Goals Screen
 

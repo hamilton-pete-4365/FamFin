@@ -27,10 +27,6 @@
 		A1B2C3D4E5F60001000A0016 /* CurrencySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0016 /* CurrencySettings.swift */; };
 		A1B2C3D4E5F60001000A0017 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0017 /* SettingsView.swift */; };
 		A1B2C3D4E5F60001000A0018 /* DataExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0018 /* DataExporter.swift */; };
-		A1B2C3D4E5F60001000A001F /* RecurringTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A001F /* RecurringTransaction.swift */; };
-		A1B2C3D4E5F60001000A0020 /* RecurrenceEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0020 /* RecurrenceEngine.swift */; };
-		A1B2C3D4E5F60001000A0021 /* RecurringTransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0021 /* RecurringTransactionsView.swift */; };
-		A1B2C3D4E5F60001000A0022 /* AddRecurringTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0022 /* AddRecurringTransactionView.swift */; };
 		AFB1000000000001 /* AutoFillBudgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFB1000000000002 /* AutoFillBudgetView.swift */; };
 		B1C2D3E4F5A60001000B0001 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B0001 /* TestHelpers.swift */; };
 		B1C2D3E4F5A60001000B0002 /* AccountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B0002 /* AccountTests.swift */; };
@@ -41,8 +37,6 @@
 		B1C2D3E4F5A60001000B0007 /* PayeeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B0007 /* PayeeTests.swift */; };
 		B1C2D3E4F5A60001000B000A /* BudgetMonthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B000A /* BudgetMonthTests.swift */; };
 		B1C2D3E4F5A60001000B000B /* DefaultCategoriesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B000B /* DefaultCategoriesTests.swift */; };
-		B1C2D3E4F5A60001000B000C /* RecurringTransactionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B000C /* RecurringTransactionTests.swift */; };
-		B1C2D3E4F5A60001000B000D /* RecurrenceEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B000D /* RecurrenceEngineTests.swift */; };
 		B1C2D3E4F5A60001000B000E /* CategoryAveragesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60002000B000E /* CategoryAveragesTests.swift */; };
 		BSB1000000000001 /* BudgetStatusButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = BSB1000000000002 /* BudgetStatusButtons.swift */; };
 		F1A2B3C4D5E60001000F0003 /* SharedModelContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E60002000F0003 /* SharedModelContainer.swift */; };
@@ -62,6 +56,7 @@
 		P4A1B2C3D5E60001000A0006 /* OnboardingCompletionStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = P4A1B2C3D5E60002000A0006 /* OnboardingCompletionStep.swift */; };
 		P4A1B2C3D5E60001000A0007 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = P4A1B2C3D5E60002000A0007 /* ConfettiView.swift */; };
 		P4A1B2C3D5E60001000A0008 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = P4A1B2C3D5E60002000A0008 /* HapticManager.swift */; };
+		S1M2O3N4T5H60001000A0001 /* SelectedMonthStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = S1M2O3N4T5H60002000A0001 /* SelectedMonthStore.swift */; };
 		T1X0000000000001 /* CategoryGrouping.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000002 /* CategoryGrouping.swift */; };
 		T1X0000000000003 /* PickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000004 /* PickerRow.swift */; };
 		T1X0000000000005 /* TransactionFormViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = T1X0000000000006 /* TransactionFormViewModel.swift */; };
@@ -90,7 +85,6 @@
 		W1D2E3F4A5B60001000A0013 /* BudgetMonth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0006 /* BudgetMonth.swift */; };
 		W1D2E3F4A5B60001000A0014 /* BudgetAllocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0007 /* BudgetAllocation.swift */; };
 		W1D2E3F4A5B60001000A0016 /* Payee.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0012 /* Payee.swift */; };
-		W1D2E3F4A5B60001000A0017 /* RecurringTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A001F /* RecurringTransaction.swift */; };
 		W1D2E3F4A5B60001000A0018 /* BudgetCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0013 /* BudgetCalculator.swift */; };
 		W1D2E3F4A5B60001000A0019 /* CurrencySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0016 /* CurrencySettings.swift */; };
 		W1D2E3F4A5B60001000A001A /* SharedModelContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = G1A2B3C4D5E60002000A0027 /* SharedModelContainer.swift */; };
@@ -156,10 +150,6 @@
 		A1B2C3D4E5F60002000A0016 /* CurrencySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySettings.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0017 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0018 /* DataExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExporter.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60002000A001F /* RecurringTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringTransaction.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60002000A0020 /* RecurrenceEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurrenceEngine.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60002000A0021 /* RecurringTransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringTransactionsView.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60002000A0022 /* AddRecurringTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRecurringTransactionView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60003000A0001 /* FamFin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FamFin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AFB1000000000002 /* AutoFillBudgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoFillBudgetView.swift; sourceTree = "<group>"; };
 		B1C2D3E4F5A60002000B0001 /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
@@ -171,8 +161,6 @@
 		B1C2D3E4F5A60002000B0007 /* PayeeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayeeTests.swift; sourceTree = "<group>"; };
 		B1C2D3E4F5A60002000B000A /* BudgetMonthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetMonthTests.swift; sourceTree = "<group>"; };
 		B1C2D3E4F5A60002000B000B /* DefaultCategoriesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultCategoriesTests.swift; sourceTree = "<group>"; };
-		B1C2D3E4F5A60002000B000C /* RecurringTransactionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringTransactionTests.swift; sourceTree = "<group>"; };
-		B1C2D3E4F5A60002000B000D /* RecurrenceEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurrenceEngineTests.swift; sourceTree = "<group>"; };
 		B1C2D3E4F5A60002000B000E /* CategoryAveragesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryAveragesTests.swift; sourceTree = "<group>"; };
 		B1C2D3E4F5A60003000B0001 /* FamFinTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FamFinTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BSB1000000000002 /* BudgetStatusButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetStatusButtons.swift; sourceTree = "<group>"; };
@@ -195,6 +183,7 @@
 		P4A1B2C3D5E60002000A0006 /* OnboardingCompletionStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCompletionStep.swift; sourceTree = "<group>"; };
 		P4A1B2C3D5E60002000A0007 /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
 		P4A1B2C3D5E60002000A0008 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
+		S1M2O3N4T5H60002000A0001 /* SelectedMonthStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedMonthStore.swift; sourceTree = "<group>"; };
 		T1X0000000000002 /* CategoryGrouping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryGrouping.swift; sourceTree = "<group>"; };
 		T1X0000000000004 /* PickerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerRow.swift; sourceTree = "<group>"; };
 		T1X0000000000006 /* TransactionFormViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionFormViewModel.swift; sourceTree = "<group>"; };
@@ -290,7 +279,6 @@
 				A1B2C3D4E5F60002000A0006 /* BudgetMonth.swift */,
 				A1B2C3D4E5F60002000A0007 /* BudgetAllocation.swift */,
 				A1B2C3D4E5F60002000A0012 /* Payee.swift */,
-				A1B2C3D4E5F60002000A001F /* RecurringTransaction.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -350,8 +338,6 @@
 				T1X000000000000C /* CategoryPickerSheet.swift */,
 				T1X0000000000002 /* CategoryGrouping.swift */,
 				T1X0000000000004 /* PickerRow.swift */,
-				A1B2C3D4E5F60002000A0021 /* RecurringTransactionsView.swift */,
-				A1B2C3D4E5F60002000A0022 /* AddRecurringTransactionView.swift */,
 				T1X0000000000016 /* CalendarDatePicker.swift */,
 			);
 			path = Transactions;
@@ -385,7 +371,7 @@
 				A1B2C3D4E5F60002000A0018 /* DataExporter.swift */,
 				A1B2C3D4E5F60002000A0010 /* DefaultCategories.swift */,
 				P4A1B2C3D5E60002000A0008 /* HapticManager.swift */,
-				A1B2C3D4E5F60002000A0020 /* RecurrenceEngine.swift */,
+				S1M2O3N4T5H60002000A0001 /* SelectedMonthStore.swift */,
 				F1A2B3C4D5E60002000F0003 /* SharedModelContainer.swift */,
 				G1A2B3C4D5E60002000A0027 /* SharedModelContainer.swift */,
 			);
@@ -415,8 +401,6 @@
 				B1C2D3E4F5A60002000B0007 /* PayeeTests.swift */,
 				B1C2D3E4F5A60002000B000A /* BudgetMonthTests.swift */,
 				B1C2D3E4F5A60002000B000B /* DefaultCategoriesTests.swift */,
-				B1C2D3E4F5A60002000B000C /* RecurringTransactionTests.swift */,
-				B1C2D3E4F5A60002000B000D /* RecurrenceEngineTests.swift */,
 				B1C2D3E4F5A60002000B000E /* CategoryAveragesTests.swift */,
 			);
 			path = FamFinTests;
@@ -638,10 +622,6 @@
 				A1B2C3D4E5F60001000A0016 /* CurrencySettings.swift in Sources */,
 				A1B2C3D4E5F60001000A0017 /* SettingsView.swift in Sources */,
 				A1B2C3D4E5F60001000A0018 /* DataExporter.swift in Sources */,
-				A1B2C3D4E5F60001000A001F /* RecurringTransaction.swift in Sources */,
-				A1B2C3D4E5F60001000A0020 /* RecurrenceEngine.swift in Sources */,
-				A1B2C3D4E5F60001000A0021 /* RecurringTransactionsView.swift in Sources */,
-				A1B2C3D4E5F60001000A0022 /* AddRecurringTransactionView.swift in Sources */,
 				K1P2D3E4F5A60001000A0001 /* AmountKeypadEngine.swift in Sources */,
 				F1A2B3C4D5E60001000F0003 /* SharedModelContainer.swift in Sources */,
 				P4A1B2C3D5E60001000A0001 /* OnboardingView.swift in Sources */,
@@ -652,6 +632,7 @@
 				P4A1B2C3D5E60001000A0006 /* OnboardingCompletionStep.swift in Sources */,
 				P4A1B2C3D5E60001000A0007 /* ConfettiView.swift in Sources */,
 				P4A1B2C3D5E60001000A0008 /* HapticManager.swift in Sources */,
+				S1M2O3N4T5H60001000A0001 /* SelectedMonthStore.swift in Sources */,
 				X1A2B3C4D5E60001000A0001 /* ProfileButton.swift in Sources */,
 				Y1A2B3C4D5E60001000A0001 /* AppearanceMode.swift in Sources */,
 				X1A2B3C4D5E60001000A0002 /* AccountDetailView.swift in Sources */,
@@ -674,8 +655,6 @@
 				B1C2D3E4F5A60001000B0007 /* PayeeTests.swift in Sources */,
 				B1C2D3E4F5A60001000B000A /* BudgetMonthTests.swift in Sources */,
 				B1C2D3E4F5A60001000B000B /* DefaultCategoriesTests.swift in Sources */,
-				B1C2D3E4F5A60001000B000C /* RecurringTransactionTests.swift in Sources */,
-				B1C2D3E4F5A60001000B000D /* RecurrenceEngineTests.swift in Sources */,
 				B1C2D3E4F5A60001000B000E /* CategoryAveragesTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -701,7 +680,6 @@
 				W1D2E3F4A5B60001000A0013 /* BudgetMonth.swift in Sources */,
 				W1D2E3F4A5B60001000A0014 /* BudgetAllocation.swift in Sources */,
 				W1D2E3F4A5B60001000A0016 /* Payee.swift in Sources */,
-				W1D2E3F4A5B60001000A0017 /* RecurringTransaction.swift in Sources */,
 				W1D2E3F4A5B60001000A0018 /* BudgetCalculator.swift in Sources */,
 				W1D2E3F4A5B60001000A0019 /* CurrencySettings.swift in Sources */,
 				W1D2E3F4A5B60001000A001A /* SharedModelContainer.swift in Sources */,

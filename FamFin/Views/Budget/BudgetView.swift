@@ -16,11 +16,10 @@ struct BudgetView: View {
         return "\(count)-\(total)-\(categorised)"
     }
 
-    @State private var selectedMonth: Date = {
-        let cal = Calendar.current
-        let comps = cal.dateComponents([.year, .month], from: Date())
-        return cal.date(from: comps) ?? Date()
-    }()
+    @Environment(SelectedMonthStore.self) private var monthStore
+
+    /// Reads from the shared store so both Budget and Transactions stay in sync.
+    private var selectedMonth: Date { monthStore.selectedMonth }
 
     /// Tracks which headers are expanded (true = open). All start open.
     @State private var expandedHeaders: Set<String> = []
@@ -239,7 +238,7 @@ struct BudgetView: View {
                 }
                 syncLocalBudgets()
             }
-            .onChange(of: selectedMonth) { _, _ in
+            .onChange(of: monthStore.selectedMonth) { _, _ in
                 syncLocalBudgets()
             }
             .onChange(of: transactionFingerprint) { _, _ in
@@ -268,12 +267,13 @@ struct BudgetView: View {
         let calendar = Calendar.current
         let comps = calendar.dateComponents([.year, .month], from: Date())
         withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
-            selectedMonth = calendar.date(from: comps) ?? Date()
+            monthStore.selectedMonth = calendar.date(from: comps) ?? Date()
         }
     }
 
     var monthSelector: some View {
-        HStack {
+        @Bindable var store = monthStore
+        return HStack {
             Button("Previous month", systemImage: "chevron.left") {
                 withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
                     changeMonth(by: -1)
@@ -301,7 +301,7 @@ struct BudgetView: View {
             .accessibilityAddTraits(.isHeader)
             .accessibilityHint("Double tap to choose a different month")
             .popover(isPresented: $showMonthPicker) {
-                MonthYearPicker(selectedMonth: $selectedMonth)
+                MonthYearPicker(selectedMonth: $store.selectedMonth)
                     .presentationCompactAdaptation(.popover)
             }
 
@@ -630,7 +630,7 @@ struct BudgetView: View {
         let calendar = Calendar.current
         if let newMonth = calendar.date(byAdding: .month, value: offset, to: selectedMonth) {
             let comps = calendar.dateComponents([.year, .month], from: newMonth)
-            selectedMonth = calendar.date(from: comps) ?? newMonth
+            monthStore.selectedMonth = calendar.date(from: comps) ?? newMonth
         }
     }
 
@@ -975,6 +975,7 @@ struct CategoryDetailSheet: View {
 
 #Preview {
     BudgetView()
+        .environment(SelectedMonthStore())
         .modelContainer(for: [
             Account.self,
             Transaction.self,

@@ -6,6 +6,7 @@ struct ContentView: View {
     @State private var selectedTab = 0
     @State private var showingNewTransaction = false
     @State private var previousTab = 0
+    @State private var monthStore = SelectedMonthStore()
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -22,6 +23,7 @@ struct ContentView: View {
             }
 
         }
+        .environment(monthStore)
         .tabViewStyle(.sidebarAdaptable)
         .onChange(of: selectedTab) { oldValue, newValue in
             // Double-tap Transactions tab to open Add Transaction
@@ -96,7 +98,6 @@ struct KeyboardShortcutButtons: View {
             Transaction.self,
             Category.self,
             BudgetMonth.self,
-            BudgetAllocation.self,
-            RecurringTransaction.self
+            BudgetAllocation.self
         ], inMemory: true)
 }
