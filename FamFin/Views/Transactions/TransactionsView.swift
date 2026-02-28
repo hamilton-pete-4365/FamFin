@@ -102,10 +102,11 @@ struct TransactionsView: View {
             // Filter banners (visible when account filter is active)
             accountFilterBanners
 
-            // Search bar (visible when search is active)
-            if isSearching {
-                searchBar
-            }
+            // Search bar (kept in hierarchy to avoid first-use keyboard lag)
+            searchBar
+                .frame(height: isSearching ? nil : 0)
+                .clipped()
+                .opacity(isSearching ? 1 : 0)
 
             // Persistent separator between header area and scrollable content
             Color(.opaqueSeparator)
@@ -113,12 +114,25 @@ struct TransactionsView: View {
                 .frame(maxWidth: .infinity)
 
             // Transaction list
-            if groupedTransactions.isEmpty {
-                Spacer()
-                emptyState
-                Spacer()
-            } else {
-                transactionList
+            ZStack {
+                if groupedTransactions.isEmpty {
+                    VStack {
+                        Spacer()
+                        emptyState
+                        Spacer()
+                    }
+                } else {
+                    transactionList
+                }
+
+                // Intercepts all taps when the search keyboard is up
+                if isSearchFieldFocused {
+                    Color.clear
+                        .contentShape(.rect)
+                        .onTapGesture {
+                            isSearchFieldFocused = false
+                        }
+                }
             }
         }
         .gesture(
@@ -331,40 +345,38 @@ struct TransactionsView: View {
     @FocusState private var isSearchFieldFocused: Bool
 
     private var searchBar: some View {
-        HStack(spacing: 8) {
-            HStack(spacing: 6) {
-                Image(systemName: "magnifyingglass")
-                    .foregroundStyle(.secondary)
-                    .font(.subheadline)
-                TextField("Search payee, memo, or category", text: $searchText)
-                    .font(.body)
-                    .focused($isSearchFieldFocused)
-                    .submitLabel(.search)
-                if !searchText.isEmpty {
-                    Button("Clear", systemImage: "xmark.circle.fill") {
-                        searchText = ""
-                    }
-                    .labelStyle(.iconOnly)
-                    .foregroundStyle(.secondary)
-                    .font(.subheadline)
+        HStack(spacing: 6) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(.secondary)
+                .font(.subheadline)
+            TextField("Search payee, memo, or category", text: $searchText)
+                .font(.body)
+                .focused($isSearchFieldFocused)
+                .submitLabel(.search)
+            if !searchText.isEmpty {
+                Button("Clear", systemImage: "xmark.circle.fill") {
+                    searchText = ""
                 }
+                .labelStyle(.iconOnly)
+                .foregroundStyle(.secondary)
+                .font(.subheadline)
             }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 8)
-            .background(Color(.tertiarySystemFill))
-            .clipShape(.rect(cornerRadius: 10))
-
-            Button("Cancel") {
-                searchText = ""
-                isSearchFieldFocused = false
-                isSearching = false
-            }
-            .font(.body)
         }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 8)
+        .background(Color(.tertiarySystemFill))
+        .clipShape(.rect(cornerRadius: 10))
         .padding(.horizontal)
         .padding(.bottom, 8)
-        .onAppear {
-            isSearchFieldFocused = true
+        .onChange(of: isSearching) { _, searching in
+            if searching {
+                isSearchFieldFocused = true
+            }
+        }
+        .onChange(of: isSearchFieldFocused) { _, focused in
+            if !focused && searchText.isEmpty {
+                isSearching = false
+            }
         }
         .accessibilityElement(children: .contain)
     }

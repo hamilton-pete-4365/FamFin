@@ -40,11 +40,18 @@ struct CalendarDatePicker: UIViewRepresentable {
         // Let SwiftUI drive the width; the calendar's intrinsic height is fine.
         calendarView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
+        // Disable the month/year label button so the user can only navigate
+        // months via the chevron arrows, not through a scroll-wheel popover.
+        Self.disableMonthLabelButton(in: calendarView)
+
         return calendarView
     }
 
     func updateUIView(_ uiView: UICalendarView, context: Context) {
         context.coordinator.parent = self
+
+        // Re-apply in case UIKit recreated subviews after a month change.
+        Self.disableMonthLabelButton(in: uiView)
 
         guard let selection = uiView.selectionBehavior as? UICalendarSelectionMultiDate else {
             return
@@ -57,6 +64,22 @@ struct CalendarDatePicker: UIViewRepresentable {
 
         if selection.selectedDates != [newComponents] {
             selection.selectedDates = [newComponents]
+        }
+    }
+
+    // MARK: - Helpers
+
+    /// Recursively searches the view hierarchy for the month/year label button
+    /// and disables user interaction so only the chevron arrows can change months.
+    private static func disableMonthLabelButton(in view: UIView) {
+        for subview in view.subviews {
+            if let button = subview as? UIButton,
+               button.title(for: .normal) != nil,
+               button.image(for: .normal) == nil {
+                button.isUserInteractionEnabled = false
+                return
+            }
+            disableMonthLabelButton(in: subview)
         }
     }
 
