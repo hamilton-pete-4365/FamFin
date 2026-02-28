@@ -36,32 +36,34 @@ struct AccountPickerSheet: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                if !budgetAccounts.isEmpty {
-                    Section("Budget Accounts") {
-                        ForEach(budgetAccounts) { account in
-                            accountButton(account)
-                        }
-                    }
-                }
-                if !trackingAccounts.isEmpty {
-                    Section("Tracking Accounts") {
-                        ForEach(trackingAccounts) { account in
-                            accountButton(account)
-                        }
-                    }
-                }
+            VStack(spacing: 0) {
+                searchField
 
-                if budgetAccounts.isEmpty && trackingAccounts.isEmpty {
-                    ContentUnavailableView.search(text: searchText)
+                Divider()
+
+                List {
+                    if !budgetAccounts.isEmpty {
+                        Section("Budget Accounts") {
+                            ForEach(budgetAccounts) { account in
+                                accountButton(account)
+                            }
+                        }
+                    }
+                    if !trackingAccounts.isEmpty {
+                        Section("Tracking Accounts") {
+                            ForEach(trackingAccounts) { account in
+                                accountButton(account)
+                            }
+                        }
+                    }
+
+                    if budgetAccounts.isEmpty && trackingAccounts.isEmpty {
+                        ContentUnavailableView.search(text: searchText)
+                    }
                 }
+                .listStyle(.insetGrouped)
             }
-            .listStyle(.insetGrouped)
-            .searchable(
-                text: $searchText,
-                placement: .navigationBarDrawer(displayMode: .always),
-                prompt: "Search accounts"
-            )
+            .background(Color(.systemGroupedBackground))
             .navigationTitle("Account")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -70,6 +72,28 @@ struct AccountPickerSheet: View {
                 }
             }
         }
+    }
+
+    // MARK: - Search Field
+
+    private var searchField: some View {
+        HStack {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(.secondary)
+
+            TextField("Search accounts", text: $searchText)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+
+            if !searchText.isEmpty {
+                Button("Clear", systemImage: "xmark.circle.fill") {
+                    searchText = ""
+                }
+                .foregroundStyle(.secondary)
+                .buttonStyle(.plain)
+            }
+        }
+        .padding()
     }
 
     private func accountButton(_ account: Account) -> some View {

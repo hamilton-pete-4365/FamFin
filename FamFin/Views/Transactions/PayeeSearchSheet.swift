@@ -44,6 +44,7 @@ struct PayeeSearchSheet: View {
                 }
             }
             .listStyle(.plain)
+            .scrollContentBackground(.hidden)
             .overlay {
                 if searchText.isEmpty {
                     ContentUnavailableView(
@@ -54,6 +55,7 @@ struct PayeeSearchSheet: View {
                 }
             }
         }
+        .background(Color(.systemGroupedBackground))
         .navigationTitle("Payee")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {

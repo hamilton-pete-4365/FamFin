@@ -44,29 +44,31 @@ struct CategoryPickerSheet: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                if let tbc = toBudgetCategory, showToBudget {
-                    categoryRow(
-                        category: tbc,
-                        groupName: nil,
-                        displayName: "\u{1F4B0} To Budget"
-                    )
-                }
+            VStack(spacing: 0) {
+                searchField
 
-                if !searchText.isEmpty && displayRows.isEmpty && !showToBudget {
-                    ContentUnavailableView.search(text: searchText)
-                } else {
-                    ForEach(displayRows, id: \.category.id) { row in
-                        categoryRow(category: row.category, groupName: row.groupName)
+                Divider()
+
+                List {
+                    if let tbc = toBudgetCategory, showToBudget {
+                        categoryRow(
+                            category: tbc,
+                            groupName: nil,
+                            displayName: "\u{1F4B0} To Budget"
+                        )
+                    }
+
+                    if !searchText.isEmpty && displayRows.isEmpty && !showToBudget {
+                        ContentUnavailableView.search(text: searchText)
+                    } else {
+                        ForEach(displayRows, id: \.category.id) { row in
+                            categoryRow(category: row.category, groupName: row.groupName)
+                        }
                     }
                 }
+                .listStyle(.insetGrouped)
             }
-            .listStyle(.insetGrouped)
-            .searchable(
-                text: $searchText,
-                placement: .navigationBarDrawer(displayMode: .always),
-                prompt: "Search categories"
-            )
+            .background(Color(.systemGroupedBackground))
             .navigationTitle("Category")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -75,6 +77,28 @@ struct CategoryPickerSheet: View {
                 }
             }
         }
+    }
+
+    // MARK: - Search Field
+
+    private var searchField: some View {
+        HStack {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(.secondary)
+
+            TextField("Search categories", text: $searchText)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+
+            if !searchText.isEmpty {
+                Button("Clear", systemImage: "xmark.circle.fill") {
+                    searchText = ""
+                }
+                .foregroundStyle(.secondary)
+                .buttonStyle(.plain)
+            }
+        }
+        .padding()
     }
 
     // MARK: - Category Row
