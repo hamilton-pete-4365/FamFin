@@ -23,9 +23,6 @@ final class Category {
     @Relationship(deleteRule: .cascade, inverse: \BudgetAllocation.category)
     var allocations: [BudgetAllocation] = []
 
-    @Relationship(deleteRule: .nullify, inverse: \RecurringTransaction.category)
-    var recurringTransactions: [RecurringTransaction] = []
-
     // Keep old field for migration — SwiftData won't crash if it exists in DB
     private var group: String?
 

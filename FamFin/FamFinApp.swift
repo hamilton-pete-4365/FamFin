@@ -21,8 +21,6 @@ struct FamFinApp: App {
             }
             // Clean up duplicate BudgetAllocations from previous bugs
             FamFinApp.cleanupDuplicateAllocations(context: modelContainer.mainContext)
-            // Generate any due recurring transactions
-            RecurrenceEngine.processRecurringTransactions(context: modelContainer.mainContext)
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
         }

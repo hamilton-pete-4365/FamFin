@@ -16,7 +16,6 @@ enum SharedModelContainer {
         BudgetMonth.self,
         BudgetAllocation.self,
         Payee.self,
-        RecurringTransaction.self,
     ])
 
     /// URL for the shared SwiftData store inside the App Group container.

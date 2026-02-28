@@ -18,14 +18,6 @@ final class Account {
     @Relationship(deleteRule: .nullify, inverse: \Transaction.transferToAccount)
     var incomingTransfers: [Transaction] = []
 
-    // MARK: - Recurring transaction inverses
-
-    @Relationship(deleteRule: .nullify, inverse: \RecurringTransaction.account)
-    var recurringTransactions: [RecurringTransaction] = []
-
-    @Relationship(deleteRule: .nullify, inverse: \RecurringTransaction.transferToAccount)
-    var recurringTransferTransactions: [RecurringTransaction] = []
-
     var balance: Decimal {
         var total = Decimal.zero
         for transaction in transactions {
