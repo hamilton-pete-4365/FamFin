@@ -142,11 +142,10 @@ struct TransactionsView: View {
             ToolbarSpacer(.fixed, placement: .topBarLeading)
             ToolbarItem(placement: .topBarLeading) {
                 Button("Search", systemImage: "magnifyingglass") {
-                    withAnimation {
-                        isSearching.toggle()
-                        if !isSearching {
-                            searchText = ""
-                        }
+                    isSearching.toggle()
+                    if !isSearching {
+                        searchText = ""
+                        isSearchFieldFocused = false
                     }
                 }
                 .foregroundStyle(isSearching ? Color.accentColor : .secondary)
@@ -356,10 +355,9 @@ struct TransactionsView: View {
             .clipShape(.rect(cornerRadius: 10))
 
             Button("Cancel") {
-                withAnimation {
-                    searchText = ""
-                    isSearching = false
-                }
+                searchText = ""
+                isSearchFieldFocused = false
+                isSearching = false
             }
             .font(.body)
         }
@@ -458,56 +456,68 @@ struct TransactionsView: View {
     // MARK: - Transaction List
 
     private var transactionList: some View {
-        List {
-            ForEach(groupedTransactions.enumerated(), id: \.element.id) { index, group in
-                Section {
-                    // Day header row — styled like Budget's category header
-                    dayHeader(for: group.date)
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
+                    Color.clear
+                        .frame(height: 0)
+                        .id("transactionListTop")
 
-                    // Transaction rows
-                    ForEach(group.transactions) { transaction in
-                        Button {
-                            editingTransaction = transaction
-                        } label: {
-                            TransactionRow(
-                                transaction: transaction
-                            )
-                        }
-                        .buttonStyle(.plain)
-                        .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
-                        .alignmentGuide(.listRowSeparatorLeading) { _ in -16 }
-                        .alignmentGuide(.listRowSeparatorTrailing) { d in d[.trailing] + 16 }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            Button(role: .destructive) {
-                                transactionToDelete = transaction
+                    ForEach(groupedTransactions.enumerated(), id: \.element.id) { index, group in
+                    Section {
+                        ForEach(group.transactions) { transaction in
+                            Button {
+                                editingTransaction = transaction
                             } label: {
-                                Label("Delete", systemImage: "trash")
+                                TransactionRow(
+                                    transaction: transaction
+                                )
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 6)
                             }
+                            .buttonStyle(.plain)
+                            .contextMenu {
+                                Button(role: .destructive) {
+                                    transactionToDelete = transaction
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
+
+                            // Row separator
+                            Divider()
                         }
+                    } header: {
+                        dayHeader(for: group.date)
                     }
                 }
             }
         }
-        .listStyle(.plain)
-        .listSectionSpacing(0)
         .scrollDismissesKeyboard(.interactively)
+        .onChange(of: selectedMonth) {
+            proxy.scrollTo("transactionListTop", anchor: .top)
+        }
+        }
     }
 
-    /// Day section header styled to match Budget's category group headers.
+    /// Sticky day section header styled to match Budget's category group headers.
     private func dayHeader(for date: Date) -> some View {
-        HStack {
-            Text(date, format: .dateTime.weekday(.wide).day().month(.wide))
-                .font(.headline)
-                .foregroundStyle(.secondary)
-                .textCase(.uppercase)
-                .lineLimit(1)
-            Spacer()
+        VStack(spacing: 0) {
+            HStack {
+                Text(date, format: .dateTime.weekday(.wide).day().month(.wide))
+                    .font(.headline)
+                    .foregroundStyle(.secondary)
+                    .textCase(.uppercase)
+                    .lineLimit(1)
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+
+            // Bottom separator
+            Divider()
         }
-        .listRowBackground(Color(.secondarySystemBackground))
-        .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
-        .alignmentGuide(.listRowSeparatorLeading) { _ in -16 }
-        .alignmentGuide(.listRowSeparatorTrailing) { d in d[.trailing] + 16 }
-        .listSectionSeparator(.hidden, edges: .top)
+        .background(Color(.secondarySystemBackground))
         .accessibilityAddTraits(.isHeader)
     }
 
